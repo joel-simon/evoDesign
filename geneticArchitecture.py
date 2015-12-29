@@ -35,7 +35,7 @@ def get_score(x):
 
 	# return score
 
-def get_neighbours(x, i, j):
+def get_neighbors(x, i, j):
 	results = []
 	if i > 0:          results.append((i-1, j))
 	if i < x.shape[0]-1: results.append((i+1, j))
@@ -44,6 +44,11 @@ def get_neighbours(x, i, j):
 	if j < x.shape[1]-1: results.append((i, j+1))
 	
 	return results
+
+def number_of_walls(x):
+	for i, j in np.ndindex(x.shape):
+		neighbors = get_neighbors(x, i, j)
+
 
 def valid_elevator(x):
 	front = set([(x.shape[0]/2, x.shape[0]/2)])
@@ -58,7 +63,7 @@ def valid_elevator(x):
 				desks.add((i, j))
 
 			if (x[i, j] == rooms['empty']) or (x[i, j] == rooms['elevator']):
-				next_front.update(get_neighbours(x, i, j))
+				next_front.update(get_neighbors(x, i, j))
 		next_front = next_front.difference(seen)
 		front = next_front
 
@@ -77,7 +82,7 @@ def distances_to_bathrooms(x):
 			x2[i, j] = 0
 			# Set union in place
 			seen.update((i,j))
-			front.update(get_neighbours(x2, i, j))
+			front.update(get_neighbors(x2, i, j))
 			front.difference_update(seen)
 
 	c = 1
@@ -88,7 +93,7 @@ def distances_to_bathrooms(x):
 				x2[i, j] = c
 			seen.add((i,j))
 			if x[i, j] == rooms['empty']:
-				next_front.update(get_neighbours(x2, i, j))
+				next_front.update(get_neighbors(x2, i, j))
 		front = next_front.difference(seen)
 		c += 1
 	
@@ -116,10 +121,27 @@ def crossover(x1, x2):
 	child1 = x1.copy()
 	child2 = x2.copy()
 
-	for i in xrange(min(i0, i1), max(i0,i1)):
-		for j in xrange(min(j0, j1), max(j0, j1)):
+	for i in xrange(min(i0, i1), max(i0,i1)+1):
+		for j in xrange(min(j0, j1), max(j0, j1)+1):
 			child1[i, j] = x2[i, j]
 			child2[i, j] = x1[i, j]
+
+	return [child1, child2]
+
+def crossover_improved(x1, x2):
+	m, n   = x1.shape[0], x1.shape[1]
+	i0, j0 = randint(0, m), randint(0, n)
+	h, w   = randint(0, m), randint(0, n)
+
+	child1 = x1.copy()
+	child2 = x2.copy()
+
+	for i in xrange(i0, i0 + h):
+		for j in xrange(j0, j0 + w):
+			i_ = i % m
+			j_ = j % n
+			child1[i_, j_] = x2[i_, j_]
+			child2[i_, j_] = x1[i_, j_]
 
 	return [child1, child2]
 
@@ -152,10 +174,10 @@ def pickCrossover(X, n):
 	indexes = np.random.choice(np.arange(len(X)), n, replace = False)
 	return X[np.sort(indexes)]
 
-l = 20
+l = 32
 population = 200
 p_c = .4
-iterations = 200
+iterations = 300
 
 def GA(X, iterations):
 	for i in xrange(iterations):
@@ -165,12 +187,12 @@ def GA(X, iterations):
 		to_crossover = pickCrossover(X, len(X) - n)
 		crossed = []
 		for j in xrange(0, len(to_crossover)-1, 2):
-			crossed += crossover(to_crossover[j], to_crossover[j+1])
+			crossed += crossover_improved(to_crossover[j], to_crossover[j+1])
 
 		X = np.concatenate((X1, crossed))
 		
 		for x in X:
-			mutate(x, 1)
+			mutate(x, 3)
 
 		if i % 20 == 0:
 			print i, get_score(X1[0])

@@ -32,7 +32,7 @@ class ScVectorizerTest(unittest.TestCase):
 		isvalid = geneticArchitecture.valid_elevator(np.array(X))
 		self.assertTrue(isvalid)
 	
-	def test_not_valid_elevator(self):
+	def test_invalid_elevator(self):
 		X =  [[2,2,0,0,2],
 					[2,1,2,0,0],
 					[0,0,3,0,0],
