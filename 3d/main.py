@@ -52,46 +52,36 @@ def draw(t1):
 		pygame.draw.line(screen, color, a_xy, b_xy, 2)
 	pygame.display.flip()
 
-def validate_truss(t):
-	loads_total = np.zeros([1, 3])
-	reactions_total = np.zeros([1, 3])
-	for j in t.joints:
-		reactions_total += j.reactions.T
-		loads_total += j.loads.T
-
-	# print('loads total', loads_total[0])
-	# print('reactions total', reactions_total[0])
-	# print('mass',t.mass*10)
-	difference = loads_total[0][1] + reactions_total[0][1] - t.mass*10
-	# print('difference', difference)
-	# print(( + reactions_total[0])[1], reactions_total[0][1]*.01)
-	return (difference < reactions_total[0][1]*.1)
-
 def fos_score(fos):
 	k = 10
 	return (math.atan((fos - 1) * 10) / math.pi) + 0.5
 
 def phenotype(x):
-	# 0th level all stay	
-	i = x.shape[0] -1
-	front = set([(i,j) for j in x[i] if j])
+	# bottom level all stay	
+	i = x.shape[0] - 1
+	front = set([(i,j) for j in x[i] if j > 0])
 	seen  = set()
 	
 	p = np.zeros(x.shape)
+
+	for i, j in np.ndindex(x.shape):
+		if x[i, j] > 1:
+			p[i, j] = x[i, j]
+
 	while len(front) > 0:
 		next_front = set()
 		for (i, j) in front:
-			p[i, j] = 1				
-			if j > 0 and x[i, j-1]:              next_front.add((i, j-1))
-			if j < x.shape[1] - 1 and x[i, j+1]: next_front.add((i, j+1))
+			p[i, j] = x[i, j]
+			if j > 0 and x[i, j-1] > 0:             next_front.add((i, j-1))
+			if j < x.shape[1] - 1 and x[i, j+1] >0: next_front.add((i, j+1))
 
-			if i > 0 and x[i - 1, j]:              next_front.add((i-1, j))
-			if i < x.shape[0] - 1 and x[i +1, j]: next_front.add((i+1, j))
+			if i > 0 and x[i - 1, j] > 0:            next_front.add((i-1, j))
+			if i < x.shape[0] - 1 and x[i +1, j] >0: next_front.add((i+1, j))
 
 		seen.update(front)
 		next_front = next_front.difference(seen)
 		front = next_front
-	
+
 	return p
 
 def truss_from_X(x):
@@ -101,56 +91,84 @@ def truss_from_X(x):
 	members = set()
 	
 	for i, j in np.ndindex(x.shape):
-		if x[i, j]:
+		if x[i, j] > 0:
 			nodes[(i,j)]
 			nodes[(i+1,j)]
 			nodes[(i,j+1)]
 			nodes[(i+1,j+1)]
 
-			members.add(((i,j), (i+1, j+1)))
-			members.add(((i,j), (i+1, j)))
-			members.add(((i,j), (i, j+1)))
+			members.add(((i,j),   (i+1, j+1)))
+			members.add(((i,j),   (i+1, j)))
+			members.add(((i,j),   (i, j+1)))
 			members.add(((i+1,j), (i+1, j+1)))
 			members.add(((i,j+1), (i+1, j+1)))
 
+	# Add joints
 	for ((i,j), n) in sorted(nodes.items(), key = lambda t: t[1]):
-		if 5 - i == 0:
-			t1.add_support(np.array([j, 5 - i, 0.0]), d=2)
+		if i == x.shape[0]:
+			t1.add_support(np.array([j, x.shape[0] - i, 0.0]), d=2)
 		else:
-			t1.add_joint(np.array([j, 5-i, 0.0]), d=2)
+			t1.add_joint(np.array([j, x.shape[0] - i, 0.0]), d=2)
 
-		# if i == 0:
-		# 	t1.joints[-1].loads[1] = -300000
-
+	# Add members
 	for m_a, m_b in members:
 		t1.add_member(nodes[m_a], nodes[m_b])
+
+	# Add Forces
+	x_force = 2500
+	y_force = -10000
+	
+	for i, j in np.ndindex(x.shape):
+		# x force
+		if x[i, j] == 2:
+			t1.joints[nodes[(i,j+1)]].loads[0] = x_force
+		# y force
+		elif x[i, j] == 3:
+			t1.joints[nodes[(i,j)]].loads[1] = y_force
 
 	return t1
 
 def score(x):
 	x = phenotype(x)
 	t = truss_from_X(phenotype(x))
-	
-	max_y = x.shape[0]
-	for j in t.joints:
-		if j.coordinates[1] == max_y:
-			j.loads[1] = -30000
 	try:
 		t.calc_mass()
 		t.calc_fos()
 	except:
 		return [0, 0]
 
+	# fos_forward = t.fos_total
+
+	# for j in t.joints:
+	# 	if j.coordinates[1] == max_y:
+	# 		j.loads[0] = -x_force
+	# 		j.loads[1] = y_force
+	# try:
+	# 	t.calc_mass()
+	# 	t.calc_fos()
+	# except:
+	# 	return [0, 0]
+
+	# fos_reverse = t.fos_total
+
+	# fos = (fos_forward + fos_reverse) / 2
+	fos = t.fos_total
+
 	mass = t.mass
 	if mass == 0:
-		return [0, t.fos_total]
-	return [(1 / mass) * fos_score(t.fos_total) * x[0].sum(), t.fos_total]
+		return [0, fos]
+	return [(1 / mass) * fos_score(fos), fos]
 
-def mutate(x, p):
-	# n_m = max(int(np.random.normal(p, 1)), 0)
-	# for m in range(n_m):
+def mutate(x, p):	
 	i = randint(x.shape[0])
 	j = randint(x.shape[1])
+
+	# Values greater than 1 signify forced on.
+	# -1 signifies forced off.
+	while x[i, j] > 1 or x[i, j] == -1:
+		i = randint(x.shape[0])
+		j = randint(x.shape[1])
+		
 	x[i, j] = not x[i, j]
 	return x
 
@@ -199,41 +217,47 @@ def GA(X, p_c, iterations):
 		for x in X:
 			mutate(x, 3)
 
-		if i % 5 == 0:
-			print('current best', i, score(X1[0]))
-			pretty_print(phenotype(X1[0]))
+		# if i % 5 == 0:
+		print('current best', i, score(X1[0]))
+		pretty_print(phenotype(X1[0]))
 
 	return X1[0]
 
 def pretty_print(x):
-	colors = [ "\033[90m #", "\033[92m #", "\033[91m #", "\033[93m #"]
+	"""
+	0 : Black
+	1 : Green
+	2 : Yellow
+	3 : Red
+	4 : Empty
+	"""
+	# 91 = red
+	colors = [ "\033[90m x", "\033[92m x", "\033[93m <", "\033[93m v", "\033[90m  "]
 	fn = lambda i: colors[int(i)]
 	for r in x:
 		print(''.join(map(fn, r)))
 	print("\033[00m")
 
+def initial_population(population):
+	w = 32
+	h = 32
+	# X = np.random.randint( 2, size = (population, h, w) )
+	X = np.ones([population, h, w])
+	for x in X:
+		x[:h/2+1, 8:] = -1 #blocked regions
+		x[:h/2, 8]    = 2 #forced on
+		x[h/2, 8:-4]  = 3 #forced on
+		
+	return X
+
+
 def main():
-	l = 6
 	population = 100
 	p_c = .4
 	iterations = 1000
-	# X = np.array([[1, 1, 1, 1, 0],
-	# 							[1, 1, 1, 1, 0],
-	# 							[0, 0, 0, 0, 0],
-	# 							[1, 1, 1, 0, 0],
-# # 							[1, 1, 1, 0, 0]])
-	# X = np.array([[ 1.,1.,1.,1.,1.,1.],
-	# 						 [ 1.,0.,1.,0.,0.,0.],
-	# 						 [ 0.,0.,1.,0.,0.,1.],
-	# 						 [ 1.,1.,1.,1.,0.,0.],
-	# 						 [ 1.,1.,0.,1.,1.,0.],
-	# 						 [ 1.,0.,0.,0.,0.,1.]])
-	# print(phenotype(X))
-	# print(score(X))
+	X = initial_population(population)
+	pretty_print(X[-1])
 	# return
-	# X = np.random.randint( 2, size = (population, l, l) )
-	X = np.ones([population, l, l*2])
-
 	with warnings.catch_warnings():
 		warnings.simplefilter("ignore")
 		best = GA(X, p_c, iterations)
