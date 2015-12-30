@@ -3,7 +3,7 @@ import numpy as np
 from numpy.random import randint
 from trussme import truss
 from collections import Mapping, defaultdict
-
+import multiprocessing
 import warnings
 
 # 
@@ -128,7 +128,7 @@ def truss_from_X(x):
 
 	return t1
 
-def score(x):
+def score_and_fos(x):
 	x = phenotype(x)
 	t = truss_from_X(phenotype(x))
 	try:
@@ -158,6 +158,9 @@ def score(x):
 	if mass == 0:
 		return [0, fos]
 	return [(1 / mass) * fos_score(fos), fos]
+
+def score(x):
+	return score_and_fos(x)[0]
 
 def mutate(x, p):	
 	i = randint(x.shape[0])
@@ -196,16 +199,20 @@ def crossover(x1, x2):
 
 	return [child1, child2]
 
-def pick_top(n, X):
-	scores  = np.array([score(x)[0] for x in X])
+def pick_top(n, X, pool):
+	# time1 = time.time()
+	# scores  = np.array([score(x) for x in X])
+	scores = pool.map(score, X)
+	# time2 = time.time()
+	# print('function took %0.3f ms' % ((time2-time1)*1000.0))
 	top     = sorted(enumerate(scores), reverse = True, key = lambda k: k[1])
 	indexes = [e[0] for e in top[:n]]
 	return X[indexes]
 
-def GA(X, p_c, iterations):	
+def GA(X, p_c, iterations, pool):	
 	for i in range(iterations):
 		n = int(len(X) * p_c)
-		X1 = pick_top(n, X)
+		X1 = pick_top(n, X, pool)
 		
 		to_crossover = pickCrossover(X, len(X) - n)
 		crossed = []
@@ -217,9 +224,9 @@ def GA(X, p_c, iterations):
 		for x in X:
 			mutate(x, 3)
 
-		# if i % 5 == 0:
-		print('current best', i, score(X1[0]))
-		pretty_print(phenotype(X1[0]))
+		if i % 10 == 0:
+			print('current best', i, score_and_fos(X1[0]))
+			pretty_print(phenotype(X1[0]))
 
 	return X1[0]
 
@@ -250,17 +257,19 @@ def initial_population(population):
 		
 	return X
 
-
 def main():
-	population = 100
+	population = 10
 	p_c = .4
 	iterations = 1000
 	X = initial_population(population)
 	pretty_print(X[-1])
-	# return
+	
+	n_c = multiprocessing.cpu_count()
+	pool = multiprocessing.Pool(processes = n_c)
+
 	with warnings.catch_warnings():
 		warnings.simplefilter("ignore")
-		best = GA(X, p_c, iterations)
+		best = GA(X, p_c, iterations, pool)
 	
 	pretty_print(phenotype(best))
 
