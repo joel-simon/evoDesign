@@ -1,0 +1,6 @@
+*.pyc
+3d/*.pyc
+/.ipynb_checkpoints/*
+3d/.ipynb_checkpoints/*
+/__pycache__
+3d/__pycache__

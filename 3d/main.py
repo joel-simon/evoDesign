@@ -232,7 +232,7 @@ def main():
 	# print(score(X))
 	# return
 	# X = np.random.randint( 2, size = (population, l, l) )
-	X = np.ones([population, l, l])
+	X = np.ones([population, l, l*2])
 
 	with warnings.catch_warnings():
 		warnings.simplefilter("ignore")
