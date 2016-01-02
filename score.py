@@ -2,12 +2,14 @@ import sys, time, math
 import numpy as np
 from collections import defaultdict
 from trussme import truss
+import warnings
+
 
 def fos_score(fos):
 	k = 10
-	return (math.atan((fos - 1) * 10) / math.pi) + 0.5
+	return (math.atan((fos - 3) * 10) / math.pi) + 0.5
 
-def truss_from_X(x):
+def truss_from_X(mask, x):
 	t1 = truss.Truss()
 	nodes = defaultdict()
 	nodes.default_factory = nodes.__len__
@@ -41,31 +43,58 @@ def truss_from_X(x):
 	x_force = 2500
 	y_force = -10000
 	
-	for i, j in np.ndindex(x.shape):
+	for i, j in np.ndindex(mask.shape):
 		# x force
-		if x[i, j] == 2:
-			t1.joints[nodes[(i,j+1)]].loads[0] = x_force
+		if mask[i, j] == 2:
+			if (i,j+1) in nodes:
+				t1.joints[nodes[(i,j+1)]].loads[0] = x_force
 		# y force
-		elif x[i, j] == 3:
-			t1.joints[nodes[(i,j)]].loads[1] = y_force
+		elif mask[i, j] == 3:
+			if (i,j) in nodes:
+				t1.joints[nodes[(i,j)]].loads[1] = y_force
 
 	return t1
 
-def score_and_fos(x):
-	t = truss_from_X(x)
+def pretty_print(x):
+	"""
+	0 : Black
+	1 : Green
+	2 : Yellow
+	3 : Red
+	4 : Empty
+	"""
+	# 91 = red
+	colors = [ "\033[90m x", "\033[92m x", "\033[93m <", "\033[93m v", "\033[90m  "]
+	fn = lambda i: colors[int(i)]
+	for r in x:
+		print(''.join(map(fn, r)))
+	print("\033[00m")
+
+
+def score_and_fos(mask, x):
+	t = truss_from_X(mask, x)
+	mask_on = x[mask > 0]
+	if not np.all(mask_on):
+		return [0, 0]
+
 	try:
-		t.calc_mass()
-		t.calc_fos()
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			# warnings.filterwarnings('error')
+			t.calc_mass()
+			t.calc_fos()
 	except:
+		# pretty_print(x)
 		return [0, 0]
 
 	fos  = t.fos_total
 	mass = t.mass
 
 	if mass == 0:
-		return [0, fos]
+		return [np.inf, fos]
 
 	return [(1 / mass) * fos_score(fos), fos]
 
-def score(x):
-	return score_and_fos(x)[0]
+def score(values):
+	mask, x = values
+	return score_and_fos(mask, x)[0]
