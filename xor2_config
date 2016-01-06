@@ -1,9 +1,9 @@
 #--- parameters for the XOR-2 experiment ---#
 
 [phenotype]
-input_nodes          = 7
+input_nodes          = 2
 hidden_nodes         = 0
-output_nodes         = 5
+output_nodes         = 1
 initial_connection   = unconnected
 max_weight           = 30
 min_weight           = -30
@@ -13,7 +13,7 @@ weight_stdev         = 1.0
 
 [genetic]
 pop_size                = 150
-max_fitness_threshold   = .95
+max_fitness_threshold   = 0.95
 prob_add_conn           = 0.988
 prob_add_node           = 0.085
 prob_delete_conn        = 0.146

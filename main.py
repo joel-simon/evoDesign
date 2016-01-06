@@ -94,16 +94,13 @@ def GA(X, p_c, iterations, pool, mask):
 		for x in X:
 			model.mutate(x, mask, 3)
 
-		if i % 10 == 0:
+		if i % 50 == 0:
 			print('current best', i, score.score_and_fos(mask, X1[0]))
 			pretty_print(model.phenotype(X1[0]))
 
 	return X1[0]
 
 def initial_population(population, mask):
-	w = 12
-	h = 12
-
 	ratio_on = 7
 	size     = (population, mask.shape[0], mask.shape[1])
 	X        = np.random.randint(ratio_on, size = size).astype(bool).astype(int)
@@ -120,9 +117,8 @@ def main():
 	population = 96
 	p_c = .4
 	iterations = 2000
-
-	w = 12
-	h = 12
+	w = 16
+	h = 16
 	mask = np.zeros([w, h])
 	mask[:h/2, w/2:]   = -1 #blocked regions
 	mask[:h/2, w/2-1]  = 2 #forced on

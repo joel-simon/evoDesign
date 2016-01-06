@@ -7,7 +7,7 @@ import warnings
 
 def fos_score(fos):
 	k = 10
-	return (math.atan((fos - 3) * 10) / math.pi) + 0.5
+	return (math.atan((fos - 2) * 10) / math.pi) + 0.5
 
 def truss_from_X(mask, x):
 	t1 = truss.Truss()
@@ -22,7 +22,9 @@ def truss_from_X(mask, x):
 			nodes[(i,j+1)]
 			nodes[(i+1,j+1)]
 
-			members.add(((i,j),   (i+1, j+1)))
+			# members.add(((i,j),   (i, j)))	
+			members.add(((i+1,j),   (i, j+1)))
+			
 			members.add(((i,j),   (i+1, j)))
 			members.add(((i,j),   (i, j+1)))
 			members.add(((i+1,j), (i+1, j+1)))
@@ -40,7 +42,7 @@ def truss_from_X(mask, x):
 		t1.add_member(nodes[m_a], nodes[m_b])
 
 	# Add Forces
-	x_force = 2500
+	x_force = 3000
 	y_force = -10000
 	
 	for i, j in np.ndindex(mask.shape):
@@ -84,7 +86,6 @@ def score_and_fos(mask, x):
 			t.calc_mass()
 			t.calc_fos()
 	except:
-		# pretty_print(x)
 		return [0, 0]
 
 	fos  = t.fos_total
