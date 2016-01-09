@@ -115,3 +115,32 @@ class ConnectionGene(object):
     def get_child(self, cg):
         # TODO: average both weights (Stanley, p. 38)
         return random.choice((self, cg)).copy()
+
+class AttributeGene(object):
+    def __init__(self, value = random.random()):
+        self.value = value
+        self.min = 0.0
+        self.max = 1.0
+    
+    def __repr__(self):
+        return str(self.value)
+    
+    def __str__(self):
+        return str(self.value)
+
+    def mutate(self, config):
+        r = random.random
+        if r() < config.prob_mutate_weight:
+            if r() < config.prob_replace_attribute:
+                # Replace value with a random value.
+                self.value = r()
+            else:
+                # Perturb value.
+                new_value = self.value + random.gauss(0, 1) * config.attribute_mutation_power
+                self.value = max(0, min(1, new_value))
+    def copy(self):
+        return AttributeGene(self.value)
+
+    def get_child(self, other):
+        """ Creates a new Gene randomly inheriting attributes from its parents."""
+        return AttributeGene((self.value+other.value)/2)

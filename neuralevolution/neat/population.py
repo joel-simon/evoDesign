@@ -143,7 +143,7 @@ class Population(object):
             species_stats[s.ID] = [c.fitness for c in s.members]
         self.generation_statistics.append(species_stats)
 
-    def epoch(self, fitness_function, n, log_best):
+    def epoch(self, fitness_function, n, log_best=None):
         """ Runs NEAT's genetic algorithm for n epochs. """
         t0 = time.time()  # for saving checkpoints
 
@@ -175,7 +175,8 @@ class Population(object):
                 print('Population\'s average fitness: {0:3.5f} stdev: {1:3.5f}'.format(fit_mean, fit_std))
                 print('Best fitness: {0:3.5f} - size: {1!r} - species {2} - id {3}'.format(best.fitness, best.size(),
                                                                                            best.species_id, best.ID))
-                log_best(best)
+                if(log_best != None):
+                    log_best(best)
                 print('Species length: {0:d} totaling {1:d} individuals'.format(len(self.species), sum(
                     [len(s.members) for s in self.species])))
                 print('Species ID       : {0!s}'.format([s.ID for s in self.species]))

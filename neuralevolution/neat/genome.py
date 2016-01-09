@@ -12,10 +12,12 @@ class Genome(object):
         self.ID = Genome.indexer.next()
         self.num_inputs = config.input_nodes
         self.num_outputs = config.output_nodes
+        self.num_attributes = config.attributes
 
         # (id, gene) pairs for connection and node gene sets.
         self.conn_genes = {}
         self.node_genes = {}
+        self.attribute_genes = []
 
         self.fitness = None
         self.species_id = None
@@ -28,27 +30,31 @@ class Genome(object):
         """ Mutates this genome """
 
         # TODO: Make a configuration item to choose whether or not multiple mutations can happen at once.
+        for _ in range(1):
+            if random() < self.config.prob_add_node:
+                self.mutate_add_node()
 
-        if random() < self.config.prob_add_node:
-            self.mutate_add_node()
+            if random() < self.config.prob_add_conn:
+                self.mutate_add_connection()
 
-        if random() < self.config.prob_add_conn:
-            self.mutate_add_connection()
+            if random() < self.config.prob_delete_node:
+                self.mutate_delete_node()
 
-        if random() < self.config.prob_delete_node:
-            self.mutate_delete_node()
+            if random() < self.config.prob_delete_conn:
+                self.mutate_delete_connection()
 
-        if random() < self.config.prob_delete_conn:
-            self.mutate_delete_connection()
+            # Mutate attribute values
+            for ag in self.attribute_genes:
+                ag.mutate(self.config)
 
-        # Mutate connection genes (weights, enabled, etc.).
-        for cg in self.conn_genes.values():
-            cg.mutate(self.config)
+            # Mutate connection genes (weights, enabled, etc.).
+            for cg in self.conn_genes.values():
+                cg.mutate(self.config)
 
-        # Mutate node genes (bias, response, etc.).
-        for ng in self.node_genes.values():
-            if ng.type != 'INPUT':
-                ng.mutate(self.config)
+            # Mutate node genes (bias, response, etc.).
+            for ng in self.node_genes.values():
+                if ng.type != 'INPUT':
+                    ng.mutate(self.config)
 
         return self
 
@@ -108,6 +114,13 @@ class Genome(object):
             assert new_gene.ID not in self.node_genes
             self.node_genes[new_gene.ID] = new_gene
 
+        # Crossover attribute genes
+        for ng_a, ng_b in zip(parent1.attribute_genes, parent2.attribute_genes):
+            new_gene = ng_a.get_child(ng_b)
+            self.attribute_genes.append(new_gene)
+        assert(len(self.attribute_genes) == len(parent1.attribute_genes))
+            
+
     def get_new_hidden_id(self):
         new_id = 0
         while new_id in self.node_genes:
@@ -146,7 +159,7 @@ class Genome(object):
         key = (in_node.ID, out_node.ID)
         if key not in self.conn_genes:
             weight = gauss(0, self.config.weight_stdev)
-            enabled = choice([False, True])
+            enabled = True#choice([False, True])
             cg = self.config.conn_gene_type(in_node.ID, out_node.ID, weight, enabled)
             self.conn_genes[cg.key] = cg
 
@@ -289,6 +302,12 @@ class Genome(object):
             assert node_gene.ID not in c.node_genes
             c.node_genes[node_gene.ID] = node_gene
             node_id += 1
+        
+        for i in range(config.attributes):
+            attribute_gene = config.attribute_gene_type()
+            c.attribute_genes.append(attribute_gene)
+
+
 
         assert node_id == len(c.node_genes)
         return c

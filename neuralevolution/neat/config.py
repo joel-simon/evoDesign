@@ -1,6 +1,6 @@
 import os
 
-from neat.genes import NodeGene, ConnectionGene
+from neat.genes import NodeGene, ConnectionGene, AttributeGene
 from neat.genome import Genome, FFGenome
 
 try:
@@ -36,9 +36,10 @@ class Config(object):
                 parameters.readfp(f)
 
         # Phenotype configuration
-        self.input_nodes = int(parameters.get('phenotype', 'input_nodes'))
+        self.input_nodes  = int(parameters.get('phenotype', 'input_nodes'))
         self.output_nodes = int(parameters.get('phenotype', 'output_nodes'))
         self.hidden_nodes = int(parameters.get('phenotype', 'hidden_nodes'))
+        self.attributes   = int(parameters.get('phenotype', 'attributes'))
         self.initial_connection = parameters.get('phenotype', 'initial_connection')
         self.max_weight = float(parameters.get('phenotype', 'max_weight'))
         self.min_weight = float(parameters.get('phenotype', 'min_weight'))
@@ -73,8 +74,15 @@ class Config(object):
         self.prob_replace_weight = float(parameters.get('genetic', 'prob_replace_weight'))
         self.weight_mutation_power = float(parameters.get('genetic', 'weight_mutation_power'))
         self.prob_toggle_link = float(parameters.get('genetic', 'prob_toggle_link'))
+
+        self.prob_mutate_attribute = float(parameters.get('genetic', 'prob_mutate_attribute'))
+        self.prob_replace_attribute = float(parameters.get('genetic', 'prob_replace_attribute'))
+        self.attribute_mutation_power = float(parameters.get('genetic', 'attribute_mutation_power'))
+
         self.elitism = int(parameters.get('genetic', 'elitism'))
         self.reset_on_extinction = bool(int(parameters.get('genetic', 'reset_on_extinction')))
+
+
 
         # genotype compatibility
         self.compatibility_threshold = float(parameters.get('genotype compatibility', 'compatibility_threshold'))
@@ -89,3 +97,4 @@ class Config(object):
         # Gene types
         self.node_gene_type = NodeGene
         self.conn_gene_type = ConnectionGene
+        self.attribute_gene_type = AttributeGene

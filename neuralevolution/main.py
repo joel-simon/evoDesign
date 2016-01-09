@@ -1,46 +1,46 @@
-from neat import nn, population, statistics, visualize, parallel
+from neat import nn, population, statistics, visualize, parallel, ctrnn
+from neat.config import Config
 import pickle, os
 import numpy as np
 import letters
 from sklearn import metrics
 from simulate import simulate
+from visualize_growth import plot_genome
 
+def get_score(pred, true):
+	# return metrics.accuracy_score(true.ravel(), pred.ravel())
+	return metrics.roc_auc_score(true.ravel(), pred.ravel())
 
+def get_start(genome):
+	start = [int(g.value) for g in genome.attribute_genes[:2]]
+	return start
 
-def get_score(a, b):
-	return metrics.accuracy_score(b.ravel(), a.ravel(), normalize = True)
-	# return metrics.f1_score(a.ravel(), b.ravel())
-
-def eval_fitness_letter(genome, letter=letters.L):
-	net = nn.create_feed_forward_phenotype(genome)
-	n_averages = 1
-	outputs = [ simulate(net, letter.shape) for _ in range(n_averages) ]
-	score = np.mean([ get_score(o, letter) for o in outputs ])
+def eval_fitness_letter(genome, letter=letters.R):
+	net    = nn.create_feed_forward_phenotype(genome)
+	output = simulate(net, letter.shape, get_start(genome))[0]
+	score  = get_score(output, letter)
 	return score
 
-def log_best(genome):
-	net    = nn.create_feed_forward_phenotype(genome)
-	output = simulate(net, [8,8])
-	letters.pretty_print(output)
-
 def main():
-	num_generations = 50
+	num_generations = 100
 	num_cores = 8
 
 	# fitness_fun = lambda genomes: eval_fitness_letter(genomes, letter)
 	pe = parallel.ParallelEvaluator(num_cores, eval_fitness_letter)
 	local_dir   = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'main_config')
-	pop         = population.Population(config_path)
-	pop.epoch(pe.evaluate, num_generations, log_best)
+	config = Config(config_path)
+
+	pop         = population.Population(config)
+	pop.epoch(pe.evaluate, num_generations, plot_genome)
 
 	# Display the most fit genome.
 	print('\nBest genome:')
 	winner = pop.most_fit_genomes[-1]
-	winner_net = nn.create_feed_forward_phenotype(winner)
-	letters.pretty_print(simulate(winner_net, [8,8]))
-	letters.pretty_print(simulate(winner_net, [16, 16]))
-	letters.pretty_print(simulate(winner_net, [32, 32]))
+
+	plot_genome(winner, [8,8])
+	plot_genome(winner, [16, 16])
+	plot_genome(winner, [32, 32])
 	
 	visualize.plot_stats(pop)
 	visualize.plot_species(pop)

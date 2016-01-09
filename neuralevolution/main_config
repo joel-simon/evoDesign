@@ -1,40 +1,44 @@
-#--- parameters for the XOR-2 experiment ---#
-
 [phenotype]
-input_nodes          = 7
+input_nodes          = 22
 hidden_nodes         = 0
-output_nodes         = 5
+output_nodes         = 7
+attributes           = 2
 initial_connection   = unconnected
 max_weight           = 30
 min_weight           = -30
-feedforward          = 1
+feedforward          = 0
 activation_functions = sigmoid
-weight_stdev         = 1.0
+weight_stdev         = 0.9
 
 [genetic]
-pop_size                = 200
-max_fitness_threshold   = .99
-prob_add_conn           = 0.988
-prob_add_node           = 0.085
-prob_delete_conn        = 0.146
-prob_delete_node        = 0.0352
-prob_mutate_bias        = 0.0509
-bias_mutation_power     = 2.093
-prob_mutate_response    = 0.1
+pop_size                = 300
+max_fitness_threshold   = 0.99
+prob_add_conn         = 0.6
+prob_add_node         = 0.2
+prob_delete_conn      = 0.1
+prob_delete_node      = 0.1
+prob_mutate_bias      = 0.1
+bias_mutation_power   = 1.0    
+prob_mutate_response  = 0.2
 response_mutation_power = 0.1
-prob_mutate_weight      = 0.460
-prob_replace_weight     = 0.0245
-weight_mutation_power   = 0.825
-prob_toggle_link        = 0.0138
-elitism                 = 10
-reset_on_extinction     = 0
+prob_mutate_weight    = 0.8
+prob_replace_weight   = 0.1
+weight_mutation_power = 1.0
+prob_toggle_link      = 0.01
+
+prob_mutate_attribute  = 0.1
+prob_replace_attribute  = 0.1
+attribute_mutation_power = 0.5
+
+elitism               = 2
+reset_on_extinction   = 1
 
 [genotype compatibility]
 compatibility_threshold = 3.0
 excess_coefficient      = 1.0
 disjoint_coefficient    = 1.0
-weight_coefficient      = 0.4
+weight_coefficient      = 0.5
 
 [species]
-survival_threshold  = 0.3
-max_stagnation      = 100
+survival_threshold  = 0.2
+max_stagnation      = 20
