@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from neat import nn
+from utilities import makeGaussian
 
 directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
@@ -30,19 +31,37 @@ def get_input(world, signals, i, j):
 	cell_inputs[21] = signals[1, i, j]
 	return cell_inputs
 
-def simulate(net, shape, start, log=None):
+# def make_kernal(m, n, s):
+# 	kernal = s + np.zeros([m,n])
+# 	return kernal
+
+# def add_kernal(kernal, X, i, j)
+
+
+
+def simulate(net, shape, attributes, log=None):
 	world            = np.zeros(shape)
 	last_world       = None
 	signals          = np.zeros([2, shape[0], shape[1]])
 	i_max, j_max     = (shape[0] - 1, shape[1] - 1)
-	i_start, j_start = start
+	
+	i_start = int(attributes[0]*shape[0])
+	j_start = int(attributes[1]*shape[1])
 
-	states            = dict()
+	# signal_1_kernal = make_kernal(**attributes[2:5])
+	# signal_2_kernal = make_kernal(**attributes[5:8])
+	signal_1_x = int(attributes[2] * 3)
+	signal_1_y = int(attributes[3] * 3)
+	signal_1_mag = attributes[4]
+
+	signal_2_x = int(attributes[5] * 3)
+	signal_2_y = int(attributes[6] * 3)
+	signal_2_mag = attributes[7]
+
 	time_since_change = 0
 	iterations = int(world.size / 2)	
 
 	world[i_start, j_start]    = 1
-	states[(i_start, j_start)] = [0]*4 # {'has_replicated': 0, 'data': 0}
 	# iterations_run = 0
 	for iterations_run in range(iterations):
 		change_made = False
@@ -50,7 +69,6 @@ def simulate(net, shape, start, log=None):
 		next_world  = world.copy()
 
 		for i, j in zip(cells[0], cells[1]):
-			# cell_state  = states[(i,j)]
 			cell_input  = get_input(world, signals, i, j)
 			cell_output = np.array(net.serial_activate(cell_input))
 			
@@ -63,47 +81,25 @@ def simulate(net, shape, start, log=None):
 					if valid and empty:
 						next_world[i+i_d, j+j_d] = 1
 						# cell_state['has_replicated'] = 1
-						states[(i+i_d, j+j_d)] = [0]*4
 						change_made       = True
 			
 			# last output is cell death
 			if cell_output[4] > 0.75:#np.random.rand():
 				next_world[i, j]  = 0
 				change_made       = True
-				del states[(i, j)]
 
-			signals[0, i, j] += cell_output[5]
-			if j > 0:
-				signals[0, i, j-1] += cell_output[5]
-			if j < j_max:
-				signals[0, i, j+1] += cell_output[5]
-
-			if i > 0:
-				signals[0, i-1, j] += cell_output[5]
-			if i < i_max:
-				signals[0, i+1, j] += cell_output[5]
-
-			signals[1, i, j] += cell_output[6]
-			if j > 0:
-				signals[1, i, j-1] += cell_output[6]
-			if j < j_max:
-				signals[1, i, j+1] += cell_output[6]
-
-			if i > 0:
-				signals[1, i-1, j] += cell_output[6]
-			if i < i_max:
-				signals[1, i+1, j] += cell_output[6]
+			signals[0, i-signal_1_x:i+signal_1_x, j-signal_1_y:j+signal_1_y] += 1
+			signals[1, i-signal_2_x:i+signal_2_x, j-signal_2_y:j+signal_2_y] += 1
 
 		if np.array_equal(next_world, last_world):
 			break
 
 		last_world = world
 		world      = next_world
-		signals *= .8
+		signals *= .5
 		
 		if log != None:
-			log(world)
-			print(signals)
+			log(world, signals)
 
 		if change_made == False:
 			time_since_change += 1

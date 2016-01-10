@@ -47,6 +47,9 @@ class Population(object):
         self.generation = -1
         self.total_evaluations = 0
 
+        self.best_fitness_ever = 0.0
+        self.best_genome_ever = None
+
         if initial_population is None:
             initial_population = self._create_population()
 
@@ -197,6 +200,10 @@ class Population(object):
                     print('\nBest individual in epoch {0} meets fitness threshold - complexity: {1!r}'.format(
                         self.generation, best.size()))
                 break
+
+            if best.fitness > self.best_fitness_ever:
+                self.best_fitness_ever = best.fitness
+                self.best_genome_ever = best
 
             # Remove stagnated species.
             # TODO: Log species removal for visualization purposes.

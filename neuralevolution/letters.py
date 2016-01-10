@@ -43,17 +43,6 @@ def scale(letter, n=2):
 		scaled[i*n:i*n +n, j*n: j*n +n] = 1
 	return scaled
 
-def print_signals(s):
-	"Hello world "
-	for x in xrange(1,10):
-		np.logical_or(np.zeros([5,4]))
-		
-	colors = [ "\033[90m _", "\033[92m x"]
-	fn = lambda i: colors[int(i)]
-	for r in x:
-		print(''.join(map(fn, r)))
-	print("\033[00m")
-
 def pretty_print(x):
 	colors = [ "\033[90m _", "\033[92m x"]
 	fn = lambda i: colors[int(i)]

@@ -2,7 +2,7 @@
 input_nodes          = 22
 hidden_nodes         = 0
 output_nodes         = 7
-attributes           = 2
+attributes           = 8
 initial_connection   = unconnected
 max_weight           = 30
 min_weight           = -30
@@ -12,7 +12,7 @@ weight_stdev         = 0.9
 
 [genetic]
 pop_size                = 300
-max_fitness_threshold   = 0.99
+max_fitness_threshold   = 0.97
 prob_add_conn         = 0.6
 prob_add_node         = 0.2
 prob_delete_conn      = 0.1
@@ -28,7 +28,7 @@ prob_toggle_link      = 0.01
 
 prob_mutate_attribute  = 0.1
 prob_replace_attribute  = 0.1
-attribute_mutation_power = 0.5
+attribute_mutation_power = 0.4
 
 elitism               = 2
 reset_on_extinction   = 1

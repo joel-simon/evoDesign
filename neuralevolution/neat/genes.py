@@ -137,7 +137,7 @@ class AttributeGene(object):
             else:
                 # Perturb value.
                 new_value = self.value + random.gauss(0, 1) * config.attribute_mutation_power
-                self.value = max(0, min(1, new_value))
+                self.value = max(0, min(.999, new_value))
     def copy(self):
         return AttributeGene(self.value)
 

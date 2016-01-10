@@ -3,26 +3,35 @@ import numpy as np
 import letters
 from neat import nn, ctrnn
 from simulate import simulate
+import matplotlib.pyplot as plt
 
-np.set_printoptions(linewidth=125)
+np.set_printoptions(linewidth=125, precision=2)
 
-def get_start(genome):
-	start = [int(g.value) for g in genome.attribute_genes[:2]]
-	return start
+def print_signals(S):
+	print(S)
+	# for s in S:
+	# 	colors = [ "\033[90m #", "\033[92m #", "\033[93m #", "\033[94m #", "\033[95m #", "\033[96m #"]
+	# 	fn = lambda i: colors[int(i)]
+	# 	for r in s:
+	# 		print(''.join(map(fn, r % (len(colors)))))
+	# 	print("\033[00m")
 
-def plot_genome(genome, size = (8,8)):
-	net   = nn.create_feed_forward_phenotype(genome)
-	output, signals, iterations_run = simulate(net, size, get_start(genome))
-	print(get_start(genome))
-	print(iterations_run)
+
+def plot_growth(output, signals):
 	letters.pretty_print(output)
-	print(signals.astype(int))
+	print_signals(signals)
 
 def main(pickle_path, i = 8, j = 8):
 	genome = pickle.load(open(pickle_path, 'rb' ))
 	net    = nn.create_feed_forward_phenotype(genome)
-	output = simulate(net, [i,j], get_start(genome), letters.pretty_print)
+	attributes = [a.value for a in genome.attribute_genes]
+	output     = simulate(net, [i,j], attributes, plot_growth)[0]
+
+	# plt.matshow(1-output, cmap=plt.cm.gray)
+	# plt.show()
+
 	return True
 
+
 if __name__ == '__main__':
-  main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+	main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
