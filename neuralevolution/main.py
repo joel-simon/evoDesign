@@ -7,7 +7,7 @@ import dill
 from sklearn import metrics
 from simulate import simulate
 
-num_generations = 500
+num_generations = 3000
 num_cores = 8
 shape      = (8,8)
 letter    = letters.R
@@ -43,7 +43,9 @@ def main():
 	pop.epoch(pe.evaluate, num_generations, plot_genome)
 
 	# Display the most fit genome.
-	print('\nBest genome:')
+	print()
+	print('Done')
+	print('Best genome has fitness: ', pop.best_fitness_ever)
 	winner = pop.best_genome_ever
 
 	plot_genome(winner, [8,8])

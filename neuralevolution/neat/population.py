@@ -194,6 +194,10 @@ class Population(object):
                 with open('best_genome_' + str(self.generation), 'w') as f:
                     pickle.dump(best, f)
 
+            if best.fitness > self.best_fitness_ever:
+                self.best_fitness_ever = best.fitness
+                self.best_genome_ever  = best
+            
             # End when the fitness threshold is reached.
             if best.fitness >= self.config.max_fitness_threshold:
                 if self.report:
@@ -201,9 +205,7 @@ class Population(object):
                         self.generation, best.size()))
                 break
 
-            if best.fitness > self.best_fitness_ever:
-                self.best_fitness_ever = best.fitness
-                self.best_genome_ever = best
+
 
             # Remove stagnated species.
             # TODO: Log species removal for visualization purposes.

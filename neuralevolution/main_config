@@ -11,7 +11,7 @@ activation_functions = sigmoid
 weight_stdev         = 0.9
 
 [genetic]
-pop_size                = 300
+pop_size                = 800
 max_fitness_threshold   = 0.97
 prob_add_conn         = 0.6
 prob_add_node         = 0.2
@@ -41,4 +41,4 @@ weight_coefficient      = 0.5
 
 [species]
 survival_threshold  = 0.2
-max_stagnation      = 20
+max_stagnation      = 40

@@ -59,7 +59,7 @@ def simulate(net, shape, attributes, log=None):
 	signal_2_mag = attributes[7]
 
 	time_since_change = 0
-	iterations = int(world.size / 2)	
+	iterations = world.size
 
 	world[i_start, j_start]    = 1
 	# iterations_run = 0
