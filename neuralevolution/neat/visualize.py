@@ -5,11 +5,11 @@ import warnings
 
 from neat.statistics import get_average_fitness, get_species_sizes
 
-try:
-    import graphviz
-except ImportError:
-    graphviz = None
-    warnings.warn('Could not import optional dependency graphviz.')
+#try:
+import graphviz
+#except ImportError:
+#    graphviz = None
+#    warnings.warn('Could not import optional dependency graphviz.')
 
 try:
     import matplotlib.pyplot as plt
