@@ -47,7 +47,7 @@ class Population(object):
         self.generation = -1
         self.total_evaluations = 0
 
-        self.best_fitness_ever = 0.0
+        self.best_fitness_ever = -1
         self.best_genome_ever = None
 
         if initial_population is None:

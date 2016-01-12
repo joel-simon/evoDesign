@@ -1,105 +1,108 @@
 import math
 import numpy as np
 from neat import nn
+from hexmap import Map
 from utilities import makeGaussian
 
-directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
 
-def valid_coordinates(i, j, X):
-	if (i < 0 or i >= X.shape[0]): return False
-	if (j < 0 or j >= X.shape[1]): return False
-	return True
-
-def get_input(world, signals, i, j):
-	i_max, j_max     = (world.shape[0] - 1, world.shape[1] - 1)
-	cell_inputs = np.zeros([22])
-	# neighbor above
-	if i > 0 and world[i-1, j] == 1:     cell_inputs[0] = 1
-	# neighbor below
-	if i < i_max and world[i+1, j] == 1: cell_inputs[1] = 1
-	# neighbor left
-	if j > 0 and world[i, j-1] == 1:     cell_inputs[2] = 1
-	# neighbor right
-	if j < j_max and world[i, j+1] == 1: cell_inputs[3] = 1
+def get_input(hex_map, signals, i, j):
+	cell_inputs = np.zeros([24])
+		
+	for n_i, occupied in enumerate(hex_map.occupied_neighbors((i, j))):
+		if occupied != False:
+			cell_inputs[n_i] = 1
 	
-	scale_i = world.shape[0] / 8
-	scale_j = world.shape[1] / 8
-	cell_inputs[4 + int(i / scale_i)] = 1#i / i_max
-	cell_inputs[12 + int(j / scale_j)] = 1#j / j_max
+	scale_i = hex_map.rows / 8
+	scale_j = hex_map.cols / 8
+	cell_inputs[6 + int(i / scale_i)]  = 1
+	cell_inputs[14 + int(j / scale_j)] = 1
 
-	cell_inputs[20] = signals[0, i, j]
-	cell_inputs[21] = signals[1, i, j]
+	cell_inputs[22] = signals[0, i, j]
+	cell_inputs[23] = signals[1, i, j]
 	return cell_inputs
 
-# def make_kernal(m, n, s):
-# 	kernal = s + np.zeros([m,n])
-# 	return kernal
+def filter_unconnected(hex_map):
+	# i_max = hex_map.rows - 1
+	front = set([(0,j) for j, v in enumerate(hex_map.values[0]) if v > 0])
+	seen  = set()
 
-# def add_kernal(kernal, X, i, j)
+	filtered_hex_map = Map((hex_map.rows, hex_map.rows))
 
+	while len(front) > 0:
+		next_front = set()
+		for (i, j) in front:
+			filtered_hex_map.values[i, j] = hex_map.values[i, j]
+			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
+			next_front.update(foo)
 
+		seen.update(front)
+		next_front = next_front.difference(seen)
+		front      = next_front
 
-def simulate(net, shape, attributes, log=None):
-	world            = np.zeros(shape)
-	last_world       = None
+	return filtered_hex_map
+
+def simulate(genome, shape, log=None):
+	net        = nn.create_feed_forward_phenotype(genome)
+	attributes = [a.value for a in genome.attribute_genes]
+	
+	hex_map          = Map(shape)
+	prev_values      = None
 	signals          = np.zeros([2, shape[0], shape[1]])
 	i_max, j_max     = (shape[0] - 1, shape[1] - 1)
 	
 	i_start = int(attributes[0]*shape[0])
 	j_start = int(attributes[1]*shape[1])
 
-	# signal_1_kernal = make_kernal(**attributes[2:5])
-	# signal_2_kernal = make_kernal(**attributes[5:8])
-	signal_1_x = int(attributes[2] * 3)
-	signal_1_y = int(attributes[3] * 3)
-	signal_1_mag = attributes[4]
+	# signal_1_x = int(attributes[2] * 3)
+	# signal_1_y = int(attributes[3] * 3)
+	# signal_1_mag = attributes[4]
 
-	signal_2_x = int(attributes[5] * 3)
-	signal_2_y = int(attributes[6] * 3)
-	signal_2_mag = attributes[7]
+	# signal_2_x = int(attributes[5] * 3)
+	# signal_2_y = int(attributes[6] * 3)
+	# signal_2_mag = attributes[7]
 
 	time_since_change = 0
-	iterations = world.size
+	iterations = hex_map.rows * hex_map.cols
 
-	world[i_start, j_start]    = 1
-	# iterations_run = 0
+	hex_map.values[i_start, j_start] = 1
+	
 	for iterations_run in range(iterations):
-		change_made = False
-		cells       = np.where(world == 1)
-		next_world  = world.copy()
+		change_made    = False
+		occupied_cells = np.where(hex_map.values == 1)
+		next_values    = hex_map.values.copy()
 
-		for i, j in zip(cells[0], cells[1]):
-			cell_input  = get_input(world, signals, i, j)
+		for i, j in zip(occupied_cells[0], occupied_cells[1]):
+			cell_input  = get_input(hex_map, signals, i, j)
 			cell_output = np.array(net.serial_activate(cell_input))
 			
 			# check for growth in any of 4 directions
-			for i_z in range(4):
+			for i_z in range(6):
 				if cell_output[i_z] > 0.75:#np.random.rand():
 					i_d, j_d = directions[i_z]
-					valid    = valid_coordinates(i+i_d, j+j_d, world)
-					empty    = valid and (world[i+i_d, j+j_d] == 0)
+					valid    = hex_map.valid_cell((i+i_d, j+j_d))
+					empty    = valid and (hex_map.values[i+i_d, j+j_d] == 0)
 					if valid and empty:
-						next_world[i+i_d, j+j_d] = 1
-						# cell_state['has_replicated'] = 1
-						change_made       = True
+						next_values[i+i_d, j+j_d] = 1
+						change_made = True
 			
 			# last output is cell death
-			if cell_output[4] > 0.75:#np.random.rand():
-				next_world[i, j]  = 0
+			if cell_output[7] > 0.75:
+				next_values[i, j] = 0
 				change_made       = True
 
-			signals[0, i-signal_1_x:i+signal_1_x, j-signal_1_y:j+signal_1_y] += 1
-			signals[1, i-signal_2_x:i+signal_2_x, j-signal_2_y:j+signal_2_y] += 1
+			# signals[0, i-signal_1_x:i+signal_1_x, j-signal_1_y:j+signal_1_y] += 1
+			# signals[1, i-signal_2_x:i+signal_2_x, j-signal_2_y:j+signal_2_y] += 1
 
-		if np.array_equal(next_world, last_world):
+		if np.array_equal(next_values, prev_values):
 			break
 
-		last_world = world
-		world      = next_world
+		prev_values    = hex_map.values
+		hex_map.values = next_values
 		signals *= .5
 		
-		if log != None:
-			log(world, signals)
+		# if log != None:
+		# 	log(hex_map.values, signals)
 
 		if change_made == False:
 			time_since_change += 1
@@ -109,4 +112,4 @@ def simulate(net, shape, attributes, log=None):
 			time_since_change == 0
 
 
-	return world, signals, iterations_run
+	return filter_unconnected(hex_map), signals, iterations_run

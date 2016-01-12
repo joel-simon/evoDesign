@@ -1,7 +1,7 @@
 [phenotype]
-input_nodes          = 22
+input_nodes          = 24
 hidden_nodes         = 0
-output_nodes         = 7
+output_nodes         = 8
 attributes           = 8
 initial_connection   = unconnected
 max_weight           = 30
@@ -11,8 +11,8 @@ activation_functions = sigmoid
 weight_stdev         = 0.9
 
 [genetic]
-pop_size                = 800
-max_fitness_threshold   = 0.97
+pop_size                = 240
+max_fitness_threshold   = 0.9
 prob_add_conn         = 0.6
 prob_add_node         = 0.2
 prob_delete_conn      = 0.1

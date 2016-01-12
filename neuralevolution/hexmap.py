@@ -1,5 +1,4 @@
 import math
-import pygame
 import random
 import numpy as np
 
@@ -9,13 +8,15 @@ class Map( object ):
 	"""
 	An top level object for managing all game data related to positioning.
 	"""
-	directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
+	# directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
+	directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
+	directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (1, -1), (-1,-1)]
 
-	def __init__( self, rows, cols, *args, **keywords ):
+	def __init__( self, shape, *args, **keywords ):
 		#Map size
-		self.rows = rows
-		self.cols = cols
-		self.values = np.zeros([rows,cols]).astype(bool)
+		self.rows = shape[0]
+		self.cols = shape[1]
+		self.values = np.zeros(shape).astype(int)
 
 	def __str__( self ):
 		return "Map (%d, %d)" % ( self.rows, self.cols )
@@ -48,7 +49,7 @@ class Map( object ):
 				str( int( self.rows - 1 + math.floor( self.cols / 2 ) ) )
 			)
 		else:
-			text_length = 3
+			text_length = 2
 
 		#Header for first row
 		for col in range( self.cols ):
@@ -64,11 +65,11 @@ class Map( object ):
 
 			for col in range( self.cols ):
 				if col % 2 == 0:
-					text = "%d,%d" % ( row + col / 2, col ) if numbers else ""
+					text = "%d,%d" % (row, col ) if numbers else str(self.values[row, col])
 					top 	 += ( text ).center( text_length ) + "\\"
-					bottom	 += ( "" ).center( text_length, '_' ) + "/"
+					bottom += ( "" ).center( text_length, '_' ) + "/"
 				else:
-					text = "%d,%d" % ( 1 + row + col / 2, col ) if numbers else " "
+					text = "%d,%d" % (row, col ) if numbers else str(self.values[row, col])
 					top 	 += ( "" ).center( text_length, '_' ) + "/"
 					bottom	 += ( text ).center( text_length ) + "\\"
 			# Clean up tail slashes on even numbers of columns
@@ -86,18 +87,28 @@ class Map( object ):
 	def valid_cell( self, cell ):
 		row, col = cell
 		if col < 0 or col >= self.cols: return False
-		if row < math.ceil( col / 2.0 ) or row >= math.ceil( col / 2.0 ) + self.rows: return False
+		if row < 0 or row >= self.rows: return False
 		return True
 
 	def neighbors( self, center ):
 		"""
 		Return the valid cells neighboring the provided cell.
 		"""
-		return filter( self.valid_cell, [
-			( center[0] - 1, center[1] ), ( center[0], center[1] + 1 ),
-			( center[0] + 1, center[1] + 1 ), ( center[0] + 1, center[1] ),
-			( center[0], center[1] - 1 ), ( center[0] - 1, center[1] - 1 )
-		] )
+		directions = self.directions_even if center[1] % 2 == 0 else self.directions_odd
+		neighbors = [ (center[0] +a, center[1] + b) for a, b in directions]
+		return filter( self.valid_cell, neighbors )
+
+	def is_occupied(self, coords):
+		if (self.valid_cell(coords) and self.values[coords] > 0):
+			return coords
+		else:
+			return False
+
+	def occupied_neighbors(self, center):
+		assert(len(center) == 2)
+		directions = self.directions_even if center[1] % 2 == 0 else self.directions_odd
+		neighbors = [ (center[0] +a, center[1] + b) for a, b in directions]
+		return map( self.is_occupied, neighbors)
 
 	def spread( self, center, radius=1 ):
 		"""
@@ -126,25 +137,3 @@ class Map( object ):
 
 	def add(coords, value):
 		pass
-
-def draw_map(screen, m, radius):
-	hex_coords = [( .5 * radius, 0 ),
-			( 1.5 * radius, 0 ),
-			( 2 * radius, SQRT3 / 2 * radius ),
-			( 1.5 * radius, SQRT3 * radius ),
-			( .5 * radius, SQRT3 * radius ),
-			( 0, SQRT3 / 2 * radius )
-	]
-	# A point list describing a single cell, based on the radius of each hex
-	for col in range( m.cols ):
-		offset = radius * SQRT3 / 2 if col % 2 else 0
-		for row in range( m.rows ):
-			# Calculate the offset of the cell
-			top = offset + SQRT3 * row * radius
-			left = 1.5 * col * radius
-			# Create a point list containing the offset cell
-			points = [( x + left, y + top ) for ( x, y ) in hex_coords]
-			color = (0,0,0)
-			if m.values[row, col]:
-				color = (0, 200, 0)
-			pygame.draw.polygon( screen, color, points)

@@ -35,7 +35,6 @@ def mutate(x, mask, p):
 	return x
 
 def phenotype(x):
-	# bottom level all stay	
 	i = x.shape[0] - 1
 	front = set([(i,j) for j,v in enumerate(x[i]) if v > 0])
 	seen  = set()
