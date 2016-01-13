@@ -104,8 +104,8 @@ def simulate(genome, shape, log=None):
 		hex_map.values = next_values
 		signals *= .5
 		
-		# if log != None:
-		# 	log(hex_map.values, signals)
+		if log != None:
+			log(hex_map, signals)
 
 		if change_made == False:
 			time_since_change += 1

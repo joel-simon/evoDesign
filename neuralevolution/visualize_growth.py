@@ -1,36 +1,38 @@
 import pickle, os, sys
 import numpy as np
-import letters
-from neat import nn, ctrnn
+import pygame
+from neat import nn
 from simulate import simulate
-import matplotlib.pyplot as plt
 
+from visualize_truss import draw_truss
+from fitness import eval_fitness, eval_fitnesses, eval_fos
+from simulate import simulate
+from truss_analysis import truss_from_map
+from hexmap import Map
+
+import time
+
+
+pygame.init()
+basicFont  = pygame.font.SysFont(None, 24)
+
+size      = width, height = 1600, 1000
+screen     = pygame.display.set_mode(size)
 np.set_printoptions(linewidth=125, precision=2)
 
-def print_signals(S):
-	print(S)
-	# for s in S:
-	# 	colors = [ "\033[90m #", "\033[92m #", "\033[93m #", "\033[94m #", "\033[95m #", "\033[96m #"]
-	# 	fn = lambda i: colors[int(i)]
-	# 	for r in s:
-	# 		print(''.join(map(fn, r % (len(colors)))))
-	# 	print("\033[00m")
-
-
-def plot_growth(output, signals):
-	letters.pretty_print(output)
-	print_signals(signals)
+def plot_growth(hex_map, signals):
+	truss   = truss_from_map(hex_map)
+	draw_truss(screen, truss, 0)
+	time.sleep(.4)
 
 def main(pickle_path, i = 8, j = 8):
-	genome = pickle.load(open(pickle_path, 'rb' ))
-	net    = nn.create_feed_forward_phenotype(genome)
-	attributes = [a.value for a in genome.attribute_genes]
-	output     = simulate(net, [i,j], attributes, plot_growth)[0]
+	genome  = pickle.load(open(pickle_path, 'rb' ))
+	simulate(genome, (i, j), plot_growth)
 
-	# plt.matshow(1-output, cmap=plt.cm.gray)
-	# plt.show()
-
-	return True
+	while True:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				sys.exit()
 
 
 if __name__ == '__main__':

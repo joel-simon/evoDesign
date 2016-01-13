@@ -73,7 +73,7 @@ class Population(object):
              self.generation_statistics,
              self.most_fit_genomes,
              self.generation,
-             random_state) = pickle.load(f)
+             random_state) = pickle.load(f, encoding='latin1')
 
             random.setstate(random_state)
 
