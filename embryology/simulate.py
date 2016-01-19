@@ -72,6 +72,10 @@ def simulate(genome, shape, log=None):
 		occupied_cells = np.where(hex_map.values == 1)
 		next_values    = hex_map.values.copy()
 
+		if log != None:
+			log(hex_map, signals, iterations_run)
+
+
 		for i, j in zip(occupied_cells[0], occupied_cells[1]):
 			cell_input  = get_input(hex_map, signals, i, j)
 			cell_output = np.array(net.serial_activate(cell_input))
@@ -104,9 +108,6 @@ def simulate(genome, shape, log=None):
 		hex_map.values = next_values
 		signals *= .5
 		
-		if log != None:
-			log(hex_map, signals)
-
 		if change_made == False:
 			time_since_change += 1
 			if time_since_change > 2:
