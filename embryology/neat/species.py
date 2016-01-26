@@ -67,7 +67,6 @@ class Species(object):
             # Select two parents at random from the given set of members.
             parent1 = random.choice(self.members)
             parent2 = random.choice(self.members)
-
             # Note that if the parents are not distinct, crossover should produce a
             # genetically identical clone of the parent (but with a different ID).
             child = parent1.crossover(parent2)

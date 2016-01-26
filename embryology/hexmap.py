@@ -4,24 +4,63 @@ import numpy as np
 
 SQRT3 = math.sqrt( 3 )
 
+from functools import partial
+
+class memoize(object):
+  """cache the return value of a method
+  
+  This class is meant to be used as a decorator of methods. The return value
+  from a given method invocation will be cached on the instance whose method
+  was invoked. All arguments passed to a method decorated with memoize must
+  be hashable.
+  
+  If a memoized method is invoked directly on its class the result will not
+  be cached. Instead the method will be invoked like a static method:
+  class Obj(object):
+      @memoize
+      def add_to(self, arg):
+          return self + arg
+  Obj.add_to(1) # not enough arguments
+  Obj.add_to(1, 2) # returns 3, result is not cached
+  """
+  def __init__(self, func):
+    self.func = func
+  def __get__(self, obj, objtype=None):
+    if obj is None:
+        return self.func
+    return partial(self, obj)
+  def __call__(self, *args, **kw):
+    obj = args[0]
+    try:
+        cache = obj.__cache
+    except AttributeError:
+        cache = obj.__cache = {}
+    key = (self.func, args[1:], frozenset(kw.items()))
+    try:
+        res = cache[key]
+    except KeyError:
+        res = cache[key] = self.func(*args, **kw)
+    return res
+
+
+
 class Map( object ):
 	"""
 	An top level object for managing all game data related to positioning.
 	"""
 	# directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
-	# for a hex in an odd column	
-	directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
-	# for a hex in an even column
-	directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
 
-	def __init__( self, shape, *args, **keywords ):
+
+	def __init__( self, shape, dtype=float, *args, **keywords ):
 		#Map size
 		self.rows = shape[0]
 		self.cols = shape[1]
-		self.values = np.zeros(shape).astype(int)
+		self.values = np.zeros(shape).astype(dtype)
 
 	def __str__( self ):
-		return "Map (%d, %d)" % ( self.rows, self.cols )
+		return self.ascii(False)
+		# return str(self.values)
+		# return "Map (%d, %d)" % ( self.rows, self.cols )
 
 	@property
 	def size( self ):
@@ -30,13 +69,13 @@ class Map( object ):
 
 	def distance( self, start, destination ):
 		"""Takes two hex coordinates and determine the distance between them."""
-		logger.debug( "Start: %s, Dest: %s", start, destination )
+		# logger.debug( "Start: %s, Dest: %s", start, destination )
 		diffX = destination[0] - start[0]
 		diffY = destination[1] - start[1]
 
 		distance = min( abs( diffX ), abs( diffY ) ) + abs( diffX - diffY )
 
-		logger.debug( "diffX: %d, diffY: %d, distance: %d", diffX, diffY, distance )
+		# logger.debug( "diffX: %d, diffY: %d, distance: %d", diffX, diffY, distance )
 		return distance
 
 	def ascii( self, numbers=True ):
@@ -86,18 +125,25 @@ class Map( object ):
 		table += footer + "\n"
 		return table
 
+	def directions(self, position):
+		# for a hex in an odd column	
+		directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
+		# for a hex in an even column
+		directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
+		return directions_even if position[1] % 2 == 0 else directions_odd
+
 	def valid_cell( self, cell ):
 		row, col = cell
 		if col < 0 or col >= self.cols: return False
 		if row < 0 or row >= self.rows: return False
 		return True
 
+	@memoize
 	def neighbors( self, center ):
 		"""
 		Return the valid cells neighboring the provided cell.
 		"""
-		directions = self.directions_even if center[1] % 2 == 0 else self.directions_odd
-		neighbors = [ (center[0] +a, center[1] + b) for a, b in directions]
+		neighbors = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
 		return filter( self.valid_cell, neighbors )
 
 	def is_occupied(self, coords):
@@ -108,10 +154,10 @@ class Map( object ):
 
 	def occupied_neighbors(self, center):
 		assert(len(center) == 2)
-		directions = self.directions_even if center[1] % 2 == 0 else self.directions_odd
-		neighbors = [ (center[0] +a, center[1] + b) for a, b in directions]
+		neighbors = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
 		return map( self.is_occupied, neighbors)
 
+	@memoize
 	def spread( self, center, radius=1 ):
 		"""
 		A slice of a map is a collection of valid cells, starting at an origin, 
@@ -139,3 +185,28 @@ class Map( object ):
 
 	def add(coords, value):
 		pass
+
+	def filter_unconnected(self):
+		front = set([(0, c) for c, v in enumerate(self.values[0]) if v > 0 and c %2 == 0])
+		seen  = set()
+		
+		filtered_values = np.empty_like(self.values)
+
+		while len(front) > 0:
+			next_front = set()
+			for (i, j) in front:
+				filtered_values[i, j] = self.values[i, j]
+				foo = [on for on in self.occupied_neighbors((i, j)) if on != False ]
+				next_front.update(foo)
+
+			seen.update(front)
+			next_front = next_front.difference(seen)
+			front      = next_front
+
+		self.values = filtered_values
+		return self
+
+
+if __name__ == '__main__':
+	hex_map = Map((8,8,), int)
+	print(hex_map)

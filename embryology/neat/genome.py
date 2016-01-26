@@ -13,11 +13,13 @@ class Genome(object):
         self.num_inputs = config.input_nodes
         self.num_outputs = config.output_nodes
         self.num_attributes = config.attributes
+        self.num_pheromones = config.pheromones
 
         # (id, gene) pairs for connection and node gene sets.
         self.conn_genes = {}
         self.node_genes = {}
         self.attribute_genes = []
+        self.pheromone_genes = []
 
         self.fitness = None
         self.species_id = None
@@ -42,6 +44,10 @@ class Genome(object):
 
             if random() < self.config.prob_delete_conn:
                 self.mutate_delete_connection()
+
+            # Mutate pheromone gene
+            for pg in self.pheromone_genes:
+                pg.mutate(self.config)
 
             # Mutate attribute values
             for ag in self.attribute_genes:
@@ -119,6 +125,14 @@ class Genome(object):
             new_gene = ng_a.get_child(ng_b)
             self.attribute_genes.append(new_gene)
         assert(len(self.attribute_genes) == len(parent1.attribute_genes))
+
+        # Crossover pheromone genes
+        for pg_a, pg_b in zip(parent1.pheromone_genes, parent2.pheromone_genes):
+            new_gene = pg_a.get_child(pg_b)
+            self.pheromone_genes.append(new_gene)
+        assert(len(self.pheromone_genes) == len(parent1.pheromone_genes))
+
+        
             
 
     def get_new_hidden_id(self):
@@ -303,10 +317,30 @@ class Genome(object):
             c.node_genes[node_gene.ID] = node_gene
             node_id += 1
         
+        # Create attribute genes
         for i in range(config.attributes):
             attribute_gene = config.attribute_gene_type()
             c.attribute_genes.append(attribute_gene)
 
+        for i in range(config.pheromones):
+            # every pheromone has an input node...
+            
+            # assert node_id not in c.node_genes
+            # input_node = node_id
+            # c.node_genes[node_id] = config.node_gene_type(node_id, 'INPUT')
+            # node_id += 1
+
+            # # ...and one output node
+            # output_node = node_id
+            # act_func  = choice(config.activation_functions)
+            # node_gene = config.node_gene_type(node_id, node_type='OUTPUT', activation_type=act_func)
+            # assert node_gene.ID not in c.node_genes
+            # c.node_genes[node_gene.ID] = node_gene
+            # node_id += 1
+
+            pheromone_gene = config.pheromone_gene_type(i)
+            c.pheromone_genes.append(pheromone_gene)
+        assert(len(c.pheromone_genes) == config.pheromones)
 
 
         assert node_id == len(c.node_genes)
@@ -404,6 +438,9 @@ class FFGenome(Genome):
                 self.conn_genes[cg.key] = cg
 
     def mutate_delete_node(self):
+        # Do nothing if there are no hidden nodes.
+        # if len(self.node_genes) <= self.num_inputs + self.num_outputs:
+        #     return -1
         deleted_id = super(FFGenome, self).mutate_delete_node()
         if deleted_id != -1:
             self.node_order.remove(deleted_id)

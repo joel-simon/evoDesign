@@ -197,7 +197,7 @@ class Population(object):
             if best.fitness > self.best_fitness_ever:
                 self.best_fitness_ever = best.fitness
                 self.best_genome_ever  = best
-            
+
             # End when the fitness threshold is reached.
             if best.fitness >= self.config.max_fitness_threshold:
                 if self.report:
@@ -219,9 +219,11 @@ class Population(object):
                         print("\n   Species {0} with {1} members is stagnated: removing it".format(s.ID, len(s.members)))
             self.species = new_species
 
+
             # Check for complete extinction.
             new_population = []
             if not self.species:
+                print('ba')
                 if self.report:
                     print('All species extinct.')
 
@@ -244,7 +246,6 @@ class Population(object):
                     new_population.extend(s.reproduce(self.config))
 
             self._speciate(new_population)
-
             if self.checkpoint_interval is not None and time.time() > t0 + 60 * self.checkpoint_interval:
                 if self.report:
                     print('Creating timed checkpoint file at generation: {0}'.format(self.generation))

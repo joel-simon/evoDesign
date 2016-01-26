@@ -144,3 +144,40 @@ class AttributeGene(object):
     def get_child(self, other):
         """ Creates a new Gene randomly inheriting attributes from its parents."""
         return AttributeGene((self.value+other.value)/2)
+
+class PheromoneGene(object):
+    """docstring for PheromoneGene"""
+    def __init__(self, ID,
+                        strength_gene = AttributeGene(),
+                        decay_gene    = AttributeGene(),
+                        distance_gene = AttributeGene()):
+        
+        self.ID = ID
+        # self.in_node_id    = in_node_id
+        # self.out_node_id   = out_node_id
+        self.strength_gene = strength_gene
+        self.distance_gene = distance_gene
+        self.decay_gene    = decay_gene
+
+    def mutate(self, config):
+        # Pick one gene randomly to mutate
+        genes = [ self.strength_gene, self.decay_gene, self.distance_gene ]
+        random.choice(genes).mutate(config)
+
+    def copy(self):
+        pg = PheromoneGene( self.ID,
+                            self.strength_gene.copy(),
+                            self.decay_gene.copy(),
+                            self.distance_gene.copy())
+        return pg
+
+    def get_child(self, other):
+        # print(self.ID , other.ID)
+        assert(self.ID == other.ID)
+
+        """ Creates a new Gene randomly inheriting attributes from its parents."""
+        strength_gene = random.choice([self.strength_gene, other.strength_gene])
+        distance_gene = random.choice([self.distance_gene, other.distance_gene])
+        decay_gene    = random.choice([self.decay_gene, other.decay_gene])
+        child = PheromoneGene( self.ID, strength_gene, distance_gene, decay_gene )
+        return child

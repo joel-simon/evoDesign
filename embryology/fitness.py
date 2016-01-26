@@ -45,9 +45,5 @@ def eval_fitness(genome):
 	return fitness
 
 def eval_fitnesses(genomes):
-  # fitensses = pool.map(eval_fitness, genomes)
-  # for fitness, genome in zip(fitensses, genomes):
-  #   genome.fitness = fitness
-
 	for genome in genomes:
 		genome.fitness = eval_fitness(genome)

@@ -1,6 +1,6 @@
 import os
 
-from neat.genes import NodeGene, ConnectionGene, AttributeGene
+from neat.genes import NodeGene, ConnectionGene, AttributeGene, PheromoneGene
 from neat.genome import Genome, FFGenome
 
 try:
@@ -40,6 +40,7 @@ class Config(object):
         self.output_nodes = int(parameters.get('phenotype', 'output_nodes'))
         self.hidden_nodes = int(parameters.get('phenotype', 'hidden_nodes'))
         self.attributes   = int(parameters.get('phenotype', 'attributes'))
+        self.pheromones   = int(parameters.get('phenotype', 'pheromones'))
         self.initial_connection = parameters.get('phenotype', 'initial_connection')
         self.max_weight = float(parameters.get('phenotype', 'max_weight'))
         self.min_weight = float(parameters.get('phenotype', 'min_weight'))
@@ -98,3 +99,4 @@ class Config(object):
         self.node_gene_type = NodeGene
         self.conn_gene_type = ConnectionGene
         self.attribute_gene_type = AttributeGene
+        self.pheromone_gene_type = PheromoneGene
