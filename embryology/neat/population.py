@@ -73,6 +73,8 @@ class Population(object):
              self.generation_statistics,
              self.most_fit_genomes,
              self.generation,
+             self.best_fitness_ever,
+             self.best_genome_ever,
              random_state) = pickle.load(f, encoding='latin1')
 
             random.setstate(random_state)
@@ -80,14 +82,20 @@ class Population(object):
     def save_checkpoint(self, filename=None):
         """ Save the current simulation state. """
         if filename is None:
-            filename = 'neat-checkpoint-{0}'.format(self.generation)
+            filename = 'output/neat-checkpoint-{0}'.format(self.generation)
         with gzip.open(filename, 'w', compresslevel=5) as f:
             data = (self.species,
                     self.generation_statistics,
                     self.most_fit_genomes,
                     self.generation,
+                    self.best_fitness_ever,
+                    self.best_genome_ever,
                     random.getstate())
             pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+        
+        # genome_filename = 'output/best-genome-{0}.p'.format(self.generation)
+        # with open(genome_filename, 'b') as f:
+        #     pickle.dump(self.best_genome_ever, f)
 
     def _create_population(self):
 

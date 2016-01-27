@@ -5,18 +5,15 @@ from neat import nn
 from simulate import simulate
 
 from visualize_truss import draw_truss
-from fitness import eval_fitness, eval_fitnesses, eval_fos
 from simulate import simulate
-from truss_analysis import truss_from_map
 from hexmap import Map
 
-import time
 
 pygame.init()
 basicFont  = pygame.font.SysFont(None, 24)
 
-size      = width, height = 800, 800
-screen     = pygame.display.set_mode(size)
+size   = width, height = 800, 800
+screen = pygame.display.set_mode(size)
 np.set_printoptions(linewidth=125, precision=2)
 
 directory = 'temp_images/'

@@ -1,8 +1,8 @@
 *.pyc
-3d/*.pyc
 /.ipynb_checkpoints/*
-3d/.ipynb_checkpoints/*
 /__pycache__
-3d/__pycache__
-temp_images
-.ipynb_checkpoints
+
+embryology/ipynb_checkpoints
+embryology/temp_images
+embryology/__pycache__
+embryology/output

@@ -53,7 +53,7 @@ def add_signal(i, j, pheromone_gene, signal_maps):
 		signal_map.values[i2, j2] += signal_strength(d, pheromone_gene)
 	return
 
-def cell_growth_cycle(genome, hex_map, pheromone_maps, log):
+def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 	# Create a network from the genome
 	net = nn.create_feed_forward_phenotype(genome)
 	change_made    = False
@@ -62,7 +62,7 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, log):
 	activation_threshold = 0.75
 
 	if log != None:
-		log(hex_map, signals, iterations_run)
+		log(hex_map, pheromone_maps, i)
 
 	# update_pheromone_maps(pheromones, pheromone_maps)
 	for p_gene, p_map in zip(genome.pheromone_genes, pheromone_maps):
@@ -136,8 +136,8 @@ def simulate(genome, shape, log = None):
 	n_iterations = int((hex_map.rows * hex_map.cols) / 2)
 
 	prev_values = []
-	for iterations_run in range(n_iterations):
-		cell_growth_cycle(genome, hex_map, pheromone_maps, log)
+	for i in range(n_iterations):
+		cell_growth_cycle(genome, hex_map, pheromone_maps, i, log)
 		prev_values.append(hex_map.values)
 		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-3]):
 			break
