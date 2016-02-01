@@ -50,7 +50,6 @@ class Map( object ):
 	"""
 	# directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
 
-
 	def __init__( self, shape, dtype=float, *args, **keywords ):
 		#Map size
 		self.rows = shape[0]
@@ -144,7 +143,7 @@ class Map( object ):
 		Return the valid cells neighboring the provided cell.
 		"""
 		neighbors = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
-		return filter( self.valid_cell, neighbors )
+		return list(filter( self.valid_cell, neighbors ))
 
 	def is_occupied(self, coords):
 		if (self.valid_cell(coords) and self.values[coords] > 0):

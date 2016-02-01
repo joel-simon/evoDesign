@@ -439,8 +439,8 @@ class FFGenome(Genome):
 
     def mutate_delete_node(self):
         # Do nothing if there are no hidden nodes.
-        # if len(self.node_genes) <= self.num_inputs + self.num_outputs:
-        #     return -1
+        if len(self.node_genes) <= self.num_inputs + self.num_outputs:
+            return -1
         deleted_id = super(FFGenome, self).mutate_delete_node()
         if deleted_id != -1:
             self.node_order.remove(deleted_id)

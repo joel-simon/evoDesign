@@ -2,8 +2,6 @@ import math
 import numpy as np
 from neat import nn
 from hexmap import Map
-from utilities import makeGaussian
-from pheromone import Pheromone
 
 def get_input(hex_map, pheromone_maps, i, j):
 	cell_inputs = []
@@ -23,14 +21,6 @@ def get_input(hex_map, pheromone_maps, i, j):
 		cell_inputs.append(p_map.values[i, j])
 
 	return cell_inputs
-
-# def update_pheromone_maps(pheromones, pheromone_maps):
-# 	for p_map in pheromone_maps:
-# 		p_map.values[:,:] = 0
-
-# 	for p in pheromones:
-# 		assert(p.type < len(pheromone_maps))
-# 		p.add_signal(pheromone_maps[p.type])
 
 def signal_strength(d, pheromone_gene):
 	max_dist = 4
@@ -100,29 +90,28 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 		# return next_values
 		hex_map.values = next_values
 
-def filter_unconnected(hex_map):
-	# i_max = hex_map.rows - 1
-	front = set([(0, c) for c, v in enumerate(hex_map.values[0]) if v > 0 and c %2 == 0])
-	seen  = set()
+# def filter_unconnected(hex_map):
+# 	# i_max = hex_map.rows - 1
+# 	front = set([(0, c) for c, v in enumerate(hex_map.values[0]) if v > 0 and c %2 == 0])
+# 	seen  = set()
 	
-	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
+# 	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
 
-	while len(front) > 0:
-		next_front = set()
-		for (i, j) in front:
-			filtered_hex_map.values[i, j] = hex_map.values[i, j]
-			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
-			next_front.update(foo)
+# 	while len(front) > 0:
+# 		next_front = set()
+# 		for (i, j) in front:
+# 			filtered_hex_map.values[i, j] = hex_map.values[i, j]
+# 			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
+# 			next_front.update(foo)
 
-		seen.update(front)
-		next_front = next_front.difference(seen)
-		front      = next_front
+# 		seen.update(front)
+# 		next_front = next_front.difference(seen)
+# 		front      = next_front
 
-	return filtered_hex_map
+# 	return filtered_hex_map
 
 def simulate(genome, shape, log = None):	
 	# State values
-	# pheromones = []
 	hex_map    =  Map(shape, int)
 	pheromone_maps = [ Map(shape) for i in range(genome.num_pheromones) ]
 	
@@ -142,11 +131,4 @@ def simulate(genome, shape, log = None):
 		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-3]):
 			break
 
-	return filter_unconnected(hex_map), pheromone_maps
-
-# if __name__ == '__main__':
-	# import pickle
-	# from visualize_growth import plot_growth
-	# pickle_path = '/Users/joelsimon/Projects/geneticArchitecture/logs/truss_analysis_1/50/best_genome.p'
-	# test_genome = pickle.load(open(pickle_path, 'rb'), encoding='latin1')
-	# simulate(test_genome, (8,8), log = plot_growth)
+	return hex_map, pheromone_maps

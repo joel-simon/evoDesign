@@ -156,6 +156,7 @@ class Population(object):
 
     def epoch(self, fitness_function, n, log_best=None):
         """ Runs NEAT's genetic algorithm for n epochs. """
+        
         t0 = time.time()  # for saving checkpoints
 
         for g in range(n):
@@ -188,6 +189,7 @@ class Population(object):
                                                                                            best.species_id, best.ID))
                 if(log_best != None):
                     log_best(best)
+                    
                 print('Species length: {0:d} totaling {1:d} individuals'.format(len(self.species), sum(
                     [len(s.members) for s in self.species])))
                 print('Species ID       : {0!s}'.format([s.ID for s in self.species]))

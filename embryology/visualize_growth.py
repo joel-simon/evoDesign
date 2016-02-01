@@ -4,7 +4,8 @@ import pygame
 from neat import nn
 from simulate import simulate
 
-from visualize_truss import draw_truss
+from truss_analysis import truss_from_map
+from visualize import draw_truss
 from simulate import simulate
 from hexmap import Map
 

@@ -8,13 +8,13 @@ pheromones           = 3
 initial_connection   = unconnected
 max_weight           = 30
 min_weight           = -30
-feedforward          = 0
+feedforward          = 1
 activation_functions = sigmoid
 weight_stdev         = 0.9
 
 [genetic]
 pop_size              = 100
-max_fitness_threshold = 0.9
+max_fitness_threshold = 1.0
 prob_add_conn         = 0.6
 prob_add_node         = 0.2
 prob_delete_conn      = 0.1
@@ -42,5 +42,5 @@ disjoint_coefficient    = 1.0
 weight_coefficient      = 0.5
 
 [species]
-survival_threshold  = 0.2
-max_stagnation      = 25
+survival_threshold  = 0.4
+max_stagnation      = 10

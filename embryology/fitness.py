@@ -1,5 +1,6 @@
 from simulate import simulate
 from truss_analysis import truss_from_map
+from hexmap import Map
 import numpy as np
 import math
 shape     = (12,16)
@@ -17,7 +18,7 @@ def eval_fos(truss):
 
 	return (fos_forward + fos_reverse) / 2.0
 
-def eval_fitness(genome):
+def eval_fitness_truss(genome):
 	hex_map = simulate(genome, shape)[0]
 	truss = truss_from_map(hex_map, 5)
 	fitness = 0.0
@@ -44,6 +45,16 @@ def eval_fitness(genome):
 	 	pass
 	return fitness
 
+target = np.random.randint(2, size = shape)
+def eval_fitness_random(genome):
+	hex_map = simulate(genome, shape)[0]
+	# correct is where both 0 or both 1, which is xnor gate
+	# xnor gate is not xor
+	correct = np.logical_not(np.logical_xor(target_map, hex_map)).sum()
+	fitenss = float(correct)/target.size
+	return fitness
+
+# When not running in parallel
 def eval_fitnesses(genomes):
 	for genome in genomes:
 		genome.fitness = eval_fitness(genome)
