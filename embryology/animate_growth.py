@@ -3,7 +3,7 @@ import numpy as np
 import pygame
 from neat import nn
 from simulate import simulate
-
+import time
 from truss_analysis import truss_from_map
 from visualize import draw_truss
 from simulate import simulate
@@ -23,16 +23,17 @@ def plot_growth(hex_map, signals, iteration):
 	truss   = truss_from_map(hex_map)
 	draw_truss(screen, truss)
 	pygame.image.save(screen, directory + str(iteration)+'.jpg')
+	time.sleep(.5)
 
-def main(pickle_path, i = 8, j = 8):
-	print(i, j)
-	genome  = pickle.load(open(pickle_path, 'rb'), encoding='latin1')
 
+def main(args):
+	genome = pickle.load(open(args.path, 'rb'), encoding='latin1')
+	shape  = (args.rows, args.cols)
 
 	if os.path.exists(directory):
 		os.system("rm -rf "+directory)
 	os.makedirs(directory)
-	simulate(genome, (i, j), plot_growth)
+	simulate(genome, shape, plot_growth)
 
 	while True:
 		for event in pygame.event.get():
@@ -41,4 +42,10 @@ def main(pickle_path, i = 8, j = 8):
 
 
 if __name__ == '__main__':
-	main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument('path', type=str)
+	parser.add_argument('rows', type=int, nargs='?', default=8)
+	parser.add_argument('cols', type=int, nargs='?', default=8)
+
+	main(parser.parse_args())

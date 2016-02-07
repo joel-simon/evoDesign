@@ -156,6 +156,13 @@ class Map( object ):
 		neighbors = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
 		return map( self.is_occupied, neighbors)
 
+	def num_occupied_neighbors(self, center):
+		n = 0
+		for a, b in self.directions(center):
+			if self.is_occupied((center[0] + a, center[1] + b)):
+				n += 1
+		return n
+
 	@memoize
 	def spread( self, center, radius=1 ):
 		"""
@@ -185,16 +192,17 @@ class Map( object ):
 	def add(coords, value):
 		pass
 
-	def filter_unconnected(self):
-		front = set([(0, c) for c, v in enumerate(self.values[0]) if v > 0 and c %2 == 0])
-		seen  = set()
+	def filter_unconnected(self, front = set()):
+
+		# front = set([(0, c) for c, v in enumerate(self.values[0]) if v > 0 and c %2 == 0])
+		seen = set()
 		
 		filtered_values = np.empty_like(self.values)
 
 		while len(front) > 0:
 			next_front = set()
 			for (i, j) in front:
-				filtered_values[i, j] = self.values[i, j]
+				filtered_values[i, j] = 1#self.values[i, j]
 				foo = [on for on in self.occupied_neighbors((i, j)) if on != False ]
 				next_front.update(foo)
 

@@ -11,11 +11,6 @@ def get_input(hex_map, pheromone_maps, i, j):
 			cell_inputs.append(1)
 		else:
 			cell_inputs.append(0)
-	
-	# scale_i = hex_map.rows / 8
-	# scale_j = hex_map.cols / 8
-	# cell_inputs[6 + int(i / scale_i)]  = 1
-	# cell_inputs[14 + int(j / scale_j)] = 1
 
 	for p_map in pheromone_maps:
 		cell_inputs.append(p_map.values[i, j])
@@ -23,8 +18,8 @@ def get_input(hex_map, pheromone_maps, i, j):
 	return cell_inputs
 
 def signal_strength(d, pheromone_gene):
-	max_dist = 4
-	max_strength = 3
+	max_dist = 5
+	max_strength = 4
 	strength = pheromone_gene.strength_gene.value
 	decay    = pheromone_gene.decay_gene.value
 	distance = pheromone_gene.distance_gene.value
@@ -65,7 +60,7 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 
 		output_grow = cell_output[:6]
 		output_apop = cell_output[6]
-		output_pher = cell_output[7: 10]
+		# output_pher = cell_output[7: 10]
 		
 		# Check for growth in any direction
 		for (i_d, j_d), output in zip(hex_map.directions((i, j)), output_grow):
@@ -81,44 +76,42 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 			next_values[i, j] = 0
 			change_made       = True
 		
-		for i_p, output in enumerate(output_pher):
-			if cell_output[i_p] > activation_threshold:
-				add_signal(i, j, genome.pheromone_genes[i_p], pheromone_maps)
-				# pheromone = Pheromone((i, j), genome.pheromone_genes[i_p])
-				# pheromones.append(pheromone)
+		# for i_p, output in enumerate(output_pher):
+		# 	if cell_output[i_p] > activation_threshold:
+		# 		add_signal(i, j, genome.pheromone_genes[i_p], pheromone_maps)
 
 		# return next_values
 		hex_map.values = next_values
 
-# def filter_unconnected(hex_map):
-# 	# i_max = hex_map.rows - 1
-# 	front = set([(0, c) for c, v in enumerate(hex_map.values[0]) if v > 0 and c %2 == 0])
-# 	seen  = set()
+def filter_unconnected(hex_map):
+	# i_max = hex_map.rows - 1
+	front = set([(0, c) for c, v in enumerate(hex_map.values[0]) if v > 0 and c %2 == 0])
+	seen  = set()
 	
-# 	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
+	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
 
-# 	while len(front) > 0:
-# 		next_front = set()
-# 		for (i, j) in front:
-# 			filtered_hex_map.values[i, j] = hex_map.values[i, j]
-# 			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
-# 			next_front.update(foo)
+	while len(front) > 0:
+		next_front = set()
+		for (i, j) in front:
+			filtered_hex_map.values[i, j] = hex_map.values[i, j]
+			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
+			next_front.update(foo)
 
-# 		seen.update(front)
-# 		next_front = next_front.difference(seen)
-# 		front      = next_front
+		seen.update(front)
+		next_front = next_front.difference(seen)
+		front      = next_front
 
-# 	return filtered_hex_map
+	return filtered_hex_map
 
 def simulate(genome, shape, log = None):	
 	# State values
-	hex_map    =  Map(shape, int)
+	hex_map =  Map(shape, int)
 	pheromone_maps = [ Map(shape) for i in range(genome.num_pheromones) ]
 	
 	# Start position is stored in attribute gene as floats
 	attributes = [ a.value for a in genome.attribute_genes ]
-	i_start = int(attributes[0] * shape[0])
-	j_start = int(attributes[1] * shape[1])
+	i_start = 0#int(attributes[0] * shape[0])
+	j_start = 0#int(attributes[1] * shape[1])
 	hex_map.values[i_start, j_start] = 1
 
 	# Create a rough ceiling
@@ -130,5 +123,8 @@ def simulate(genome, shape, log = None):
 		prev_values.append(hex_map.values)
 		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-3]):
 			break
+		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-4]):
+			break
 
 	return hex_map, pheromone_maps
+

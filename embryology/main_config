@@ -1,9 +1,9 @@
 [phenotype]
-input_nodes          = 9
+input_nodes          = 6
 hidden_nodes         = 0
-output_nodes         = 10
-attributes           = 2
-pheromones           = 3
+output_nodes         = 7
+attributes           = 0
+pheromones           = 0
 
 initial_connection   = unconnected
 max_weight           = 30
@@ -42,5 +42,5 @@ disjoint_coefficient    = 1.0
 weight_coefficient      = 0.5
 
 [species]
-survival_threshold  = 0.4
-max_stagnation      = 10
+survival_threshold  = 0.3
+max_stagnation      = 20

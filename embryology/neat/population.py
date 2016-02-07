@@ -154,6 +154,13 @@ class Population(object):
             species_stats[s.ID] = [c.fitness for c in s.members]
         self.generation_statistics.append(species_stats)
 
+    def best_genomes(self, n):
+        key = lambda g: g.fitness
+        return sorted(self.most_fit_genomes, key=key, reverse=True )[:n]
+
+    def best_genome(self):
+        return self.best_genomes(1)[0]
+
     def epoch(self, fitness_function, n, log_best=None):
         """ Runs NEAT's genetic algorithm for n epochs. """
         
