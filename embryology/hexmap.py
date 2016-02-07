@@ -192,28 +192,6 @@ class Map( object ):
 	def add(coords, value):
 		pass
 
-	def filter_unconnected(self, front = set()):
-
-		# front = set([(0, c) for c, v in enumerate(self.values[0]) if v > 0 and c %2 == 0])
-		seen = set()
-		
-		filtered_values = np.empty_like(self.values)
-
-		while len(front) > 0:
-			next_front = set()
-			for (i, j) in front:
-				filtered_values[i, j] = 1#self.values[i, j]
-				foo = [on for on in self.occupied_neighbors((i, j)) if on != False ]
-				next_front.update(foo)
-
-			seen.update(front)
-			next_front = next_front.difference(seen)
-			front      = next_front
-
-		self.values = filtered_values
-		return self
-
-
 if __name__ == '__main__':
 	hex_map = Map((8,8,), int)
 	print(hex_map)

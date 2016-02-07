@@ -38,16 +38,13 @@ def add_signal(i, j, pheromone_gene, signal_maps):
 		signal_map.values[i2, j2] += signal_strength(d, pheromone_gene)
 	return
 
-def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
+def cell_growth_cycle(genome, hex_map, pheromone_maps):
 	# Create a network from the genome
 	net = nn.create_feed_forward_phenotype(genome)
 	change_made    = False
 	occupied_cells = np.where(hex_map.values == 1)
 	next_values    = hex_map.values.copy()
 	activation_threshold = 0.75
-
-	if log != None:
-		log(hex_map, pheromone_maps, i)
 
 	# update_pheromone_maps(pheromones, pheromone_maps)
 	for p_gene, p_map in zip(genome.pheromone_genes, pheromone_maps):
@@ -71,7 +68,7 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 					next_values[i+i_d, j+j_d] = 1
 					change_made = True
 		
-		# last output is cell death
+		# Last output is cell death.
 		if output_apop > activation_threshold:
 			next_values[i, j] = 0
 			change_made       = True
@@ -83,25 +80,6 @@ def cell_growth_cycle(genome, hex_map, pheromone_maps, i, log):
 		# return next_values
 		hex_map.values = next_values
 
-def filter_unconnected(hex_map):
-	# i_max = hex_map.rows - 1
-	front = set([(0, c) for c, v in enumerate(hex_map.values[0]) if v > 0 and c %2 == 0])
-	seen  = set()
-	
-	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
-
-	while len(front) > 0:
-		next_front = set()
-		for (i, j) in front:
-			filtered_hex_map.values[i, j] = hex_map.values[i, j]
-			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
-			next_front.update(foo)
-
-		seen.update(front)
-		next_front = next_front.difference(seen)
-		front      = next_front
-
-	return filtered_hex_map
 
 def simulate(genome, shape, log = None):	
 	# State values
@@ -115,16 +93,23 @@ def simulate(genome, shape, log = None):
 	hex_map.values[i_start, j_start] = 1
 
 	# Create a rough ceiling
-	n_iterations = int((hex_map.rows * hex_map.cols) / 2)
+	n_iterations = int((hex_map.rows * hex_map.cols))
 
 	prev_values = []
 	for i in range(n_iterations):
-		cell_growth_cycle(genome, hex_map, pheromone_maps, i, log)
+		
+		if log != None:
+			log(hex_map, i)
+
+		cell_growth_cycle(genome, hex_map, pheromone_maps)
 		prev_values.append(hex_map.values)
 		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-3]):
 			break
 		if len(prev_values) > 3 and np.array_equal(prev_values[-1], prev_values[-4]):
 			break
+	
+	if log != None:
+		log(hex_map, i)
 
-	return hex_map, pheromone_maps
+	return (hex_map, pheromone_maps)
 

@@ -28,7 +28,6 @@ def main(args):
 	parallel = False
 	draw = True
 
-
 	if draw:
 		pygame.init()
 		basicFont  = pygame.font.SysFont(None, 24)
@@ -45,7 +44,7 @@ def main(args):
 			return		
 	os.makedirs('output')
 
-	experiment = experiments.SurfaceArea((14,14), screen)
+	experiment = experiments.SurfaceArea((8,8), screen)
 	final_population = run_experiment(experiment, generations, parallel)
 
 	best_genomes = final_population.best_genomes(5)
@@ -57,8 +56,11 @@ def main(args):
 
 	with open('output/best_genomes.p', 'wb') as f:
 		pickle.dump(best_genomes, f)
+
 	with open('output/best_genome.p', 'wb') as f:
 		pickle.dump(winner, f)
+
+	# print([(experiment.fitness(genome), genome.fitness) for genome in best_genomes])
 
 	print
 	print('#'*80)
@@ -67,6 +69,7 @@ def main(args):
 	print('#'*80)
 
 	if draw:
+		experiment.draw(winner)
 		while True:
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
