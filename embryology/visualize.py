@@ -3,6 +3,14 @@ import pygame.gfxdraw
 import numpy as np
 import math
 
+from simulate import simulate
+import os, sys
+from images2gif import writeGif
+import gzip
+import pickle
+from PIL import Image
+
+
 BLACK = (0,0,0)
 GREY  = (50, 50, 50)
 WHITE = (255, 255, 255)
@@ -53,11 +61,6 @@ def draw_truss(screen, truss, fitness=None, fos=None):
 		screen.blit(text, textrect)
 	pygame.display.flip()
 
-
-def derp(row, col, radius):
-
-	return (top, left)
-
 def hex_points(row, col, radius, screen_height):
 	offset = radius * SQRT3 / 2 if col % 2 else 0
 	top    = offset + SQRT3 * row * radius
@@ -74,7 +77,7 @@ def hex_points(row, col, radius, screen_height):
 	return [((x + left), ( y + top)) for ( x, y ) in hex_coords]
 
 def draw_hex_map(screen, hexmap, start = (0,0)):
-	radius = 30
+	radius = 20
 	margin = 3
 	w, h = screen.get_size()
 	for col in range(hexmap.values.shape[1]):
@@ -83,25 +86,44 @@ def draw_hex_map(screen, hexmap, start = (0,0)):
 			points = hex_points(row, col, radius, h)
 			for i, (x, y) in enumerate(points):
 				points[i] = (x+margin+start[0], h-y-margin)
-			# pygame.gfxdraw.aapolygon(screen, points, BLACK)
+
 			if hexmap.values[row, col] != 0.0:
 				pygame.draw.polygon(screen, GREEN, points)
 			pygame.draw.polygon(screen, GREY, points, 1)
 	return
 
-if __name__ == '__main__':
-	from hexmap import Map
-	
-	a = Map((8, 8))
-	a.values += 1
-	
-	pygame.init()
-	screen = pygame.display.set_mode((800, 500))
-	screen.fill((255,255,255))
-	draw_hex_map(screen, a)
-	pygame.display.flip()
+# def main(args):
+def make_gif(screen, genome, experiment, filename):
+	folder = 'temp_images/'
+	if os.path.exists(folder):
+		os.system("rm -rf "+folder)
+	os.makedirs(folder)
 
-	while True:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				sys.exit()
+	def gif_frame(hexmap, i):
+		screen.fill((255,255,255))
+		draw_hex_map(screen, hexmap, start = (0,0))
+		pygame.display.flip()
+		pygame.image.save(screen, folder + str(i)+'.jpg')
+
+	simulate(genome, experiment.shape, gif_frame)
+	experiment.draw(genome)
+
+	n = len([fn for fn in os.listdir(folder) if fn.endswith('.jpg')])
+	file_names = [folder+str(i)+'.jpg' for i in range(n)]
+	images = [Image.open(fn) for fn in file_names]
+	writeGif(filename+'.gif', images, duration=0.4)
+
+
+# if __name__ == '__main__':
+# 	import argparse
+# 	parser = argparse.ArgumentParser()
+# 	parser.add_argument('path', type=str)
+# 	parser.add_argument('rows', type=int, nargs='?', default=8)
+# 	parser.add_argument('cols', type=int, nargs='?', default=8)
+
+# 	main(parser.parse_args())
+
+# 	while True:
+# 		for event in pygame.event.get():
+# 			if event.type == pygame.QUIT:
+# 				sys.exit()
