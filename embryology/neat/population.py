@@ -155,8 +155,20 @@ class Population(object):
         self.generation_statistics.append(species_stats)
 
     def best_genomes(self, n):
+        top_n = []
+        used_ids = set()
         key = lambda g: g.fitness
-        return sorted(self.most_fit_genomes, key=key, reverse=True )[:n]
+        sorted_genomes = sorted(self.most_fit_genomes, key=key, reverse=True )
+        
+        i = 0
+        while( i < len(sorted_genomes) and len(top_n) < n ):
+            genome = sorted_genomes[i]
+            if genome.ID not in used_ids:
+                top_n.append(genome)
+                used_ids.add(genome.ID)
+            i += 1
+            
+        return top_n
 
     def best_genome(self):
         return self.best_genomes(1)[0]

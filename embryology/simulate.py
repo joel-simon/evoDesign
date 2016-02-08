@@ -93,7 +93,7 @@ def simulate(genome, shape, log = None):
 	hex_map.values[i_start, j_start] = 1
 
 	# Create a rough ceiling
-	n_iterations = int((hex_map.rows * hex_map.cols))
+	n_iterations = int((hex_map.rows * hex_map.cols)/2)
 
 	prev_values = []
 	for i in range(n_iterations):

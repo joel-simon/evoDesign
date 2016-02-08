@@ -1,5 +1,4 @@
 import pickle, os, sys, pygame
-import numpy as np
 import multiprocessing
 
 from neat import population, parallel
@@ -42,7 +41,7 @@ def main(args):
 			return		
 	os.makedirs('output')
 
-	experiment = experiments.SurfaceArea((16,16), screen)
+	experiment = experiments.SurfaceArea((12,12), screen)
 	final_population = run_experiment(experiment, generations, parallel)
 
 	best_genomes = final_population.best_genomes(5)
