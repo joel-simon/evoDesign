@@ -80,14 +80,14 @@ def draw_hex_map(screen, hexmap, start = (0,0)):
 	radius = 20
 	margin = 3
 	w, h = screen.get_size()
-	for col in range(hexmap.values.shape[1]):
-		for row in range(hexmap.values.shape[0]):
+	for col in range(hexmap.cols):
+		for row in range(hexmap.rows):
 			
 			points = hex_points(row, col, radius, h)
 			for i, (x, y) in enumerate(points):
 				points[i] = (x+margin+start[0], h-y-margin)
 
-			if hexmap.values[row, col] != 0.0:
+			if hexmap.values[row][col] != None:
 				pygame.draw.polygon(screen, GREEN, points)
 			pygame.draw.polygon(screen, GREY, points, 1)
 	return

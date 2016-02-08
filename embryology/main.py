@@ -1,15 +1,20 @@
-import pickle, os, sys, pygame
+import pickle, os, sys
 import multiprocessing
 
 from neat import population, parallel
 from neat import visualize as neat_visualize
+from neat import ctrnn
+from neat.config import Config
 
 import visualize
 import experiments
 
 
 def run_experiment(experiment, generations, parallel=False):
-	pop = population.Population('main_config', checkpoint_interval = None,
+	local_dir = os.path.dirname(__file__)
+	config = Config(os.path.join(local_dir, 'main_config'))
+	# config.node_gene_type = ctrnn.CTNodeGene
+	pop = population.Population(config, checkpoint_interval = None,
 																						 checkpoint_generation = None)
 	if parallel:
 		num_cores = multiprocessing.cpu_count()
@@ -26,6 +31,7 @@ def main(args):
 	draw = True
 
 	if draw:
+		import pygame
 		pygame.init()
 		basicFont  = pygame.font.SysFont(None, 24)
 		screen     = pygame.display.set_mode((800, 800))
@@ -39,6 +45,7 @@ def main(args):
 		else:
 			print('aborting.')
 			return		
+
 	os.makedirs('output')
 
 	experiment = experiments.SurfaceArea((12,12), screen)

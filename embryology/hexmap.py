@@ -52,13 +52,23 @@ class Map( object ):
 
 	def __init__( self, shape, dtype=float, *args, **keywords ):
 		#Map size
+		self.shape  = shape
 		self.rows = shape[0]
 		self.cols = shape[1]
-		self.values = np.zeros(shape).astype(dtype)
+		self.values = [[None for _ in range(shape[1])] for _ in range(shape[0])]  
+
 
 	def __str__( self ):
-		return self.ascii(False)
+		# return self.ascii(False)
 		# return str(self.values)
+		foo = []
+		for row in self.values:
+			for cell in row:
+				if cell == None:
+					foo.append('0')
+				else:
+					foo.append('1')
+		return ''.join(foo)
 		# return "Map (%d, %d)" % ( self.rows, self.cols )
 
 	@property
@@ -105,11 +115,11 @@ class Map( object ):
 
 			for col in range( self.cols ):
 				if col % 2 == 0:
-					text = "%d,%d" % (row, col ) if numbers else str(self.values[row, col])
+					text = "%d,%d" % (row, col ) if numbers else str(self.values[row][col])
 					top 	 += ( text ).center( text_length ) + "\\"
 					bottom += ( "" ).center( text_length, '_' ) + "/"
 				else:
-					text = "%d,%d" % (row, col ) if numbers else str(self.values[row, col])
+					text = "%d,%d" % (row, col ) if numbers else str(self.values[row][col])
 					top 	 += ( "" ).center( text_length, '_' ) + "/"
 					bottom	 += ( text ).center( text_length ) + "\\"
 			# Clean up tail slashes on even numbers of columns
@@ -146,7 +156,7 @@ class Map( object ):
 		return list(filter( self.valid_cell, neighbors ))
 
 	def is_occupied(self, coords):
-		if (self.valid_cell(coords) and self.values[coords] > 0):
+		if (self.valid_cell(coords) and self.values[coords[0]][coords[1]] != None):
 			return coords
 		else:
 			return False
