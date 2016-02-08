@@ -10,6 +10,8 @@ import gzip
 import pickle
 from PIL import Image
 
+from shutil import copyfile
+
 
 BLACK = (0,0,0)
 GREY  = (50, 50, 50)
@@ -76,20 +78,27 @@ def hex_points(row, col, radius, screen_height):
 	]
 	return [((x + left), ( y + top)) for ( x, y ) in hex_coords]
 
+from neat import nn, ctrnn
 def draw_hex_map(screen, hexmap, start = (0,0)):
 	radius = 20
 	margin = 3
 	w, h = screen.get_size()
 	for col in range(hexmap.cols):
 		for row in range(hexmap.rows):
-			
+			cell = hexmap.values[row][col]
+
 			points = hex_points(row, col, radius, h)
 			for i, (x, y) in enumerate(points):
 				points[i] = (x+margin+start[0], h-y-margin)
 
-			if hexmap.values[row][col] != None:
+			if cell == -1:
+				pygame.draw.polygon(screen, BLACK, points)
+
+			elif isinstance(cell, ctrnn.Network):
 				pygame.draw.polygon(screen, GREEN, points)
+
 			pygame.draw.polygon(screen, GREY, points, 1)
+
 	return
 
 # def main(args):
@@ -105,13 +114,14 @@ def make_gif(screen, genome, experiment, filename):
 		pygame.display.flip()
 		pygame.image.save(screen, folder + str(i)+'.jpg')
 
-	simulate(genome, experiment.shape, gif_frame)
+	simulate(genome, experiment.shape, gif_frame, experiment.start)
 	experiment.draw(genome)
 
 	n = len([fn for fn in os.listdir(folder) if fn.endswith('.jpg')])
 	file_names = [folder+str(i)+'.jpg' for i in range(n)]
 	images = [Image.open(fn) for fn in file_names]
-	writeGif(filename+'.gif', images, duration=0.4)
+	writeGif(filename+'.gif', images, duration=0.5)
+	copyfile(folder+str(n-1)+'.jpg', './'+filename+'.jpg')
 
 
 # if __name__ == '__main__':

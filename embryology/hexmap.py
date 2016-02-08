@@ -1,6 +1,5 @@
 import math
 import random
-import numpy as np
 
 SQRT3 = math.sqrt( 3 )
 
@@ -50,12 +49,12 @@ class Map( object ):
 	"""
 	# directions = [ ( 0, 1 ), ( 1, 1 ), ( 1, 0 ), ( 0, -1 ), ( -1, -1 ), ( -1, 0 ) ]
 
-	def __init__( self, shape, dtype=float, *args, **keywords ):
+	def __init__( self, shape, *args, **keywords ):
 		#Map size
 		self.shape  = shape
 		self.rows = shape[0]
 		self.cols = shape[1]
-		self.values = [[None for _ in range(shape[1])] for _ in range(shape[0])]  
+		self.values = [[0 for _ in range(shape[1])] for _ in range(shape[0])]  
 
 
 	def __str__( self ):
@@ -64,10 +63,8 @@ class Map( object ):
 		foo = []
 		for row in self.values:
 			for cell in row:
-				if cell == None:
-					foo.append('0')
-				else:
-					foo.append('1')
+				foo.append(str(cell))
+
 		return ''.join(foo)
 		# return "Map (%d, %d)" % ( self.rows, self.cols )
 
@@ -156,7 +153,7 @@ class Map( object ):
 		return list(filter( self.valid_cell, neighbors ))
 
 	def is_occupied(self, coords):
-		if (self.valid_cell(coords) and self.values[coords[0]][coords[1]] != None):
+		if (self.valid_cell(coords) and self.values[coords[0]][coords[1]] != 0):
 			return coords
 		else:
 			return False

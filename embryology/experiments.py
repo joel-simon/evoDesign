@@ -1,9 +1,7 @@
-import numpy as np
 from simulate import simulate
-from visualize import draw_hex_map
+
 from hexmap import Map
-from sklearn import metrics
-import pygame
+
 
 # The front is the starting set that others must be connected to.
 def filter_unconnected(hex_map, front):
@@ -31,21 +29,49 @@ class Experiment(object):
 			genome.fitness = self.fitness(genome)		
 	
 	def draw(self, genome):
+
 		if self.screen != None:
+			from visualize import draw_hex_map
+			import pygame
+		
 			self.screen.fill((255,255,255))
 			draw_hex_map(self.screen, self.grow(genome))
 			pygame.display.flip()
-
-
-
 
 class SurfaceArea(Experiment):
 	def __init__(self, shape, screen=None):
 		self.shape  = shape
 		self.screen = screen
+		self.start = None
 
 	def surfaceArea(self, hexmap):
 		surfaceArea = 0
+		for i, row in enumerate(hexmap.values):
+			for j, cell in enumerate(row):
+				if cell != None:
+					neighbors = len(hexmap.neighbors((i, j)))
+					surfaceArea += neighbors - hexmap.num_occupied_neighbors((i, j))
+
+		return surfaceArea
+
+	def grow(self, genome):
+		hexmap = simulate(genome, self.shape)[0]
+		return filter_unconnected( hexmap, set([(0,0)]) )
+
+	def fitness(self, genome):
+		hexmap = self.grow(genome)
+		surfaceArea = self.surfaceArea(hexmap)
+		n = hexmap.shape[0] * hexmap.shape[1]
+		return surfaceArea / float(n * 2)
+
+class Tree(Experiment):
+	def __init__(self, shape, screen=None):
+		self.shape  = shape
+		self.screen = screen
+		self.start = None
+
+	def lightInput(self, hexmap):
+		light = 0
 		for i, row in enumerate(hexmap.values):
 			for j, cell in enumerate(row):
 				if cell != None:

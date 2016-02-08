@@ -8,7 +8,7 @@ pheromones           = 0
 initial_connection   = unconnected
 max_weight           = 30
 min_weight           = -30
-feedforward          = 1
+feedforward          = 0
 activation_functions = sigmoid
 weight_stdev         = 0.9
 

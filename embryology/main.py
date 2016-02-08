@@ -6,14 +6,14 @@ from neat import visualize as neat_visualize
 from neat import ctrnn
 from neat.config import Config
 
-import visualize
+
 import experiments
 
 
 def run_experiment(experiment, generations, parallel=False):
 	local_dir = os.path.dirname(__file__)
 	config = Config(os.path.join(local_dir, 'main_config'))
-	# config.node_gene_type = ctrnn.CTNodeGene
+	config.node_gene_type = ctrnn.CTNodeGene
 	pop = population.Population(config, checkpoint_interval = None,
 																						 checkpoint_generation = None)
 	if parallel:
@@ -28,13 +28,12 @@ def run_experiment(experiment, generations, parallel=False):
 def main(args):
 	generations = int(args[0])
 	parallel = False
-	draw = True
+	draw = False
 
 	if draw:
 		import pygame
 		pygame.init()
-		basicFont  = pygame.font.SysFont(None, 24)
-		screen     = pygame.display.set_mode((800, 800))
+		screen = pygame.display.set_mode((800, 800))
 	else:
 		screen = None
 
@@ -53,25 +52,19 @@ def main(args):
 
 	best_genomes = final_population.best_genomes(5)
 	winner = best_genomes[0]
-	
-	neat_visualize.plot_stats(final_population, filename='output/avg_fitness.svg')
-	neat_visualize.plot_species(final_population, filename='output/speciation.svg')
-	neat_visualize.draw_net(winner, view = False, filename='output/network')
+
+	# neat_visualize.plot_stats(final_population, filename='output/avg_fitness.svg')
+	# neat_visualize.plot_species(final_population, filename='output/speciation.svg')
+	# neat_visualize.draw_net(winner, view = False, filename='output/network')
 
 	with open('output/best_genomes.p', 'wb') as f:
 		pickle.dump(best_genomes, f)
-
-	with open('output/best_genome.p', 'wb') as f:
-		pickle.dump(winner, f)
 
 	print()
 	print('#'*80)
 	print('saved best score', winner.fitness)
 	print('average score', sum([bg.fitness for bg in best_genomes])/5.0)
 	print('#'*80)
-
-	for rank, genome in enumerate(best_genomes):
-		visualize.make_gif(screen, genome, experiment, str(rank))
 
 	if draw:
 		experiment.draw(winner)
