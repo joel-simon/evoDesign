@@ -9,7 +9,7 @@ from images2gif import writeGif
 import gzip
 import pickle
 from PIL import Image
-
+import time
 from shutil import copyfile
 
 
@@ -112,18 +112,26 @@ def make_gif(screen, genome, experiment, filename):
 		screen.fill((255,255,255))
 		draw_hex_map(screen, hexmap, start = (0,0))
 		pygame.display.flip()
-		pygame.image.save(screen, folder + str(i)+'.jpg')
+		if filename:
+			pygame.image.save(screen, folder + str(i)+'.jpg')
+		else:
+			time.sleep(.5)
 
-	simulate(genome, experiment.shape, gif_frame, experiment.start)
+	simulate(genome, experiment.shape, experiment.cell_inputs, gif_frame, experiment.start)
 	experiment.draw(genome)
 
-	n = len([fn for fn in os.listdir(folder) if fn.endswith('.jpg')])
-	file_names = [folder+str(i)+'.jpg' for i in range(n)]
-	images = [Image.open(fn) for fn in file_names]
-	writeGif(filename+'.gif', images, duration=0.5)
-	copyfile(folder+str(n-1)+'.jpg', './'+filename+'.jpg')
+	if filename:
+		n = len([fn for fn in os.listdir(folder) if fn.endswith('.jpg')])
+		file_names = [folder+str(i)+'.jpg' for i in range(n)]
+		images = [Image.open(fn) for fn in file_names]
+		writeGif(filename+'.gif', images, duration=0.5)
+		copyfile(folder+str(n-1)+'.jpg', './'+filename+'.jpg')
 
-
+	else:
+		while True:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					sys.exit()
 # if __name__ == '__main__':
 # 	import argparse
 # 	parser = argparse.ArgumentParser()

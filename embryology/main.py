@@ -10,13 +10,14 @@ from neat.config import Config
 import experiments
 
 
-def run_experiment(experiment, generations, parallel=False):
+def run_experiment(experiment, generations, run_parallel=False):
 	local_dir = os.path.dirname(__file__)
 	config = Config(os.path.join(local_dir, 'main_config'))
 	config.node_gene_type = ctrnn.CTNodeGene
+
 	pop = population.Population(config, checkpoint_interval = None,
 																						 checkpoint_generation = None)
-	if parallel:
+	if run_parallel:
 		num_cores = multiprocessing.cpu_count()
 		pe = parallel.ParallelEvaluator(num_cores, experiment.fitness)
 		pop.epoch(pe.evaluate, generations, experiment.draw)
@@ -47,7 +48,7 @@ def main(args):
 
 	os.makedirs('output')
 
-	experiment = experiments.SurfaceArea((12,12), screen)
+	experiment = experiments.Tree((12,12), screen)
 	final_population = run_experiment(experiment, generations, parallel)
 
 	best_genomes = final_population.best_genomes(5)

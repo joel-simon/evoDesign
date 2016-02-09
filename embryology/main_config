@@ -1,5 +1,5 @@
 [phenotype]
-input_nodes          = 6
+input_nodes          = 7
 hidden_nodes         = 0
 output_nodes         = 7
 attributes           = 0

@@ -13,7 +13,10 @@ def derp(row, col, radius):
 
 def truss_from_map(hex_map, real_radius=1):
 	radius = .75
-	t1    = truss.Truss()
+	t1 = truss.Truss()
+
+	hex_to_members = dict()
+
 	nodes = defaultdict()
 	nodes.default_factory = nodes.__len__
 	members = set()
@@ -26,13 +29,14 @@ def truss_from_map(hex_map, real_radius=1):
 	]
 	edges = [(0,1), (1,2), (2,3), (3,4), (4,5), (5,0), (0, 4), (0,3), (1,3)]
 	
-	max_y = derp(hex_map.values.shape[0] - 1, 1, radius)[0] + (SQRT3 * radius)
+	max_y = derp(hex_map.rows - 1, 1, radius)[0] + (SQRT3 * radius)
 
-	for col in range(hex_map.values.shape[1]):
+	for col in range(hex_map.cols):
 		
-		for row in range(hex_map.values.shape[0]):
+		for row in range(hex_map.rows):
+
 			top, left = derp(row, col, radius)
-			if hex_map.values[row, col] == 0:
+			if hex_map.values[row][col] == 0:
 				continue
 
 			new_nodes = [( round(x + left, 2), round(y + top, 2)) for ( x, y ) in hex_coords]
@@ -54,16 +58,5 @@ def truss_from_map(hex_map, real_radius=1):
 	# Add members
 	for m_a, m_b in members:
 		t1.add_member(nodes[m_a], nodes[m_b])
-
-	# Add Forces
-	x_force = -2000
-	y_force = -2000
-
-	for joint in t1.joints:
-
-		if round(joint.coordinates[1], 1) == round(max_y, 1):
-			joint.loads[1] = y_force
-			joint.loads[0] = x_force
-
 
 	return t1

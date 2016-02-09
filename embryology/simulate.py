@@ -5,19 +5,24 @@ from neat import nn, ctrnn
 from neat.genes import NodeGene
 from hexmap import Map
 
-def get_input(hex_map, pheromone_maps, i, j):
-	cell_inputs = []
-		
-	for n_i, occupied in enumerate(hex_map.occupied_neighbors((i, j))):
-		if occupied != False:
-			cell_inputs.append(1)
-		else:
-			cell_inputs.append(0)
+# The front is the starting set that others must be connected to.
+def filter_unconnected(hex_map, front):
+	seen = set()
+	
+	filtered_hex_map = Map((hex_map.rows, hex_map.cols))
 
-	for p_map in pheromone_maps:
-		cell_inputs.append(p_map.values[i][j])
+	while len(front) > 0:
+		next_front = set()
+		for (i, j) in front:
+			filtered_hex_map.values[i][j] = hex_map.values[i][j]
+			foo = [on for on in hex_map.occupied_neighbors((i, j)) if on != False ]
+			next_front.update(foo)
 
-	return cell_inputs
+		seen.update(front)
+		next_front = next_front.difference(seen)
+		front      = next_front
+
+	return filtered_hex_map
 
 def signal_strength(d, pheromone_gene):
 	max_dist = 5
@@ -40,51 +45,46 @@ def add_signal(i, j, pheromone_gene, signal_maps):
 		signal_map.values[i2][j2] += signal_strength(d, pheromone_gene)
 	return
 
-def cell_growth_cycle(make_cell, hex_map, pheromone_maps):	
+def cell_growth_cycle(make_cell, hex_map, pheromone_maps, cell_input_fun):	
 	next_values = [copy.copy(row) for row in hex_map.values]
 	activation_threshold = 0.75
 
 	# update_pheromone_maps(pheromones, pheromone_maps)
 	# for p_gene, p_map in zip(genome.pheromone_genes, pheromone_maps):
 	# 	p_map.values *= p_gene.decay_gene.value
-
-	for i in range(hex_map.rows):
-		for j in range(hex_map.cols):
+	for (i,j), inputs in cell_input_fun(hex_map, pheromone_maps):
+		cell = hex_map.values[i][j]
+		assert(isinstance(cell, ctrnn.Network))
 			
-			cell = hex_map.values[i][j]
-			if isinstance(cell, ctrnn.Network):
-				cell_input  = get_input(hex_map, pheromone_maps, i, j)
-				
-				cell_output = cell.parallel_activate(cell_input)
-				# cell_output = cell.serial_activate(cell_input)
+		cell_output = cell.parallel_activate(inputs)
 
-				output_grow = cell_output[:6]
-				output_apop = cell_output[6]
-				# output_pher = cell_output[7: 10]
+		output_grow = cell_output[:6]
+		output_apop = cell_output[6]
+		# output_pher = cell_output[7: 10]
+		
+		# Check for growth in any direction
+		for (i_d, j_d), output in zip(hex_map.directions((i, j)), output_grow):
+			if output > activation_threshold:
+				valid    = hex_map.valid_cell((i+i_d, j+j_d))
+				empty    = valid and (hex_map.values[i+i_d][j+j_d] == 0)
 				
-				# Check for growth in any direction
-				for (i_d, j_d), output in zip(hex_map.directions((i, j)), output_grow):
-					if output > activation_threshold:
-						valid    = hex_map.valid_cell((i+i_d, j+j_d))
-						empty    = valid and (hex_map.values[i+i_d][j+j_d] == 0)
-						
-						if valid and empty:
-							next_values[i+i_d][j+j_d] = make_cell()
-				
-				# Last output is cell death.
-				if output_apop > activation_threshold:
-					next_values[i][j] = 0
-				
-				# for i_p, output in enumerate(output_pher):
-				# 	if cell_output[i_p] > activation_threshold:
-				# 		add_signal(i, j, genome.pheromone_genes[i_p], pheromone_maps)
+				if valid and empty:
+					next_values[i+i_d][j+j_d] = make_cell()
+		
+		# Last output is cell death.
+		if output_apop > activation_threshold:
+			next_values[i][j] = 0
+		
+		# for i_p, output in enumerate(output_pher):
+		# 	if cell_output[i_p] > activation_threshold:
+		# 		add_signal(i, j, genome.pheromone_genes[i_p], pheromone_maps)
 
 	hex_map.values = next_values
 
 
-def simulate(genome, shape, log = None, start=None):
+def simulate(genome, shape, cell_inputs, log = None, start=None):
 	# State values
-	hex_map = Map(shape) if start == None else start 
+	hexmap = Map(shape) if start == None else start 
 	pheromone_maps = [ Map(shape) for i in range(genome.num_pheromones) ]
 	
 	# net = nn.create_feed_forward_phenotype(genome)
@@ -96,19 +96,20 @@ def simulate(genome, shape, log = None, start=None):
 	# attributes = [ a.value for a in genome.attribute_genes ]
 	
 	i_start = 0#int(attributes[0] * shape[0])
-	j_start = 0#int(attributes[1] * shape[1])
-	hex_map.values[i_start][j_start] = make_cell()
+	j_start = int(hexmap.cols / 2)#int(attributes[1] * shape[1])
+	hexmap.values[i_start][j_start] = make_cell()
 	# Create a rough ceiling
-	n_iterations = int((hex_map.rows * hex_map.cols) / 2)
+	n_iterations = int((hexmap.rows * hexmap.cols) / 2)
 
 	prev_values = set()
 	for i in range(n_iterations):
 		
 		if log != None:
-			log(hex_map, i)
+			log(hexmap, i)
 
-		cell_growth_cycle(make_cell, hex_map, pheromone_maps)
-		string_repr = str(hex_map)
+		cell_growth_cycle(make_cell, hexmap, pheromone_maps, cell_inputs)
+		hexmap = filter_unconnected(hexmap, set([(i_start, j_start)]))
+		string_repr = str(hexmap)
 
 		if string_repr in prev_values:
 			break
@@ -116,9 +117,9 @@ def simulate(genome, shape, log = None, start=None):
 			prev_values.add(string_repr)
 
 	if log != None:
-		log(hex_map, i)
+		log(hexmap, i)
 
-	return (hex_map, pheromone_maps)
+	return (hexmap, pheromone_maps)
 
 if __name__ == '__main__':
 	import sys, pickle
