@@ -67,12 +67,12 @@ def main(args):
     pickle.dump(pop, f)
 
 if __name__ == '__main__':
-  import inspect
-  print inspect.getsourcelines(fitness)
+  # import inspect
+  # print inspect.getsourcelines(fitness)
 
-  # parser = argparse.ArgumentParser()
-  # parser.add_argument('-o', '--out', help='Output directory', required=True)
-  # parser.add_argument('-g', '--generations', help='', required=True, type=int)
-  # parser.add_argument('-c', '--cores', help='', required=False, default=None, type=int)
-  # args = parser.parse_args()
-  # main(args)
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-o', '--out', help='Output directory', required=True)
+  parser.add_argument('-g', '--generations', help='', required=True, type=int)
+  parser.add_argument('-c', '--cores', help='', required=False, default=None, type=int)
+  args = parser.parse_args()
+  main(args)
