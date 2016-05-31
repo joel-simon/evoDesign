@@ -13,7 +13,7 @@ import sys
 
 def plot(nodes, edges):
   map_pos = lambda p: (int(p[0]), 800-int(p[1]))
-  points = [n.p for n in nodes]
+  points = [(n.px, n.py) for n in nodes]
 
   screen.fill((255,255,255))
 
@@ -32,7 +32,8 @@ def plot(nodes, edges):
   screen.blit(num_nodes, (10,50))
 
   for node in nodes:
-    x, y = map_pos(node.p)
+    x, y = map_pos((node.px, node.py))
+    # print(node.px, node.py, x, y)
     pygame.gfxdraw.aacircle(screen, x, y, int(node.r), (10, 10, 10))
     a = node.morphogen_concentrations[0][0]
 
@@ -41,10 +42,10 @@ def plot(nodes, edges):
 
     pygame.gfxdraw.filled_circle(screen, x, y, int(node.r), (200,10,10, red))
 
-  # for (node1, node2) in edges:
-  #   x1, y1 = map_pos(node1.p)
-  #   x2, y2 = map_pos(node2.p)
-  #   pygame.gfxdraw.line(screen, x1, y1, x2, y2, (10,10,10))
+  for (node1, node2) in edges:
+    x1, y1 = map_pos((node.px, node.py))
+    x2, y2 = map_pos((node.px, node.py))
+    pygame.gfxdraw.line(screen, x1, y1, x2, y2, (10,10,10))
 
   # vor = Voronoi(points)
   # verts = vor.vertices
@@ -58,7 +59,7 @@ def plot(nodes, edges):
   #     pygame.gfxdraw.filled_circle(screen, x, y, 4, (255,10,10))
 
   pygame.display.flip()
-  # time.sleep(1/60.)
+  # time.sleep(1)
 
 
 class VisualVoronoiSpringPhysics(VoronoiSpringPhysics):

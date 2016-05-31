@@ -1,6 +1,6 @@
 from collections import defaultdict
 from cell import Cell
-from Vector import Vector
+# from Vector import Vector
 from physics import VoronoiSpringPhysics
 import random
 
@@ -23,10 +23,10 @@ class Simulation(object):
     for _ in range(10):
       x = 400+20*(random.random()-.5)
       y = 400+20*(random.random()-.5)
-      self.create_cell(p=Vector(x,y))
+      self.create_cell(x, y)
 
-  def create_cell(self, p, cell_type=0):
-    cell = Cell(self.next_cell_id, self.genome, p, cell_type)
+  def create_cell(self, px, py, cell_type=0):
+    cell = Cell(self.next_cell_id, self.genome, px, py, cell_type)
     self.physics.add_node(cell)
     self.cells[cell.id] = cell
     self.next_cell_id += 1
@@ -45,7 +45,7 @@ class Simulation(object):
   #   return self.physics.neighbors(cell)
   # def spread_
 
-  def spread_morphogen(self, steps=3000, saturate=False):
+  def spread_morphogen(self, steps=500, saturate=False):
     Da = 0.02   #diffusion of the activator (unit: , if regions on x-axis have a width of 1 mu)
     Ra = 0.02   #removal rate of the activator
     Pa = 0.001   #activator-independent activator production rate
@@ -105,8 +105,9 @@ class Simulation(object):
 
     # Cell division
     if outputs['division']:
-      dd = Vector(random.random()-.5, random.random()-.5)
-      daughter = self.create_cell(dd + cell.p.copy(), cell.cell_type)
+      px = cell.px + random.random()-.5
+      py = cell.py + random.random()-.5
+      daughter = self.create_cell(px, py)
       change = True
 
     # Morphogen Spread.

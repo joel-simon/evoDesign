@@ -2,29 +2,33 @@ from cellGenome import CellGenome
 from neat import nn
 directions = [(0,1), (1,0), (0,-1), (-1,0)]
 import math
-from Vector import Vector
+# from Vector import Vector
 import random
 
 # TODO move this
 class Node(object):
     """docstring for Node"""
-    def __init__(self, p):
-        self.p = p
+    def __init__(self, px, py):
         self.m = 1
-        self.v = Vector(0,0)
-        self.a = Vector(0,0)
+        self.px = px
+        self.py = py
+        self.vx = 0
+        self.vy = 0
+        self.ax = 0
+        self.ay = 0
         self.static = False
         self.stress = 0.0
         self.r = 16.0
 
-    def applyForce(self, f):
-        self.stress += abs(f.norm())
+    def applyForce(self, fx, fy):
+        # self.stress += abs(f.norm())
         if not self.static:
-          self.a += f / self.m
+          self.ax += fx / self.m
+          self.ay += fy / self.m
 
 class Cell(Node):
     """docstring for Cell"""
-    def __init__(self, cell_id, genome, p, cell_type=0):
+    def __init__(self, cell_id, genome, px, py, cell_type=0):
         assert(isinstance(genome, CellGenome))
         self.id = cell_id
         self.genome = genome
@@ -41,7 +45,7 @@ class Cell(Node):
 
         self.network = nn.create_feed_forward_phenotype(genome)
 
-        super(Cell, self).__init__(p)
+        super(Cell, self).__init__(px, py)
 
     # Used by create inputs.
     def get_threshold(self, c):
@@ -62,6 +66,19 @@ class Cell(Node):
             inputs[ind] = 1
 
         return inputs
+
+    def get_outputs(self):
+        inputs  = self.create_inputs()
+        outputs = self.network.serial_activate(inputs)
+
+        parsed_outputs = dict()
+        parsed_outputs['apoptosis']  = (outputs[0] > .75)
+        parsed_outputs['division']   = (outputs[1] > .75)
+        parsed_outputs['a1'] = outputs[2]*.1
+        parsed_outputs['h1'] = outputs[3]*.1
+
+        assert(len(parsed_outputs) == self.genome.num_outputs)
+        return parsed_outputs
 
     # def get_growth_direction(self, growth_directions):
     #     return directions[growth_directions.index(max(growth_directions))]
@@ -85,15 +102,3 @@ class Cell(Node):
 
         # parsed_actions['morphogens'] = actions[-self.genome.morphogens:]
 
-    def get_outputs(self):
-        inputs  = self.create_inputs()
-        outputs = self.network.serial_activate(inputs)
-
-        parsed_outputs = dict()
-        parsed_outputs['apoptosis']  = (outputs[0] > .75)
-        parsed_outputs['division']   = (outputs[1] > .75)
-        parsed_outputs['a1'] = outputs[2]*.1
-        parsed_outputs['h1'] = outputs[3]*.1
-
-        assert(len(parsed_outputs) == self.genome.num_outputs)
-        return parsed_outputs

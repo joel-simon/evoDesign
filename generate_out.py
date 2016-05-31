@@ -12,7 +12,6 @@ def plot_scores(genome, filename, n=10, view=True):
   fitnesses = pool.map(fitness, repeat(genome, n))
   plt.hist(fitnesses)
   plt.title("Score Histogram for n=%i" % n)
-  run_simulation(filename)
   if view:
     plt.show()
   print fitnesses
@@ -24,10 +23,9 @@ def main(dirname):
 
   winner = pop.statistics.best_genome()
 
-  genome_text = open('genome.txt', 'w+')
+  genome_text = open(join(dirname,'genome.txt'), 'w+')
   genome_text.write('fitness: %f\n' % winner.fitness)
   genome_text.write(str(winner))
-
 
   # Plot the evolution of the best/average fitness.
   visualize.plot_stats(pop.statistics, ylog=True,
@@ -45,7 +43,7 @@ def main(dirname):
   visualize.draw_net(winner, view=True, node_names=node_names,
                     filename=join(dirname,"nn_winner.gv"))
 
-  plot_scores(winner, filename=join(dirname, 'scores.png'), n=100)
+  plot_scores(winner, filename=join(dirname, 'scores.png'), n=20)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled.gv", show_disabled=False)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False, prune_unused=True)
 

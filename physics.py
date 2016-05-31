@@ -1,10 +1,13 @@
 import sys, time, math
 # import numpy as np
-from Vector import Vector
+# from Vector import Vector
 import random
 from pyhull.delaunay import DelaunayTri
 from collections import defaultdict
 import warnings
+
+def norm(x, y):
+  return math.sqrt(x*x + y*y)
 
 class VoronoiSpringPhysics(object):
   """docstring for VoronoiSpringPhysics"""
@@ -63,78 +66,80 @@ class VoronoiSpringPhysics(object):
         if node.id < neighbor.id:
           yield (node, neighbor)
 
-  def springForce(self, node1, node2):
-    d = node1.p - node2.p #the direction of the spring
-    d = Vector(d[0], d[1])
-
-    r = node1.r + node2.r
-    displacement = r - d.norm()
-    direction = d.normalize()
-    force = direction * self.stiffness * displacement * 0.5
-    return force
 
   def applyHookesLaw(self):
     for node1, node2 in self.edges():
-      force = self.springForce(node1, node2)
-      node1.applyForce(1 * force)
-      node2.applyForce(-1 * force)
+            # d = node1.p - node2.p #the direction of the spring
+      dx = node1.px - node2.px
+      dy = node1.py - node2.py
+
+      r = node1.r + node2.r
+
+      d_norm = norm(dx, dy)
+      
+      displacement = r - d_norm
+      
+      forcex = (dx / d_norm) * self.stiffness * displacement * 0.5
+      forcey = (dy / d_norm) * self.stiffness * displacement * 0.5
+
+      node1.applyForce(forcex, forcey)
+      node2.applyForce(-1*forcex, -1*forcey)
 
   def applyGravity(self):
     for node in self.nodes:
-      node.applyForce(Vector(0.0, -5*node.m))
+      node.applyForce(0.0, -5*node.m)
 
-  def applyConstraints():
-    for node in self.nodes:
-      x, y = node.p
-      assert(type(x) == type(1.0))
-      assert(type(y) == type(1.0))
-      vx, vy = node.v
+  # def applyConstraints():
+  #   for node in self.nodes:
+  #     x, y = node.p
+  #     assert(type(x) == type(1.0))
+  #     assert(type(y) == type(1.0))
+  #     vx, vy = node.v
 
-      if x < 0:
-        x = 0
-        if vx < 0:
-          vx *= -1
+  #     if x < 0:
+  #       x = 0
+  #       if vx < 0:
+  #         vx *= -1
 
-      elif x > 800:
-        x = 800
-        if vx > 0:
-          vx *= -1
+  #     elif x > 800:
+  #       x = 800
+  #       if vx > 0:
+  #         vx *= -1
 
-      if y < 0:
-        y = 0
-        if vy < 0:
-          vy *= -1
+  #     if y < 0:
+  #       y = 0
+  #       if vy < 0:
+  #         vy *= -1
 
-      elif y > 800:
-        y = 800
-        if vy > 0:
-          vy *= -1
-      node.p = Vector(x, y)
-      node.v = Vector(vx, vy)
+  #     elif y > 800:
+  #       y = 800
+  #       if vy > 0:
+  #         vy *= -1
+  #     node.p = Vector(x, y)
+  #     node.v = Vector(vx, vy)
 
   def totalEnergy(self):
     energy = 0.0
     for node in self.nodes:
-      speed = node.v.norm()
+      speed = node.vx + node.vy
       energy += 0.5 * node.m * speed * speed
 
     return energy
 
-  def updateVelocity(self):
+  def updateVelocityAndPositions(self):
     for node in self.nodes:
-      node.v += node.a * self.timestep
-      node.v *= self.damping
-      node.a = Vector(0,0)
+      node.vx += node.ax * self.timestep
+      node.vy += node.ay * self.timestep
+      
+      node.ax = 0
+      node.ay = 0
 
-      # if node.v[0] + node.v[1] < 1:
-      #   node.v = Vector(0,0)
+      node.vx *= self.damping
+      node.vy *= self.damping
 
-  def updatePositions(self):
-    for node in self.nodes:
-      node.p += node.v * self.timestep
-      # if node.p[1] < 0:
-      #   node.p = Vector(node.p[0], 1.0)
-      #   node.v = Vector(0.0, node.v[1]* -1.0)
+      node.px += node.vx * self.timestep
+      node.py += node.vy * self.timestep
+
 
   def updateEdges(self):
     self.clear_edges()
@@ -151,7 +156,7 @@ class VoronoiSpringPhysics(object):
       self.add_edge(self.nodes[2], self.nodes[0])
 
     else:
-      nodes = [n.p for n in self.nodes]
+      nodes = [(n.px, n.py) for n in self.nodes]
       tri = DelaunayTri(nodes)
 
       id_nodes = {i: n for i, n in enumerate(self.nodes) }
@@ -170,8 +175,7 @@ class VoronoiSpringPhysics(object):
     self.updateEdges()
     self.applyHookesLaw()
     # self.applyGravity()
-    self.updateVelocity()
-    self.updatePositions()
+    self.updateVelocityAndPositions()
 
   def finished(self, steps):
     avg_energy = self.totalEnergy() / float(len(self.nodes))

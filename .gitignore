@@ -5,4 +5,5 @@
 *.svg
 *.png
 *.p
+out/
 neat_custom/__pycache__
