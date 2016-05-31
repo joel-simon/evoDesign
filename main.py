@@ -2,37 +2,51 @@ import os
 import sys
 import pickle
 
-from neat import nn, parallel, population, visualize
+from neat import nn, parallel, population
 from neat.config import Config
+from physics import VoronoiSpringPhysics
 from simulation import Simulation
 from cellGenome import CellGenome
+from Vector import Vector
+import random
 
 simulation_dimensions = (800,800)
 
 def init_output():
   if os.path.exists('out'):
     # erase = input('Delete existing out folder? (y/n) :')
-    if True:#erase == 'y':
+    if True:#erase.lower() == 'y':
       os.system("rm -rf out")
     else:
       print('aborting.')
       return
   os.makedirs('out')
 
-# For multi core
-def evaluate_genome(genome):
-  print("Starting genome simulation")
-  sim   = Simulation(genome, simulation_dimensions, draw=False)
-  sim.run(10)
+def fitness(sim):
+  k = 75
   n = len(sim.cells)
-
-  if not n:
-    fitness = 0.0
-  else:
-    fitness = sum([c.morphogens[0] for c in sim.cells.values()])/n
-
-  print("Finished genome simulation", fitness)
+  fitness = 1 - abs(n-k)
   return fitness
+
+# For multi core
+def evaluate_genome(genome, n_avgs=5):
+  # print("Starting genome simulation")
+  fitnesses = []
+
+  for i in range(n_avgs):
+    physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
+                                    damping=0.4, timestep = .05)
+    sim = Simulation(genome, physics, simulation_dimensions)
+
+    for _ in range(10):
+      x = 400+20*(random.random()-.5)
+      y = 400+20*(random.random()-.5)
+      sim.create_cell(p=Vector(x,y))
+
+    sim.run(80)
+    fitnesses.append(fitness(sim))
+
+  return sum(fitnesses)/float(n_avgs)
 
 # For single core
 def evaluate_genomes(genomes):
@@ -41,41 +55,30 @@ def evaluate_genomes(genomes):
 
 def main(args):
   generations = int(args[0])
-  cores = 1
-  # draw = False
 
   local_dir = os.path.dirname(__file__)
   config    = Config(os.path.join(local_dir, 'config.txt'))
   config.genotype = CellGenome
 
+  cores = 1
+
   init_output()
   pop = population.Population(config)
-  # pe  = parallel.ParallelEvaluator(cores, evaluate_genome)
-  # pop.run(pe.evaluate, generations)
-  pop.run(evaluate_genomes, generations)
+
+  if cores > 1:
+    pe  = parallel.ParallelEvaluator(cores, evaluate_genome)
+    pop.run(pe.evaluate, generations)
+  else:
+    pop.run(evaluate_genomes, generations)
 
   # Save the winner.
   print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
-  winner = pop.statistics.best_genome()
-  with open('out/nn_winner_genome', 'wb') as f:
-    pickle.dump(winner, f)
+  # winner = pop.statistics.best_genome()
+  # with open('out/nn_winner_genome', 'wb') as f:
+  #   pickle.dump(winner, f)
 
-
-  # Plot the evolution of the best/average fitness.
-  visualize.plot_stats(pop.statistics, ylog=True, filename="out/nn_fitness.svg")
-  # Visualizes speciation
-  visualize.plot_species(pop.statistics, filename="out/nn_speciation.svg")
-  # Visualize the best network.
-  visualize.draw_net(winner, view=True, filename="out/nn_winner.gv")
-  # visualize.draw_net(winner, view=True, filename="nn_winner-enabled.gv", show_disabled=False)
-  # visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False, prune_unused=True)
-
-  # if draw:
-  #   # experiment.draw(winner)
-  #   while True:
-  #     for event in pygame.event.get():
-  #       if event.type == pygame.QUIT:
-  #         sys.exit()
+  with open('out/population.p', 'wb') as f:
+    pickle.dump(pop, f)
 
 if __name__ == '__main__':
   main(sys.argv[1:])

@@ -8,9 +8,9 @@ stagnation_type      = DefaultStagnation
 reproduction_type    = DefaultReproduction
 
 [phenotype]
-input_nodes          = 4
+input_nodes          = 5
 hidden_nodes         = 0
-output_nodes         = 1
+output_nodes         = 4
 initial_connection   = fs_neat
 max_weight           = +30
 min_weight           = -30
@@ -19,7 +19,7 @@ activation_functions = sigmoid
 weight_stdev         = 1.0
 
 [genetic]
-pop_size                = 10
+pop_size                = 32
 max_fitness_threshold   = .95
 prob_add_conn           = 0.1
 prob_add_node           = 0.1
@@ -34,7 +34,10 @@ prob_replace_weight     = 0.1
 weight_mutation_power   = 0.5
 prob_mutate_activation  = 0.0
 prob_toggle_link        = 0.01
-reset_on_extinction     = 0
+reset_on_extinction     = 1
+
+[attributes]
+prob_replace_attribute = 0.01
 
 [genotype compatibility]
 compatibility_threshold = 3.0

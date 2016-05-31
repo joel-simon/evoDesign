@@ -1,0 +1,16 @@
+digraph {
+	node [fontsize=9 height=0.2 shape=circle width=0.2]
+		stress [shape=box style=filled]
+		a0t0 [shape=box style=filled]
+		a0t1 [shape=box style=filled]
+		a0t2 [shape=box style=filled]
+		a0t3 [shape=box style=filled]
+		apoptosis [color=lightblue style=filled]
+		division [color=lightblue style=filled]
+		a0 [color=lightblue style=filled]
+		h0 [color=lightblue style=filled]
+			a0t2 -> h0 [color=green penwidth=0.28014922099 style=solid]
+			a0t2 -> a0 [color=green penwidth=0.139724820072 style=solid]
+			a0t2 -> division [color=green penwidth=0.406218149135 style=solid]
+			a0t2 -> apoptosis [color=red penwidth=0.353232698869 style=solid]
+}

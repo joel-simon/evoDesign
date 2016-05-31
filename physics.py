@@ -1,9 +1,10 @@
 import sys, time, math
-import numpy as np
+# import numpy as np
 from Vector import Vector
 import random
 from pyhull.delaunay import DelaunayTri
 from collections import defaultdict
+import warnings
 
 class VoronoiSpringPhysics(object):
   """docstring for VoronoiSpringPhysics"""
@@ -64,17 +65,10 @@ class VoronoiSpringPhysics(object):
 
   def springForce(self, node1, node2):
     d = node1.p - node2.p #the direction of the spring
-    d = Vector(d[0]*1.5, d[1])
+    d = Vector(d[0], d[1])
 
     r = node1.r + node2.r
-
-    # d2 = node2.p - node1.p
-    # angle = math.atan2(d2[1],d2[0]) / 2 * math.pi
-    # derp = 0.05 + abs(math.cos(angle))
-
-    # r *= derp
     displacement = r - d.norm()
-
     direction = d.normalize()
     force = direction * self.stiffness * displacement * 0.5
     return force
@@ -144,22 +138,35 @@ class VoronoiSpringPhysics(object):
 
   def updateEdges(self):
     self.clear_edges()
+    n = len(self.nodes)
+    assert(n!=0)
+    # nodes = self.nodes.vl
+    if n == 1:
+      return
+    elif n == 2:
+      self.add_edge(self.nodes[0], self.nodes[1])
+    elif n == 3:
+      self.add_edge(self.nodes[0], self.nodes[1])
+      self.add_edge(self.nodes[1], self.nodes[2])
+      self.add_edge(self.nodes[2], self.nodes[0])
 
-    tri = DelaunayTri(np.array([n.p for n in self.nodes]))
+    else:
+      nodes = [n.p for n in self.nodes]
+      tri = DelaunayTri(nodes)
 
-    for ia, ib, ic in tri.vertices:
-      # self.add_edges([(ia, ib), (ib, ic), (ic, ia)])
-      self.add_edge(self.id_nodes[ia], self.id_nodes[ib])
-      self.add_edge(self.id_nodes[ib], self.id_nodes[ic])
-      self.add_edge(self.id_nodes[ic], self.id_nodes[ia])
+      id_nodes = {i: n for i, n in enumerate(self.nodes) }
 
-      # (ib, ic), (ic, ia)])
-    # except AttributeError:
-    #   return
-      # print(e)
+      for ia, ib, ic in tri.vertices:
+        self.add_edge(id_nodes[ia], id_nodes[ib])
+        self.add_edge(id_nodes[ib], id_nodes[ic])
+        self.add_edge(id_nodes[ic], id_nodes[ia])
 
   def step(self):
     assert(len(self.nodes) != 0)
+
+    for node in self.nodes:
+      node.stress = 0.0
+
     self.updateEdges()
     self.applyHookesLaw()
     # self.applyGravity()
@@ -168,7 +175,14 @@ class VoronoiSpringPhysics(object):
 
   def finished(self, steps):
     avg_energy = self.totalEnergy() / float(len(self.nodes))
-    return avg_energy < self.minEnergyThreshold and steps > 0
+
+    if steps > 200:
+      return True
+
+    if (avg_energy < self.minEnergyThreshold and steps > 0):
+      return True
+
+    return False
 
   def run(self):
     steps = 0
@@ -178,5 +192,5 @@ class VoronoiSpringPhysics(object):
       steps += 1
 
     # print(self.steps, avg_energy)
-    print("Finished force diagram step:", steps)
+    # print("Finished force diagram step:", steps, '\n')
 
