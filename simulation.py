@@ -20,6 +20,11 @@ class Simulation(object):
     self.verbose = verbose
     self.steps_since_change = 0
 
+    for _ in range(10):
+      x = 400+20*(random.random()-.5)
+      y = 400+20*(random.random()-.5)
+      self.create_cell(p=Vector(x,y))
+
   def create_cell(self, p, cell_type=0):
     cell = Cell(self.next_cell_id, self.genome, p, cell_type)
     self.physics.add_node(cell)
@@ -154,49 +159,3 @@ class Simulation(object):
         print("\t%i cells left" % len(self.cells))
 
     # print('done')
-
-
-# Simulate a random genomes
-if __name__ == '__main__':
-  import os
-  from neat import nn, parallel, population, visualize
-  from neat.config import Config
-  from cellGenome import CellGenome
-  from visualize import VisualVoronoiSpringPhysics
-  import pygame, sys
-
-  local_dir = os.path.dirname(__file__)
-  config  = Config(os.path.join(local_dir, 'config.txt'))
-  dummy_genome = CellGenome.create_unconnected(1, config)
-
-  physics = VisualVoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
-                                        damping=0.3, timestep = .05)
-
-  sim = Simulation(dummy_genome, physics, (800, 800))
-
-  for i in range(200):
-    x = 400+20*(random.random()-.5)
-    y = 400+20*(random.random()-.5)
-    sim.create_cell(p=Vector(x,y))
-
-  sim.run(1)
-  list(sim.cells.values())[0].morphogen_productions[0][0] = .1
-  # cell = list(sim.cells.values())[1].morphogen_productions[0][0] = .1
-  # sim.spread_morphogen()
-
-
-  for i in range(10):
-    x = 400+20*(random.random()-.5)
-    y = 400+20*(random.random()-.5)
-    sim.create_cell(p=Vector(x,y))
-    # sim.spread_morphogen(steps=1000)
-    sim.step()
-
-
-  # for cell in sim.cells.values():
-  #   print(cell.morphogen_concentrations)
-  while True:
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        sys.exit()
-

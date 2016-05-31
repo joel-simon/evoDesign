@@ -1,8 +1,8 @@
 *.pyc
 /.ipynb_checkpoints/*
 /__pycache__
-
-embryology/ipynb_checkpoints
-embryology/temp_images
-embryology/__pycache__
-embryology/output
+*.cprof
+*.svg
+*.png
+*.p
+neat_custom/__pycache__

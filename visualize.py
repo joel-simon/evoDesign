@@ -5,9 +5,11 @@ import numpy as np
 import pygame
 import pygame.gfxdraw
 pygame.init()
-font = pygame.font.SysFont("monospace", 15)
+font = pygame.font.SysFont("monospace", 18)
 screen = pygame.display.set_mode((800, 800))
 from physics import VoronoiSpringPhysics
+from os.path import join
+import sys
 
 def plot(nodes, edges):
   map_pos = lambda p: (int(p[0]), 800-int(p[1]))
@@ -25,6 +27,9 @@ def plot(nodes, edges):
 
   mintext = font.render("b range:(%f, %f)" % (min(c_b), max(c_b)),1,(0,0,0) )
   screen.blit(mintext, (10,30))
+
+  num_nodes = font.render("# nodes: %i" % len(nodes),1,(0,0,0) )
+  screen.blit(num_nodes, (10,50))
 
   for node in nodes:
     x, y = map_pos(node.p)
@@ -65,15 +70,14 @@ class VisualVoronoiSpringPhysics(VoronoiSpringPhysics):
     super(VisualVoronoiSpringPhysics, self).step()
     plot(self.nodes, self.edges())
 
-if __name__ == '__main__':
+def main(path):
   import pickle
   import sys
   import random
   from simulation import Simulation
 
-  with open('./out/population.p', 'rb') as f:
-      pop = pickle.load(f, encoding='latin1')
-      # print('load file')
+  with open(join(path, 'population.p'), 'rb') as f:
+    pop = pickle.load(f, encoding='latin1')
 
   physics = VisualVoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
                                         damping=0.4, timestep = .05)
@@ -82,10 +86,6 @@ if __name__ == '__main__':
   # print('ready')
   sim = Simulation(best_genome, physics, (800, 800), verbose=True)
 
-  for i in range(10):
-    x = 400+20*(random.random()-.5)
-    y = 400+20*(random.random()-.5)
-    sim.create_cell(p=Vector(x,y))
   # print('2')
   sim.run(80)
   print('run over')
@@ -93,3 +93,9 @@ if __name__ == '__main__':
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         sys.exit()
+
+if __name__ == '__main__':
+  if len(sys.argv) == 1:
+    main('./out')
+  else:
+    main(sys.argv[1])

@@ -1,16 +1,17 @@
-fitness: -0.500000
+fitness: -1.000000
 Nodes:
 	NodeGene(id=0, type=INPUT, bias=0.0, response=4.924273, activation=sigmoid)
 	NodeGene(id=1, type=INPUT, bias=0.0, response=4.924273, activation=sigmoid)
 	NodeGene(id=2, type=INPUT, bias=0.0, response=4.924273, activation=sigmoid)
 	NodeGene(id=3, type=INPUT, bias=0.0, response=4.924273, activation=sigmoid)
 	NodeGene(id=4, type=INPUT, bias=0.0, response=4.924273, activation=sigmoid)
-	NodeGene(id=5, type=OUTPUT, bias=-0.623266328627, response=4.97551770372, activation=sigmoid)
-	NodeGene(id=6, type=OUTPUT, bias=-0.0198779280693, response=5.44499790359, activation=sigmoid)
-	NodeGene(id=7, type=OUTPUT, bias=-0.755714833918, response=5.51735082, activation=sigmoid)
-	NodeGene(id=8, type=OUTPUT, bias=-0.404790529398, response=5.98830297253, activation=sigmoid)
+	NodeGene(id=5, type=OUTPUT, bias=0.714427964208, response=5.32824741955, activation=sigmoid)
+	NodeGene(id=6, type=OUTPUT, bias=-0.157458736933, response=4.42361965415, activation=sigmoid)
+	NodeGene(id=7, type=OUTPUT, bias=-0.778122936919, response=4.23839102487, activation=sigmoid)
+	NodeGene(id=8, type=OUTPUT, bias=0.0842765911148, response=5.633568292, activation=sigmoid)
 Connections:
-	ConnectionGene(in=2, out=5, weight=-0.620984186445, enabled=True, innov=4)
-	ConnectionGene(in=2, out=6, weight=0.367248704801, enabled=True, innov=5)
-	ConnectionGene(in=2, out=7, weight=-0.778875447055, enabled=False, innov=6)
-	ConnectionGene(in=2, out=8, weight=-2.401357514, enabled=True, innov=7)
+	ConnectionGene(in=2, out=5, weight=-0.873017841879, enabled=True, innov=8)
+	ConnectionGene(in=2, out=6, weight=1.5688703548, enabled=True, innov=9)
+	ConnectionGene(in=2, out=7, weight=0.129958045098, enabled=True, innov=10)
+	ConnectionGene(in=2, out=8, weight=0.95987508613, enabled=True, innov=11)
+	ConnectionGene(in=1, out=5, weight=-0.30359325638, enabled=False, innov=16)

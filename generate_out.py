@@ -2,6 +2,22 @@ import pickle
 from neat import visualize
 import sys
 from os.path import join
+from main import fitness
+import matplotlib.pyplot as plt
+from multiprocessing import Pool
+from itertools import repeat
+
+def plot_scores(genome, filename, n=10, view=True):
+  pool = Pool()
+  fitnesses = pool.map(fitness, repeat(genome, n))
+  plt.hist(fitnesses)
+  plt.title("Score Histogram for n=%i" % n)
+  run_simulation(filename)
+  if view:
+    plt.show()
+  print fitnesses
+
+  plt.close()
 
 def main(dirname):
   pop = pickle.load(open(join(dirname, 'population.p')))
@@ -19,7 +35,7 @@ def main(dirname):
 
   # Visualizes speciation
   visualize.plot_species(pop.statistics,
-                        filename=join(dirname,"nn_speciation.svg"))
+                          filename=join(dirname,"nn_speciation.svg"))
 
   # Visualize the best network.
   node_names = dict()
@@ -29,6 +45,7 @@ def main(dirname):
   visualize.draw_net(winner, view=True, node_names=node_names,
                     filename=join(dirname,"nn_winner.gv"))
 
+  plot_scores(winner, filename=join(dirname, 'scores.png'), n=100)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled.gv", show_disabled=False)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False, prune_unused=True)
 

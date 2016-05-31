@@ -22,33 +22,24 @@ def init_output():
       return
   os.makedirs('out')
 
-def fitness(sim):
+def fitness(genome):
+  physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
+                                damping=0.4, timestep = .05)
+  sim = Simulation(genome, physics, simulation_dimensions)
+  sim.run(80)
+
   k = 75
   n = len(sim.cells)
   fitness = 1 - abs(n-k)
   return fitness
 
-# For multi core
-def evaluate_genome(genome, n_avgs=5):
-  # print("Starting genome simulation")
+def evaluate_genome(genome, n_avgs=1):
   fitnesses = []
-
-  for i in range(n_avgs):
-    physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
-                                    damping=0.4, timestep = .05)
-    sim = Simulation(genome, physics, simulation_dimensions)
-
-    for _ in range(10):
-      x = 400+20*(random.random()-.5)
-      y = 400+20*(random.random()-.5)
-      sim.create_cell(p=Vector(x,y))
-
-    sim.run(80)
-    fitnesses.append(fitness(sim))
+  for i in range(n_avgs):   
+    fitnesses.append(fitness(genome))
 
   return sum(fitnesses)/float(n_avgs)
 
-# For single core
 def evaluate_genomes(genomes):
   for g in genomes:
     g.fitness = evaluate_genome(g)
