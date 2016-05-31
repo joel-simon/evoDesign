@@ -180,7 +180,7 @@ class VoronoiSpringPhysics(object):
   def finished(self, steps):
     avg_energy = self.totalEnergy() / float(len(self.nodes))
 
-    if steps > 200:
+    if steps > 100:
       return True
 
     if (avg_energy < self.minEnergyThreshold and steps > 0):

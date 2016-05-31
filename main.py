@@ -9,18 +9,20 @@ from simulation import Simulation
 from cellGenome import CellGenome
 from Vector import Vector
 import random
+import argparse
+from os import path
 
 simulation_dimensions = (800,800)
 
-def init_output():
-  if os.path.exists('out'):
+def init_output(dirname):
+  if path.exists(dirname):
     # erase = input('Delete existing out folder? (y/n) :')
     if True:#erase.lower() == 'y':
-      os.system("rm -rf out")
+      os.system("rm -rf "+dirname)
     else:
       print('aborting.')
       return
-  os.makedirs('out')
+  os.makedirs(dirname)
 
 def fitness(genome):
   physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
@@ -45,31 +47,32 @@ def evaluate_genomes(genomes):
     g.fitness = evaluate_genome(g)
 
 def main(args):
-  generations = int(args[0])
-
-  local_dir = os.path.dirname(__file__)
-  config    = Config(os.path.join(local_dir, 'config.txt'))
+  local_dir = path.dirname(__file__)
+  config    = Config(path.join(local_dir, 'config.txt'))
   config.genotype = CellGenome
 
-  cores = 1
-
-  init_output()
+  init_output(args.out)
   pop = population.Population(config)
 
-  if cores > 1:
-    pe  = parallel.ParallelEvaluator(cores, evaluate_genome)
-    pop.run(pe.evaluate, generations)
+  if args.cores > 1:
+    pe  = parallel.ParallelEvaluator(args.cores, evaluate_genome)
+    pop.run(pe.evaluate, args.generations)
   else:
-    pop.run(evaluate_genomes, generations)
+    pop.run(evaluate_genomes, args.generations)
 
   # Save the winner.
   print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
-  # winner = pop.statistics.best_genome()
-  # with open('out/nn_winner_genome', 'wb') as f:
-  #   pickle.dump(winner, f)
 
-  with open('out/population.p', 'wb') as f:
+  with open(path.join(args.out,'population.p'), 'wb') as f:
     pickle.dump(pop, f)
 
 if __name__ == '__main__':
-  main(sys.argv[1:])
+  import inspect
+  print inspect.getsourcelines(fitness)
+
+  # parser = argparse.ArgumentParser()
+  # parser.add_argument('-o', '--out', help='Output directory', required=True)
+  # parser.add_argument('-g', '--generations', help='', required=True, type=int)
+  # parser.add_argument('-c', '--cores', help='', required=False, default=None, type=int)
+  # args = parser.parse_args()
+  # main(args)

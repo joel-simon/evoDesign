@@ -108,6 +108,14 @@ class Simulation(object):
       px = cell.px + random.random()-.5
       py = cell.py + random.random()-.5
       daughter = self.create_cell(px, py)
+      for i in range(1):
+        daughter.morphogen_concentrations[i][0] = cell.morphogen_concentrations[i][0]/2
+        daughter.morphogen_concentrations[i][1] = cell.morphogen_concentrations[i][1]/2
+
+        cell.morphogen_concentrations[i][0] /= 2
+        cell.morphogen_concentrations[i][1] /= 2
+
+
       change = True
 
     # Morphogen Spread.
