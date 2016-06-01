@@ -10,6 +10,8 @@ screen = pygame.display.set_mode((800, 800))
 from physics import VoronoiSpringPhysics
 from os.path import join
 import sys
+import os
+import subprocess
 
 def plot(nodes, edges):
   map_pos = lambda p: (int(p[0]), 800-int(p[1]))
@@ -42,10 +44,10 @@ def plot(nodes, edges):
 
     pygame.gfxdraw.filled_circle(screen, x, y, int(node.r), (200,10,10, red))
 
-  for (node1, node2) in edges:
-    x1, y1 = map_pos((node.px, node.py))
-    x2, y2 = map_pos((node.px, node.py))
-    pygame.gfxdraw.line(screen, x1, y1, x2, y2, (10,10,10))
+  # for (node1, node2) in edges:
+  #   x1, y1 = map_pos((node.px, node.py))
+  #   x2, y2 = map_pos((node.px, node.py))
+  #   pygame.gfxdraw.line(screen, x1, y1, x2, y2, (10,10,10))
 
   # vor = Voronoi(points)
   # verts = vor.vertices
@@ -65,11 +67,21 @@ def plot(nodes, edges):
 class VisualVoronoiSpringPhysics(VoronoiSpringPhysics):
   """docstring for VisualVoronoiSpringPhysics"""
   def __init__(self, *args, **kwargs):
+    self.save = kwargs['save']
+    del kwargs['save']
+    self.frame = 0
+    
+    os.system("rm -rf temp")
+    os.makedirs('temp')
+
     super(VisualVoronoiSpringPhysics, self).__init__(*args, **kwargs)
 
   def step(self):
     super(VisualVoronoiSpringPhysics, self).step()
     plot(self.nodes, self.edges())
+    if self.save:
+      pygame.image.save(screen, "temp/%i.jpg" % self.frame)
+      self.frame += 1
 
 def main(path):
   import pickle
@@ -80,16 +92,24 @@ def main(path):
   with open(join(path, 'population.p'), 'rb') as f:
     pop = pickle.load(f, encoding='latin1')
 
+  video_path = join(path, 'animation.avi')
+  save = True
+
   physics = VisualVoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
-                                        damping=0.4, timestep = .05)
+                                        damping=0.4, timestep = .05, save=save)
 
   best_genome = pop.statistics.best_genome()
-  # print('ready')
   sim = Simulation(best_genome, physics, (800, 800), verbose=True)
 
-  # print('2')
   sim.run(80)
   print('run over')
+
+  if save:
+    subprocess.call(['avconv','-i','temp/%d.jpg','-r','12',
+                    '-threads','auto','-qscale','1','-s','800x800', video_path])
+    os.system("rm -rf temp")
+    print 'Created video file.'
+
   while True:
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
