@@ -13,11 +13,20 @@ import sys
 import os
 import subprocess
 
+BLACK = (0,0,0)
+LIGHT_GREEN = (0, 200, 0, 10)
+
 def plot(nodes, edges):
   map_pos = lambda p: (int(p[0]), 800-int(p[1]))
   points = [(n.px, n.py) for n in nodes]
 
+
   screen.fill((255,255,255))
+
+  # pygame.draw.rect(screen,  LIGHT_GREEN, (0,0,800,200))
+  # pygame.draw.rect(screen,  LIGHT_GREEN, (0,0,200,800))
+  # pygame.draw.rect(screen,  LIGHT_GREEN, (0,600,800,200))
+
 
   c_a = [ n.morphogen_concentrations[0][0] for n in nodes ]
   c_b = [ n.morphogen_concentrations[0][1] for n in nodes ]
@@ -35,18 +44,14 @@ def plot(nodes, edges):
 
   for node in nodes:
     x, y = map_pos((node.px, node.py))
-    # print(node.px, node.py, x, y)
     pygame.gfxdraw.aacircle(screen, x, y, int(node.r), (10, 10, 10))
     a = node.morphogen_concentrations[0][0]
-
     red = int(200 * (a-m_range[0])/(1+m_range[1]-m_range[0]))
-    # blue = int(255 * node.morphogen_concentrations[0][1])
-
     pygame.gfxdraw.filled_circle(screen, x, y, int(node.r), (200,10,10, red))
 
   # for (node1, node2) in edges:
-  #   x1, y1 = map_pos((node.px, node.py))
-  #   x2, y2 = map_pos((node.px, node.py))
+  #   x1, y1 = map_pos((node1.px, node1.py))
+  #   x2, y2 = map_pos((node2.px, node2.py))
   #   pygame.gfxdraw.line(screen, x1, y1, x2, y2, (10,10,10))
 
   # vor = Voronoi(points)

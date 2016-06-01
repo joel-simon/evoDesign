@@ -5,6 +5,7 @@ from physics import VoronoiSpringPhysics
 import random
 
 import time
+import math
 
 # from visualize import plot
 
@@ -14,16 +15,21 @@ def clamp(n, minn=0, maxn=1):
 class Simulation(object):
   def __init__(self, genome, physics, dimensions, verbose=False):
     self.genome = genome
-    self.cells = dict()
-    self.next_cell_id = 0
     self.physics = physics
     self.verbose = verbose
-    self.steps_since_change = 0
+
+    self.reset()
 
     for _ in range(10):
       x = 400+20*(random.random()-.5)
       y = 400+20*(random.random()-.5)
       self.create_cell(x, y)
+
+  def reset(self):
+    self.cells = dict()
+    self.next_cell_id = 0
+    self.steps_since_change = 0
+
 
   def create_cell(self, px, py, cell_type=0):
     cell = Cell(self.next_cell_id, self.genome, px, py, cell_type)
@@ -45,14 +51,24 @@ class Simulation(object):
   #   return self.physics.neighbors(cell)
   # def spread_
 
-  def spread_morphogen(self, steps=500, saturate=False):
-    Da = 0.02   #diffusion of the activator (unit: , if regions on x-axis have a width of 1 mu)
-    Ra = 0.02   #removal rate of the activator
-    Pa = 0.001   #activator-independent activator production rate
+  def spread_morphogen(self, mid, morphogen, steps=500, saturate=False):
+    values = morphogen.values()
+    Da = values['activator_diffusion']
+    Ra = values['activator_decay']
+    Pa = values['activator_production']
 
-    Db = 0.15   #Diffusion of the inhibitor
-    Rb = 0.02   #Removal rate of the inhibitor
-    Pb = 0.001  #activator-independent inhibitor production rate
+    Db = values['inhibitor_diffusion']
+    Rb = values['inhibitor_decay']
+    Pb = values['inhibitor_production']
+
+
+    # Da = 0.02   #diffusion of the activator (unit: , if regions on x-axis have a width of 1 mu)
+    # Ra = 0.02   #removal rate of the activator
+    # Pa = 0.001   #activator-independent activator production rate
+
+    # Db = 0.15   #Diffusion of the inhibitor
+    # Rb = 0.02   #Removal rate of the inhibitor
+    # Pb = 0.001  #activator-independent inhibitor production rate
 
     for s in range(steps):
       new_values = { cell: [0,0] for cell in self.cells.values() }
@@ -90,8 +106,14 @@ class Simulation(object):
         new_values[cell][1] = bv+Prod_b-Rem_b+(Db*Dif_b)
 
       for cell in self.cells.values():
-        cell.morphogen_concentrations[0][0] = new_values[cell][0]
-        cell.morphogen_concentrations[0][1] = new_values[cell][1]
+        new_values[cell][0] = max(new_values[cell][0], 0)
+        new_values[cell][1] = max(new_values[cell][1], 0)
+
+        if not math.isnan(new_values[cell][0]):
+          cell.morphogen_concentrations[0][0] = new_values[cell][0]
+
+        if not math.isnan(new_values[cell][1]):
+          cell.morphogen_concentrations[0][1] = new_values[cell][1]
 
     C = [ n.morphogen_concentrations[0][0] for n in self.cells.values() ]
 
@@ -129,7 +151,9 @@ class Simulation(object):
     # self.calculate_light()
     changes_made = False
     self.physics.run()
-    self.spread_morphogen(steps=500)
+
+    for mid, morphogen in self.genome.morphogen_genes.items():
+      self.spread_morphogen(mid, morphogen, steps=1000)
 
     derp = [(cell, cell.get_outputs()) for cell in self.cells.values()]
 

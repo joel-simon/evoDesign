@@ -43,7 +43,7 @@ def main(dirname):
   visualize.draw_net(winner, view=True, node_names=node_names,
                     filename=join(dirname,"nn_winner.gv"))
 
-  plot_scores(winner, filename=join(dirname, 'scores.png'), n=100)
+  # plot_scores(winner, filename=join(dirname, 'scores.png'), n=100)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled.gv", show_disabled=False)
   # visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False, prune_unused=True)
 
