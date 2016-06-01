@@ -1,18 +1,21 @@
 import os
 import sys
 import pickle
+import random
+import argparse
+from os import path
+import math
 
 from neat import nn, parallel, population
 from neat.config import Config
 from physics import VoronoiSpringPhysics
 from simulation import Simulation
 from cellGenome import CellGenome
-from Vector import Vector
-import random
-import argparse
-from os import path
 
 simulation_dimensions = (800,800)
+
+def make_array(w, h):
+  return [[0 for x in range(w)] for y in range(h)]
 
 def init_output(dirname):
   if path.exists(dirname):
@@ -28,16 +31,45 @@ def fitness(genome):
   physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
                                 damping=0.4, timestep = .05)
   sim = Simulation(genome, physics, simulation_dimensions)
-  sim.run(80)
+  sim.run(100)
 
-  k = 75
   n = len(sim.cells)
-  fitness = 1 - abs(n-k)
+
+  if n < 10:
+    return 0
+
+  if n < 20:
+    size_score = n/20.0
+  else:
+    size_score = 1
+
+  minX, maxX, minY, maxY = 0,0,0,0
+  for cell in sim.cells.values():
+    minX = min(cell.px, minX)
+    maxX = max(cell.px, maxX)
+    minY = min(cell.py, minY)
+    maxY = max(cell.py, maxY)
+
+  width = maxX - minX
+  height = maxY - minY
+  # print width, height
+  shape_score = 1.0 / (1.0 + math.exp(-(height/width - 2)))
+
+  fitness = .3*size_score + .7*shape_score
+  # for y in range(simulation_dimensions[0]):
+  #   for x in range(simulation_dimensions[1]):
+  #     if x < 200 or y < 200 or y > 600:
+  #       target[x][y] = 1
+
+  # fitness = np.logical_not(np.logical_xor(target, prediction)).mean()
+  # k = 75
+  # n = len(sim.cells)
+  # fitness = 1 - abs(n-k)
   return fitness
 
 def evaluate_genome(genome, n_avgs=1):
   fitnesses = []
-  for i in range(n_avgs):   
+  for i in range(n_avgs):
     fitnesses.append(fitness(genome))
 
   return sum(fitnesses)/float(n_avgs)

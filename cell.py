@@ -49,7 +49,7 @@ class Cell(Node):
 
     # Used by create inputs.
     def get_threshold(self, c):
-        max_value = 5
+        max_value = 20
         p = c/max_value
         p = min(p, .9999)
         th = self.genome.morphogen_thresholds
