@@ -37,22 +37,22 @@ class MorphogenGene(object):
             self, ID,
             activator_diffusion=0.02,
             activator_decay=0.02,
-            activator_production=0.001,
+            # activator_production=0.001,
 
             inhibitor_diffusion=0.15,
             inhibitor_decay=0.02,
-            inhibitor_production=0.001
+            # inhibitor_production=0.001
         ):
 
         self.ID = ID
         self.components = {
             'activator_diffusion' :  AttributeGene(1, activator_diffusion, maxv=.15),
             'activator_decay' :  AttributeGene(1, activator_decay, maxv=.5),
-            'activator_production' :  AttributeGene(1, activator_production, maxv=.5),
+            # 'activator_production' :  AttributeGene(1, activator_production, maxv=.5),
 
             'inhibitor_diffusion' :  AttributeGene(1, inhibitor_diffusion, maxv=.15),
             'inhibitor_decay' :  AttributeGene(1, inhibitor_decay, maxv=.5),
-            'inhibitor_production' :  AttributeGene(1, inhibitor_production, maxv=.5)
+            # 'inhibitor_production' :  AttributeGene(1, inhibitor_production, maxv=.5)
         }
 
 

@@ -55,11 +55,11 @@ class Simulation(object):
     values = morphogen.values()
     Da = values['activator_diffusion']
     Ra = values['activator_decay']
-    Pa = values['activator_production']
+    Pa = 0#values['activator_production']
 
     Db = values['inhibitor_diffusion']
     Rb = values['inhibitor_decay']
-    Pb = values['inhibitor_production']
+    Pb = 0#values['inhibitor_production']
 
 
     # Da = 0.02   #diffusion of the activator (unit: , if regions on x-axis have a width of 1 mu)

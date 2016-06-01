@@ -27,6 +27,16 @@ def init_output(dirname):
       return
   os.makedirs(dirname)
 
+def fitness2(genome):
+  physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
+                                damping=0.4, timestep = .05)
+  sim = Simulation(genome, physics, simulation_dimensions)
+  sim.run(100)
+  k = 75
+  n = len(sim.cells)
+  fitness = 1 - abs(n-k)
+  return fitness
+
 def fitness(genome):
   physics = VoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
                                 damping=0.4, timestep = .05)
@@ -61,10 +71,6 @@ def fitness(genome):
   #     if x < 200 or y < 200 or y > 600:
   #       target[x][y] = 1
 
-  # fitness = np.logical_not(np.logical_xor(target, prediction)).mean()
-  # k = 75
-  # n = len(sim.cells)
-  # fitness = 1 - abs(n-k)
   return fitness
 
 def evaluate_genome(genome, n_avgs=1):

@@ -12,6 +12,7 @@ from os.path import join
 import sys
 import os
 import subprocess
+import argparse
 
 BLACK = (0,0,0)
 LIGHT_GREEN = (0, 200, 0, 10)
@@ -88,17 +89,17 @@ class VisualVoronoiSpringPhysics(VoronoiSpringPhysics):
       pygame.image.save(screen, "temp/%i.jpg" % self.frame)
       self.frame += 1
 
-def main(path):
+def main(args):
   import pickle
   import sys
   import random
   from simulation import Simulation
-
+  path = args.dir
   with open(join(path, 'population.p'), 'rb') as f:
     pop = pickle.load(f, encoding='latin1')
 
   video_path = join(path, 'animation.avi')
-  save = True
+  save = args.save
 
   physics = VisualVoronoiSpringPhysics(stiffness=400.0, repulsion=400.0,
                                         damping=0.4, timestep = .05, save=save)
@@ -113,7 +114,7 @@ def main(path):
     subprocess.call(['avconv','-i','temp/%d.jpg','-r','12',
                     '-threads','auto','-qscale','1','-s','800x800', video_path])
     os.system("rm -rf temp")
-    print 'Created video file.'
+    print('Created video file.')
 
   while True:
     for event in pygame.event.get():
@@ -121,7 +122,8 @@ def main(path):
         sys.exit()
 
 if __name__ == '__main__':
-  if len(sys.argv) == 1:
-    main('./out')
-  else:
-    main(sys.argv[1])
+  parser = argparse.ArgumentParser()
+  parser.add_argument('-d', '--dir', help='Input directory', required=True)
+  parser.add_argument('--save')
+  args = parser.parse_args()
+  main(args)

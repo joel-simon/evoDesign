@@ -11,7 +11,7 @@ class CellGenome(Genome):
 
         self.cell_types = 1
         self.num_morphogens = 1
-        self.morphogen_thresholds = 6
+        self.morphogen_thresholds = 4
 
         self.morphogen_genes = dict()
         self.attribute_genes = dict()
@@ -73,5 +73,10 @@ class CellGenome(Genome):
 
     def __str__(self):
         # s = 'Morphogens:'
-        return super(CellGenome, self).__str__()
-
+        s = super(CellGenome, self).__str__()
+        s += '\n'
+        for mid, m in self.morphogen_genes.items():
+            s += 'Morphogen %i:' % mid
+            for k, v in m.values().items():
+                s += '\n\t%s:%s' % (k,v)
+        return s
