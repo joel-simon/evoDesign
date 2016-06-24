@@ -25,7 +25,7 @@ class SoftPhysics(Framework):
         self.joints = []
         self.contacts = []
 
-        self.nodes_per_body = 36
+        self.nodes_per_body = 50
         self.break_thresshold = 1000
 
     def run(self):
