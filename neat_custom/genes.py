@@ -8,7 +8,7 @@ class AttributeGene(object):
         self.maxv = 1.0
         self.value = max(self.minv, min(self.maxv, value))
         if mutate_power == None:
-            self.mutate_power = self.value
+            self.mutate_power = self.value/2
 
     def __str__(self):
         return 'Attribute Gene:'+str(self.value)
@@ -57,6 +57,7 @@ class MorphogenGene(object):
 
 
     def mutate(self, config):
+        # return
         for gene in self.components.values():
             gene.mutate(config)
 
