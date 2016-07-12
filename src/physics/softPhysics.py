@@ -66,38 +66,33 @@ class SoftPhysics(Framework):
         shapes=b2PolygonShape(box=dimensions),
       )
 
-    # def neighbors(self, node):
-    #   result = []
-    #   for joint in self.world.joints:
-    #     if body_node[joint.bodyA] == node:
-    #       result.append(joint.bodyB.userData)
-    #     elif body_node[joint.bodyB] == node:
-    #       result.append(joint.bodyA.userData)
-
-    #   return result
+    def neighbors(self, node):
+      result = []
+      for joint in self.world.joints:
+        if body_node[joint.bodyA] == node:
+          result.append(joint.bodyB.userData)
+        elif body_node[joint.bodyB] == node:
+          result.append(joint.bodyA.userData)
 
     def BeginContact(self, contact):
         self.contacts.append(contact)
 
-
-    def divide(self, body):
-        daughter_body = body.divide()
-        self.cell_bodies.append(daughter_body)
-        # pass
-        # return daughter
+    def divide_body(self, body, angle):
+        daughter_body = body.divide(angle)
+        if daughter_body:
+            self.cell_bodies.append(daughter_body)
+            return daughter_body
+        else:
+            return None
 
     # Functions used by simulation
-    def grow(self, body):
-        joint = body.grow()
-        # print('joint', joint)
-        self.nuke_joints.append(joint)
-
+    def grow_body(self, body, n=1):
+        body.grow(n)
 
     def Step(self, settings):
         for cell in self.cell_bodies:
             cell.step()
             for joint in cell.nuke_joints:
-                cell.joints.remove(joint)
                 self.world.DestroyJoint(joint)
                 joint = None
             cell.nuke_joints = []
@@ -105,7 +100,7 @@ class SoftPhysics(Framework):
         for contact in self.contacts:
             bodyA, bodyB = (contact.fixtureA.body, contact.fixtureB.body)
 
-            if not (bodyA.userData and  bodyB.userData):
+            if not (bodyA.userData and bodyB.userData):
                 continue
 
             if bodyA.userData['parent'] != bodyB.userData['parent']:

@@ -109,10 +109,8 @@ class VoronoiSpringPhysics(object):
     return self.distance(node_a, node_b) < (node_a.r + node_b.r)
 
   def updateEdges(self):
-    # self.clear_edges()
-    # edges = self.edges()
     for node_a, node_b in list(self.edges()):
-      if self.distance(node_a, node_b) > (node_a.r + node_b.r)*1.2:
+      if self.distance(node_a, node_b) > (node_a.r + node_b.r)*3:
         self.remove_edge(node_a, node_b)
 
     n = len(self.nodes)
@@ -132,16 +130,21 @@ class VoronoiSpringPhysics(object):
 
       id_nodes = {i: n for i, n in enumerate(self.nodes) }
 
-      for ia, ib, ic in tri.vertices:
-        node_a = id_nodes[ia]
-        node_b = id_nodes[ib]
-        node_c = id_nodes[ic]
-        if self.intersecting(node_a, node_b):
-          self.add_edge(id_nodes[ia], id_nodes[ib])
-        if self.intersecting(node_b, node_c):
-          self.add_edge(id_nodes[ib], id_nodes[ic])
-        if self.intersecting(node_a, node_c):
-          self.add_edge(id_nodes[ic], id_nodes[ia])
+      # for ia, ib, ic in tri.vertices:
+      #   node_a = id_nodes[ia]
+      #   node_b = id_nodes[ib]
+      #   node_c = id_nodes[ic]
+      #   if self.intersecting(node_a, node_b):
+      #     self.add_edge(id_nodes[ia], id_nodes[ib])
+      #   if self.intersecting(node_b, node_c):
+      #     self.add_edge(id_nodes[ib], id_nodes[ic])
+      #   if self.intersecting(node_a, node_c):
+      #     self.add_edge(id_nodes[ic], id_nodes[ia])
+    for ia, ib, ic in tri.vertices:
+      self.add_edge(id_nodes[ia], id_nodes[ib])
+      self.add_edge(id_nodes[ib], id_nodes[ic])
+      self.add_edge(id_nodes[ic], id_nodes[ia])
+
 
   def step(self):
     assert(len(self.nodes) != 0)
@@ -174,38 +177,3 @@ class VoronoiSpringPhysics(object):
     while not self.finished(steps):
       self.step()
       steps += 1
-
-    # print(self.steps, avg_energy)
-    # print("Finished force diagram step:", steps, '\n')
-
-
-  # def applyConstraints():
-  #   for node in self.nodes:
-  #     x, y = node.p
-  #     assert(type(x) == type(1.0))
-  #     assert(type(y) == type(1.0))
-  #     vx, vy = node.v
-
-  #     if x < 0:
-  #       x = 0
-  #       if vx < 0:
-  #         vx *= -1
-
-  #     elif x > 800:
-  #       x = 800
-  #       if vx > 0:
-  #         vx *= -1
-
-  #     if y < 0:
-  #       y = 0
-  #       if vy < 0:
-  #         vy *= -1
-
-  #     elif y > 800:
-  #       y = 800
-  #       if vy > 0:
-  #         vy *= -1
-  #     node.p = Vector(x, y)
-  #     node.v = Vector(vx, vy)
-
-

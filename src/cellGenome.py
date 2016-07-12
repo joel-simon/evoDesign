@@ -12,30 +12,20 @@ class CellType(object):
 
 class CellGenome(Genome):
     """Extend the default genome with more behavior."""
-    def __init__(self, *args, **kwargs):
-        super(CellGenome, self).__init__(*args, **kwargs)
+    def __init__(self, ID, config, parent1_id, parent2_id):
+        super(CellGenome, self).__init__(ID, config, parent1_id, parent2_id)
 
         # Start with one cell type with default params.
         self.cell_types = [CellType(0)]
 
-        self.num_morphogens = 1
-        self.morphogen_thresholds = 4
 
         self.morphogen_genes = dict()
         self.attribute_genes = dict()
 
-        self.inputs = [
-            'stress'
-        ]
-
-        self.outputs = [
-            ('apoptosis', 'sigmoid', True),
-            ('divide_sin', 'tanh', False),
-            ('divide_cos', 'tanh', False),
-            ('grow', 'tanh', False)
-            # ('grow0', 'identity'),
-            # ('grow1', 'identity')
-        ]
+        self.inputs = config.genome_config['inputs']
+        self.outputs = config.genome_config['outputs']
+        self.num_morphogens = config.genome_config['num_morphogens']
+        self.morphogen_thresholds = config.genome_config['morphogen_thresholds']
 
         for i in range(self.num_morphogens):
             # Create the morphogen gene with ranodm values.

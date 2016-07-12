@@ -10,36 +10,40 @@ from neat import population, visualize
 from neat.config import Config
 from .cellGenome import CellGenome
 
-from .physics import VoronoiSpringPhysics
 from .simulation import Simulation
+from .physics.softPhysics import SoftPhysics
 
 class Experiment(object):
-    def __init__(self, cores=1, generations=100, out_dir='./out/derp'):
+    def __init__(self, cores, generations, population, out_dir='./out/derp'):
         # Run options
         self.cores = cores
         self.out_dir = out_dir
         self.generations = generations
+        self.population = population
 
         # Simulation
         self.simulation_config = {
-            'max_steps' : 100,
-            # 'dimensions' : (800,800),
-            # 'start_size' : 10,
-            'max_size' : 200,
+            'max_steps': 100,
+            'bounds' : 100
+        }
 
-            # Cell config
-            'gravity' : False,
-            'morphogens' : False,
-            'stress' : False
+        # Genome
+        self.genome_config = {
+            'num_morphogens': 0,
+            'morphogen_thresholds': 4,
+            'inputs': [
+            ],
+
+            'outputs': [
+            ]
+
         }
 
         # Physics
-        self.physics = VoronoiSpringPhysics
+        self.physics = SoftPhysics
+        self.physics.render = True
         self.physics_config = {
-            'stiffness': 400.,
-            'repulsion': 400.,
-            'damping': .5,
-            'timestep': .03
+            'max_steps': 200,
         }
 
         if path.exists(out_dir):
@@ -103,14 +107,19 @@ class Experiment(object):
 
         print('Report finished.')
 
+    def set_up(self, sim):
+        raise NotImplementedError
+
     def run(self):
         print('Running:')
         print(pprint(vars(self)))
 
         # Change the Genome used.
         local_dir = path.dirname(__file__)
-        config    = Config(path.join(local_dir, '../config.txt'))
+        config = Config(path.join(local_dir, '../config.txt'))
         config.genotype = CellGenome
+        config.genome_config = self.genome_config
+        config.pop_size = self.population
 
         # Create a population.
         pop = population.Population(config)

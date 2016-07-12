@@ -1,13 +1,17 @@
+import numpy as np
+# impoty
 
+def pca(X):
+  n_samples, n_features = X.shape
+  X -= np.mean(X, axis=0)
+  U, S, V = np.linalg.svd(X, full_matrices=False)
+  explained_variance_ = (S ** 2) / n_samples
+  explained_variance_ratio_ = (explained_variance_ /
+                               explained_variance_.sum())
+  return (V, explained_variance_ratio_)
 
-# def pca(X):
-#   n_samples, n_features = X.shape
-#   X -= np.mean(X, axis=0)
-#   U, S, V = np.linalg.svd(X, full_matrices=False)
-#   explained_variance_ = (S ** 2) / n_samples
-#   explained_variance_ratio_ = (explained_variance_ /
-#                                explained_variance_.sum())
-#   return (V, explained_variance_ratio_)
+  # print(U, S, V)
+print pca(np.array([[0,0], [1,0], [1,.02]]))
 
 # GREEN = (0,200,0)
 # RED   = (200,0,0)

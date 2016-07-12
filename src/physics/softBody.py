@@ -18,7 +18,7 @@ class SoftBody(PhysicsBody):
     def __init__(self, world, position, radius, n_bodies, bodies=None):
         self.world = world
         self.damping = .8
-        self.softness = 5000
+        self.softness = 10000
         self.nuke_joints = []
         self.userData = dict()
 
@@ -40,27 +40,32 @@ class SoftBody(PhysicsBody):
             for i in range(1, n_bodies):
                 self.add_joint(self.bodies[i], self.bodies[i-1])
         else:
+            assert(len(bodies) > 0)
+            assert(len(bodies[0].fixtures) > 0)
             self.joints = []
             self.bodies = bodies
             self.node_radius = bodies[0].fixtures[0].shape.radius
             self.change_in_bodies()
+            print('takign %i bodies'%len(self.bodies))
             for body in self.bodies:
                 body.userData['parent'] = self
 
-
-    def _create_body(self, position):
+    def _create_body(self, position, ind=None):
         body = self.world.CreateDynamicBody(
             position=position,
-            userData={'parent': self},
+            userData={ 'parent': self },
             fixedRotation = True,
-            # linearDamping=.00
+            linearDamping=.6
         )
         body.CreateCircleFixture(
             shape=b2CircleShape(radius=self.node_radius),
             # density=.01,
            friction=.4
         )
-        self.bodies.append(body)
+        if ind != None:
+            self.bodies.insert(ind, body)
+        else:
+            self.bodies.append(body)
         return body
 
     def change_in_bodies(self):
@@ -149,35 +154,32 @@ class SoftBody(PhysicsBody):
             # print(force_vector)
             body.ApplyForce(force=(force_vector[0], force_vector[1]), point=(0,0), wake=False)
 
-    def grow(self):
-        print('growing', self.initvolume)
+    def grow(self, n=1):
+        print('growing', n, self.initvolume)
 
-        joint = random.choice(self.joints)
-        bodyA = joint.bodyA
-        bodyB = joint.bodyB
+        joints = random.sample(self.joints, n)
+        # joint = random.choice(self.joints)
+        for joint in joints:
+            bodyA = joint.bodyA
+            bodyB = joint.bodyB
+            # print(bodyA.userData['parent'] == self)
+            # print(bodyB.userData['parent'] == self)
+            # print(bodyB.userData['parent'] == bodyA.userData['parent'])
+            ind = self.bodies.index(bodyB)
+            body = self._create_body((bodyA.position+bodyB.position)/2, ind)
 
-        self.nuke_joints.append(joint)
-        self.joints.remove(joint)
-
-        body = self.world.CreateDynamicBody(
-            position=(bodyA.position+bodyB.position)/2,
-            userData={'cell': self},
-            fixedRotation = True,
-        )
-        body.CreateCircleFixture(
-            shape=b2CircleShape(radius=self.node_radius,),
-        )
-        self.bodies.insert(self.bodies.index(bodyB), body)
-
-        self.add_joint(bodyA, body)
-        self.add_joint(body, bodyB)
+            self.add_joint(bodyA, body)
+            self.add_joint(body, bodyB)
+            self.nuke_joints.append(joint)
+            self.joints.remove(joint)
 
         self.change_in_bodies()
 
-        return joint
-
     def get_stress(self):
         return self.volume() / self.initvolume
+
+    def get_size(self):
+        return len(self.bodies)
 
     def awake(self):
         return True
@@ -194,7 +196,10 @@ class SoftBody(PhysicsBody):
         center = self.center()
         def key(body):
             diff = body.position - center
-            return math.atan2(diff[1], diff[0])
+            a = math.atan2(diff[1], diff[0])
+            if a < 0:
+                a = 2*pi - abs(a)
+            return a
         self.bodies.sort(key = key)
 
     # Utility function used by divide to created nodes linkings two others.
@@ -205,7 +210,7 @@ class SoftBody(PhysicsBody):
         body_distance = (bodyA.position - bodyB.position).Normalize() * k
 
         num_new = max(1, math.floor(body_distance/(self.node_radius*2)))
-        print('dist', body_distance, num_new)
+        # print('dist', body_distance, num_new)
         assert(num_new > 0)
 
         X = np.linspace(bodyB.position[0],bodyA.position[0],num_new, endpoint=False)
@@ -223,7 +228,9 @@ class SoftBody(PhysicsBody):
 
         self.change_in_bodies()
 
-    def divide(self, angle=0):
+    def divide(self, angle):
+        if len(self.bodies) < 24:
+            return None
         center = self.center()
         bodyA, bodyB = None, None
         min_a, min_b = 3, 3
@@ -231,6 +238,9 @@ class SoftBody(PhysicsBody):
         for body in self.bodies:
             diff = body.position - center
             body_angle = math.atan2(diff[1], diff[0])
+            if body_angle < 0:
+                body_angle = 2*pi - abs(body_angle)
+
             if angle_dist(body_angle, angle) < min_a:
                 bodyA = body
                 min_a = angle_dist(body_angle, angle)
@@ -239,27 +249,38 @@ class SoftBody(PhysicsBody):
                 bodyB = body
                 min_b = angle_dist(body_angle, angle+pi)
 
+
         # The points to split the cell
         i, j = sorted((self.bodies.index(bodyA), self.bodies.index(bodyB)))
+        print('dividing', len(self.bodies), i, j)
+        # j = j%
+        a, b, = self.bodies[i-1], self.bodies[j+1]
 
-        # return
-        other_bodies = self.bodies[:i] + self.bodies[j:]
-        self.bodies = self.bodies[i:j]
+        nb = len(self.bodies)
+        other_bodies = self.bodies[:i] + self.bodies[j+1:]
+        self.bodies = self.bodies[i:j+1]
 
+        if i==j:
+            print(angle, i, len(self.bodies))
+        assert(i != j)
+        assert(len(other_bodies)+len(self.bodies) == nb)
         assert(len(other_bodies) > 0)
         assert(len(self.bodies) > 0)
 
-            # if joint.bodyA == self.bodies[j] and joint.bodyB == self.bodies[j+1]:
-            #     self.nuke_joints.append(joint)
+        self._connect(self.bodies[-1], self.bodies[0])
 
-        self._connect(self.bodies[0], self.bodies[-1])
         self.order_bodies()
 
         daughter = SoftBody(self.world, None, None, None, other_bodies)
-        daughter._connect(other_bodies[0], other_bodies[-1])
+
+        daughter._connect(a, b)
+
         daughter.order_bodies()
 
-        for joint in self.joints:
+        for body in daughter.bodies:
+            assert(body.userData['parent'] == daughter)
+
+        for joint in list([j for j in self.joints]):
             parentA = joint.bodyA.userData['parent']
             parentB = joint.bodyB.userData['parent']
             if (parentA == daughter) and (parentB == daughter):
@@ -267,11 +288,25 @@ class SoftBody(PhysicsBody):
                 self.joints.remove(joint)
             elif (parentA != parentB):
                 self.nuke_joints.append(joint)
+                self.joints.remove(joint)
+
+        # for joint in self.joints:
+        #     parentA = joint.bodyA.userData['parent']
+        #     parentB = joint.bodyB.userData['parent']
+        #     if parentA != self:
+        #         print(parentA)
+        #         print(self)
+        #         print(daughter)
+        #     assert(parentA == self)
+        #     assert(parentB == self)
 
         # for joint in daughter.joints:
-        #     self.joints.remove(joint)
+        #     parentA = joint.bodyA.userData['parent']
+        #     parentB = joint.bodyB.userData['parent']
+        #     assert(parentA == daughter)
+        #     assert(parentB == daughter)
 
-        print(len(self.bodies), len(daughter.bodies))
+        # print(len(self.bodies), len(daughter.bodies))
 
         return daughter
 

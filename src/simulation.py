@@ -1,35 +1,24 @@
-from src.cell import Cell#cell_factory
-
+from src.cell import Cell
 import random
-
 import time
 import math
-from Box2D import b2Vec2
 
 class Simulation(object):
-    def __init__(self, genome, physics, bounds=True,
-                                max_size=999, render=None, verbose=False, gravity=False,
-                                morphogens=False, stress=False, max_steps=100):
+    def __init__(self, genome, physics, bounds=200,
+                    max_size=999, verbose=False
+                    max_steps=100):
         self.genome = genome
         self.physics = physics
         self.verbose = verbose
-        self.render = render
         self.max_steps = max_steps
         self.max_size = max_size
-        self.gravity = gravity
         self.reset()
         self.bounds = bounds
         self.steps = 0
 
-        # Create a cell class that inherits each cell_type parent class
-        # self.Cells = []
-        # for cell_type in genome.cell_types:
-        #   self.Cells.append(cell_factory(cell_type))
-        # print self.Cells
-
-        if self.bounds:
+        if self.bounds != None:
             t = 20
-            w = 200
+            w = self.bounds
             # Floor
             self.physics.create_static_box(position=(0,-t/2),dimensions=(w/2,t/2))
             # Ceiling
@@ -44,13 +33,12 @@ class Simulation(object):
         self.steps_since_change = 0
 
     def get_id(self):
-        return self.next_cell_id
         self.next_cell_id += 1
+        return self.next_cell_id
 
-    def create_cell(self, position, size=[1, 1], cell_type=0):
-        # cell_type = self.genome.cell_types[cell_type]
-
-        body = self.physics.create_body(position, size)
+    def create_cell(self, position, size=[1, 1], cell_type=0, body=None):
+        if body == None:
+            body = self.physics.create_body(position, size)
         cell = Cell(self.get_id(), self.genome, body)
         self.cells.append(cell)
         body.userData['cell'] = cell
@@ -60,57 +48,19 @@ class Simulation(object):
         self.physics.destroy_body(cell.body)
         self.cells.remove(cell)
 
-    # def divide_cell(self, cell):
-    #   px = cell.px + random.random()-.5
-    #   py = cell.py + random.random()-.5
-    #   daughter = self.create_cell(px, py)
-    #   for i in range(1):
-    #     daughter.morphogen_concentrations[i][0] = cell.morphogen_concentrations[i][0]/2
-    #     daughter.morphogen_concentrations[i][1] = cell.morphogen_concentrations[i][1]/2
+    def divide_cell(self, cell, angle):
+        daughter_body = self.physics.divide_body(cell.body, angle)
+        if daughter_body:
+            daughter = Cell(self.get_id(), self.genome, daughter_body)
+            daughter_body.userData['cell'] = daughter
+            return daughter
+        return None
 
-    #     cell.morphogen_concentrations[i][0] /= 2
-    #     cell.morphogen_concentrations[i][1] /= 2
-
-    def divide_cell(self, cell):
-        daughter = self.physics.divide(cell.body)
-        self.cells.append(daughter)
-        # body = cell.body
-        # fixt = body.fixtures[0]
-        # oldw = 2*abs(fixt.shape.vertices[0][0])
-        # oldh = 2*abs(fixt.shape.vertices[0][1])
-
-        # axis = 0
-        # if oldh > oldw:
-        #     axis = 1
-
-        # angle   = body.angle - (math.radians(90) * (axis))
-        # angvect = b2Vec2(math.cos(angle), math.sin(angle))
-
-        # w = oldw
-        # h = oldh
-
-        # if axis == 0:
-        #     w/=2
-        # else:
-        #     h/=2
-
-        # self.physics.set_size(body, w, h)
-
-        # daughter = self.create_cell(position=body.position, size=(w, h))
-        # daughter.body.angle = body.angle
-
-        # if axis == 1:
-        #     body.position -= angvect * (oldh/4)
-        #     daughter.body.position += angvect * (oldh/4)
-        # else:
-        #     body.position -= angvect * (oldw/4)
-        #     daughter.body.position += angvect * (oldw/4)
-
-        # self.physics.add_edge(body, daughter.body)
-        # return daughter
-
-    def grow_cell(self, cell, axis0, axis1):
-        self.physics.grow(cell.body, axis0, axis1)
+    def grow_cell(self, cell, n):
+        daughter_body = self.physics.grow_body(cell.body, n)
+        if daughter_body:
+            self.create_cell(None, None, None, daughter_body)
+            # self.cells.append(daughter)
 
     def spread_morphogen(self, mid, morphogen, steps=1000, saturate=False):
         values = morphogen.values()
@@ -178,20 +128,27 @@ class Simulation(object):
 
         for cell, outputs in derp:
 
-            # Cell Growth
-            self.grow_cell(cell, outputs['grow0'], outputs['grow1'])
-
-            # for mid in range(1): # Morphogen Spread.
-            #   cell.morphogen_productions[mid][0] += outputs['a1']
-            #   cell.morphogen_productions[mid][1] += outputs['h1']
-
             if outputs['apoptosis']:
+                print('apoptosis')
                 self.kill_cell(cell)
                 apoptosis += 1
+                # cannot apoptosis and do other things.
+                continue
 
-            if outputs['divide']:
-                self.divide_cell(cell)
+            # Cell Growth
+            if outputs['grow'] > .5:
+                self.grow_cell(cell, 1)
+
+
+            divides = [outputs['divide0'],outputs['divide1'],outputs['divide2'],outputs['divide3']]
+            if max(divides) > .5:
+                print('divide')
+                # angles = np.linspace(0,2*math.pi,4,endpoint=False)
+                angles = [ 0., 1.57079633,  3.14159265,  4.71238898]
+                angle = angles[divides.index(max(divides))]
+                self.divide_cell(cell, angle)
                 division += 1
+
 
         if (apoptosis + division > 0):
             self.steps_since_change = 0
@@ -207,8 +164,6 @@ class Simulation(object):
         #   for node_b in neighbors:
         #     assert(node_a in self.physics.adjacencies[node_b])
 
-        # if self.render:
-        #   self.render(self)
 
         if self.verbose:
             print('\tapoptosis:%i' % apoptosis)
@@ -237,7 +192,7 @@ class Simulation(object):
 
         while not self.finished():
             if self.verbose:
-                print("Simulation: step %i" % self.steps)
+                print('#'*20,"Simulation: step %i" % self.steps, '#'*20)
             self.step()
             self.steps += 1
 

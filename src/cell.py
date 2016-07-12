@@ -14,7 +14,7 @@ class Cell(object):
         self.genome = genome
         # self.cell_type = cell_type
         self.body = body
-        self.stress = 0
+        self.age = 0
 
         # cell_type = genome.cell_types[cell_type]
 
@@ -37,8 +37,14 @@ class Cell(object):
     def create_inputs(self):
         inputs = [0] * self.genome.num_inputs
 
+        # for i, (name, func) in enumerate(self.genome.inputs):
+        #     inputs[i] = func(self)
+
         if 'stress' in self.genome.inputs:
             inputs[self.genome.inputs.index('stress')] = self.body.get_stress()
+
+        if 'size' in self.genome.inputs:
+            inputs[self.genome.inputs.index('size')] = self.body.get_size() / 20.
 
         for m in range(self.num_morphogens):
             a = self.morphogen_concentrations[m][0]
