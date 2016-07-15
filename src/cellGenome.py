@@ -1,5 +1,5 @@
 from neat.genome import Genome
-from neat_custom.genes import AttributeGene, MorphogenGene
+from .neat_custom.genes import AttributeGene, MorphogenGene
 
 class CellType(object):
     """docstring for CellType"""

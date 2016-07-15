@@ -26,13 +26,13 @@ class fwSettings(object):
     backend = 'pygame'
 
     # Physics options
-    hz = 50.0
-    velocityIterations = 6
-    positionIterations = 2
+    hz = 120.0
+    velocityIterations = 6 *4
+    positionIterations = 2 *4
     # Makes physics results more accurate (see Box2D wiki)
     enableWarmStarting = True
     enableContinuous = True     # Calculate time of impact
-    enableSubStepping = False
+    enableSubStepping = True
 
     # Drawing
     drawStats = True

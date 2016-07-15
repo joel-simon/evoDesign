@@ -125,7 +125,7 @@ class FrameworkBase(b2ContactListener):
         self.__reset()
 
         # Box2D Initialization
-        self.world = b2World(gravity=(0, 0), doSleep=True)
+        self.world = b2World(gravity=(0, -10), doSleep=True)
 
         self.destructionListener = fwDestructionListener(test=self)
         self.world.destructionListener = self.destructionListener

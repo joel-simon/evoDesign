@@ -8,7 +8,6 @@ class FixedSize(Experiment):
 
         self.target = 100
 
-
         self.genome_config['inputs'] = [
           'stress',
           'size'
@@ -43,14 +42,14 @@ class FixedSize(Experiment):
         fitness = 1 - abs(n-self.target)/float(self.target)
         return fitness
 
-if __name__ == '__main__':
-  parser = argparse.ArgumentParser()
-  parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-  parser.add_argument('-g', '--generations', help='', default=100, type=int)
-  parser.add_argument('-p', '--population', help='', default=100, type=int)
-  parser.add_argument('-c', '--cores', help='', default=1, type=int)
-  args = parser.parse_args()
+# if __name__ == '__main__':
+#   parser = argparse.ArgumentParser()
+#   parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
+#   parser.add_argument('-g', '--generations', help='', default=100, type=int)
+#   parser.add_argument('-p', '--population', help='', default=100, type=int)
+#   parser.add_argument('-c', '--cores', help='', default=1, type=int)
+#   args = parser.parse_args()
 
-  experiment = FixedSize(out_dir=args.out, generations=args.generations,
-                          cores=args.cores, population=args.population)
-  experiment.run()
+#   experiment = FixedSize(out_dir=args.out, generations=args.generations,
+#                           cores=args.cores, population=args.population)
+#   experiment.run()

@@ -59,21 +59,22 @@ NOTHING = object()
 class SoftBody(PhysicsBody):
     body_id = 0
     """docstring for SoftBody"""
-    def __init__(self, world, position, bodies, wall_length=1, verbose=False):
+    def __init__(self, world, position, bodies, wall_length=4, verbose=False):
         self.world = world
 
         # attribtutes
-        self.damping = 6
+        self.damping = .2
         self.friction = 1
-        self.softness = 10000
+        self.softness = 5000
+        self.density = .5
 
         self.wall_length = wall_length
-        self.max_wall_length = self.wall_length * 2
+        self.max_wall_length = self.wall_length * 1.5
         self.contracted_axis = None
         self.userData = dict()
         self.rest_area = None
 
-        self.interal_body = False
+        self.internal_body = False
 
         # Attributes to update every time step
         self.angle = 0 #Angle of major axis.
@@ -85,6 +86,7 @@ class SoftBody(PhysicsBody):
 
         self.bodies = []
         self.inner_joints = []
+        self.contraction_joints = []
 
         # body -> other bodies
         self.verbose = verbose
@@ -102,6 +104,7 @@ class SoftBody(PhysicsBody):
             # Create joints
             for i in range(0, bodies):
                 joint = self._create_joint(self.bodies[i], self.bodies[i-1])
+
             self.rest_area = self._area()
             self.area=self.rest_area
 
@@ -167,12 +170,12 @@ class SoftBody(PhysicsBody):
         SoftBody.body_id += 1
         body.CreateCircleFixture(
             shape=b2CircleShape(radius=self.wall_length/2),
-            # density=.0,
+            density=self.density,
             friction=self.friction
         )
         return body
 
-    def _create_joint(self, bodyA, bodyB, hz=12, dr=.2, length=NOTHING, type='outer_wall'):
+    def _create_joint(self, bodyA, bodyB, hz=15, dr=1, length=NOTHING, type='outer_wall'):
         joint = self.world.CreateDistanceJoint(
             frequencyHz=hz,
             dampingRatio=dr,
@@ -250,9 +253,9 @@ class SoftBody(PhysicsBody):
 
         force = 0
         if area > 0:
-            force = self.softness * (self.rest_area / area - 1)
+            force = self.softness * (self.rest_area / area) +1
 
-        force += self.softness * self.pressure / len(self.bodies)
+        # force += self.pressure / len(self.bodies)
 
         for i in range(len(self.bodies)):
             body = self.bodies[i]
@@ -307,7 +310,7 @@ class SoftBody(PhysicsBody):
         self.world.DestroyJoint(joint)
 
     def grow(self, n):
-        if self.interal_body:
+        if self.internal_body:
             return
 
         self.pressure += n
@@ -331,7 +334,9 @@ class SoftBody(PhysicsBody):
 
         for joint in set(divide_joints):
             self.divide_joint(joint)
-        self.valid()
+
+        if self.verbose:
+            self.valid()
 
     def stress(self):
         return self._area() / self.rest_area
@@ -378,9 +383,10 @@ class SoftBody(PhysicsBody):
         self._computeDynamics()
 
     # Utility function used by divide to created nodes linkings two others.
-    def _connect(self, bodyA, bodyB, k=1, n_joints=4):
+    def _connect(self, bodyA, bodyB, k=1, n_joints=6):
         assert(bodyA in self.bodies)
         assert(bodyB in self.bodies)
+
 
         body_distance = distance(bodyA, bodyB)
         # if n_joints == None:
@@ -389,9 +395,13 @@ class SoftBody(PhysicsBody):
         length = body_distance / n_joints
         num_bodies = n_joints - 1
 
-        # print('Connecting nodes')
-        # print('\tdisance:',body_distance)
-        # print('\tsegment_length:', length, length*num_bodies)
+        joint_args = {
+            'hz': 20,
+            'dr': 1,
+            'type':'inner_wall',
+            'length': length
+        }
+
 
         new_bodies = []
 
@@ -401,13 +411,12 @@ class SoftBody(PhysicsBody):
         for pos in zip(X, Y):
             new_bodies.append(self._create_body(pos))
 
-        joints = []
 
-        joints.append(self._create_joint(bodyB, new_bodies[0], length =length, type='inner_wall'))
-        joints.append(self._create_joint(new_bodies[-1], bodyA, length =length, type='inner_wall'))
+        self._create_joint(bodyB, new_bodies[0], **joint_args)
+        self._create_joint(new_bodies[-1], bodyA, **joint_args)
 
         for i in range(0, num_bodies - 1):
-            joints.append(self._create_joint(new_bodies[i], new_bodies[i+1], length =length, type='inner_wall'))
+            self._create_joint(new_bodies[i], new_bodies[i+1], **joint_args)
 
         return (new_bodies, [])
 
@@ -437,23 +446,37 @@ class SoftBody(PhysicsBody):
 
     def contract(self, axis, n):
         if self.contracted_axis != None:
-            for joint in self.inner_joints:
-                joint.length *= .9
+            # pass
+            for joint in self.contraction_joints:
+                joint.length = max(10, joint.length *.99)
         else:
             self.contracted_axis = axis
             # elif self.contracted_axis == (not axis):
             #     return
 
-            num_bodies = int(len(self.bodies)/4)
+            # num_bodies = int(len(self.bodies)/4)
 
-            angle = self.angle + ((1-axis)*pi/2)
+            # angle = self.angle + ((1-axis)*pi/2)
 
-            bodiesA = self._spread(angle, num_bodies)
-            bodiesB = self._spread(angle+pi, num_bodies)
+            bodyA, bodyB = self._axis_nodes(1)
+            a, b = self.bodies.index(bodyA), self.bodies.index(bodyB)
+
+            # joint = self._create_joint(bodyA, bodyB, hz=4, dr=.5, length = None)
+            # self.inner_joints.append(joint)
+            n = 4
+            for i in range(-n, n+1, 2):
+
+                joint = self._create_joint(self.bodies[a-i], self.bodies[b+i],
+                    hz=4, dr=.5, length=None, type='inner_wall')
+                self.contraction_joints.append(joint)
+
+
+            # bodiesA = self._spread(angle, num_bodies)
+            # bodiesB = self._spread(angle+pi, num_bodies)
 
             # for bodyA, bodyB in zip(bodiesA, bodiesB):
-            for bodyA in bodiesA+bodiesB:
-                bodyB = self.cent_body
+            # for bodyA in bodiesA+bodiesB:
+            #     bodyB = self.cent_body
             #     joint = None
             #     for jointEdge in bodyA.joints:
             #         if jointEdge.other == bodyB:
@@ -463,8 +486,8 @@ class SoftBody(PhysicsBody):
 
                 # No existing joint between.
                 # if joint == None:
-                joint = self._create_joint(bodyA, bodyB, hz=4, dr=.5)
-                self.inner_joints.append(joint)
+                # joint = self._create_joint(bodyA, bodyB, hz=4, dr=.5)
+                # self.inner_joints.append(joint)
 
     def print_order(self):
         for body in self.bodies:
@@ -472,7 +495,7 @@ class SoftBody(PhysicsBody):
             print(body.userData['id'], [j.other.userData['id'] for j in body.joints])
 
     def _check_internal(self):
-        self.interal_body = all(len(b.userData['parents']) != 1 for b in self.bodies)
+        self.internal_body = all(len(b.userData['parents']) != 1 for b in self.bodies)
 
     # TODO refactor this
     def divide(self, angle):
@@ -514,8 +537,8 @@ class SoftBody(PhysicsBody):
         daughter.rest_area = daughter._area()
         self.rest_area = self._area()
 
-        daughter.pressure = 0#self.pressure/2
-        self.pressure = 0
+        daughter.pressure = self.pressure/2
+        self.pressure = self.pressure/2
 
         for body in daughter.bodies:
             body.userData['parents'].remove(self)
@@ -534,8 +557,9 @@ class SoftBody(PhysicsBody):
             print('\trest areas', self.rest_area, daughter.rest_area)
             print()
         # print([b.userData['id'] for b in self.bodies])
-        self.valid()
-        daughter.valid()
+        if self.verbose:
+            self.valid()
+            daughter.valid()
         return daughter
 
     def _update_body_angles(self):
@@ -560,7 +584,6 @@ class SoftBody(PhysicsBody):
                 if joint == None:
                     for body in self.bodies:
                         body.angle = pi/2
-
                     self.bodies[i].angle = -pi/2
                     self.bodies[i-1].angle = -pi/2
                     print('jont is none', self.bodies[i].userData['id'], self.bodies[-1].userData['id'])

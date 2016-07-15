@@ -19,9 +19,13 @@ class MyDraw(PygameDraw):
     # pass
     def __init__(self, **kwargs):
         super(MyDraw, self).__init__(**kwargs)
+
     def StartDraw(self, **kwargs):
-        print('StartDraw')
         super(MyDraw, self).StartDraw(**kwargs)
+
+    # def EndDraw(self, **kwargs):
+    #     super(MyDraw, self).EndDraw(**kwargs)
+
 
     def DrawSolidPolygon(self, vertices, color):
         # print('COLOR', color)
@@ -36,7 +40,7 @@ class Simulation(Framework):
         super(Simulation, self).__init__()
 
         # self.renderer = MyDraw(surface=self.screen, test=self)
-        # self.world.renderer = self.renderer
+        # self.world.renderer = None#self.renderer
 
         self.genome = genome
         self.verbose = verbose
@@ -48,8 +52,6 @@ class Simulation(Framework):
 
         self.joints = []
         self.contacts = []
-        # self.nuke_joints = []
-        # self.nuke_bodies = []
 
         self.nodes_per_body = 50
         self.break_thresshold = 1000
@@ -111,6 +113,31 @@ class Simulation(Framework):
         self.world.DestroyJoint(joint)
         return new_joint
 
+    def handle_outputs(self, outputs):
+        new_cells = []
+        for cell, output in zip(self.cells, outputs):
+            if 'apoptosis' in output and output['apoptosis']:
+                self.kill_cells.append(cell)
+                continue #Cannot apoptosis and do other things.
+
+            # CELL GROWTH
+            if 'grow' in output:
+                cell.body.grow(output['grow'])
+                if cell.body.area >= 2*cell.body.rest_area:
+                    daughter_body = cell.body.divide(angle=math.pi/2)
+                    new_cells.append(self.create_cell(None, None, body=daughter_body))
+
+            if 'divide' in output:
+                daughter_body = cell.body.divide(angle=math.pi/2)
+                new_cells.append(self.create_cell(None, None, body=daughter_body))
+
+            if 'contract' in output:
+                cell.body.contract(math.pi/2, output['contract'])
+
+        return new_cells
+            # if 'contract' in output:
+            #     cell.body.contract
+
     def Step(self, settings):
         if self.pause:
             settings.pause = True
@@ -119,30 +146,16 @@ class Simulation(Framework):
 
         print('step', self.stepCount)
         kill_cells = []
-        new_cells = []
+
 
         nuke_bodies = set()
         # Compute internal logic for cell bodies
         try:
             for cell in self.cells:
                 cell.body.step()
-
             outputs = self._get_outputs()
-            for cell, output in zip(self.cells, outputs):
-                if 'apoptosis' in output and output['apoptosis']:
-                    self.kill_cells.append(cell)
-                    continue #Cannot apoptosis and do other things.
+            new_cells = self.handle_outputs(outputs)
 
-                # CELL GROWTH
-                if 'grow' in output:
-                    cell.body.grow(output['grow'])
-                    if cell.body.area >= 2*cell.body.rest_area:
-                        daughter_body = cell.body.divide(angle=math.pi/2)
-                        new_cells.append(self.create_cell(None, None, body=daughter_body))
-
-                if 'divide' in output:
-                    daughter_body = cell.body.divide(angle=math.pi/2)
-                    new_cells.append(self.create_cell(None, None, body=daughter_body))
 
         except AssertionError as e:
             traceback.print_exc()
@@ -153,7 +166,6 @@ class Simulation(Framework):
             self.cell.body.destroy()
             self.cells.remove(cell)
 
-        # print('\tcontacts..')
         for contact in self.contacts:
             bodyA, bodyB = (contact.fixtureA.body, contact.fixtureB.body)
 
@@ -162,11 +174,10 @@ class Simulation(Framework):
 
             # if bodyA.userData == 'bounds' or bodyB.userData == 'bounds':
             #     continue
-            if bodyA.userData == None:
-                continue
-            if bodyB.userData == None:
-                continue
-
+            # if bodyA.userData == None:
+            #     continue
+            # if bodyB.userData == None:
+            #     continue
             if len(bodyA.userData['parents'].intersection(bodyB.userData['parents'])) > 0:
                 continue
 
@@ -181,6 +192,7 @@ class Simulation(Framework):
             # MERGE BODYB INTO BODYA
             if self.verbose:
                 print('MERGING JOINTS')
+                print('len other', len(others))
                 print('\tbodyA %i' %(bodyA.userData['id']))
                 print('\tbodyB %i' %(bodyB.userData['id']))
 
@@ -196,11 +208,13 @@ class Simulation(Framework):
                 parentB.bodies.insert(idx, bodyA)
                 parentB.bodies.remove(bodyB)
                 bodyA.userData['parents'].add(parentB)
+
             nuke_bodies.add(bodyB)
-            for parentA in bodyA.userData['parents']:
-                parentA.valid()
-            for parentB in bodyB.userData['parents']:
-                parentB.valid()
+            if self.verbose:
+                for parentA in bodyA.userData['parents']:
+                    parentA.valid()
+                for parentB in bodyB.userData['parents']:
+                    parentB.valid()
 
         for body in nuke_bodies:
             self.world.DestroyBody(body)
@@ -208,9 +222,14 @@ class Simulation(Framework):
         self.contacts = []
         self.cells.extend(new_cells)
 
-        # color = b2Color(.9, .1, .1)
-        # for cell in self.cells:
-        #     points = [self.renderer.to_screen(b.position) for b in cell.body.bodies]
-        #     self.renderer.DrawSolidPolygon(points, color)
+        if isinstance(self.renderer, MyDraw):
+            colorA = b2Color(.1, .8, .1)
+            colorB = b2Color(.1, .1, .9)
+            for cell in self.cells:
+                points = [self.renderer.to_screen(b.position) for b in cell.body.bodies]
+                # if cell.body.internal_body:
+                #     self.renderer.DrawSolidPolygon(points, colorB)
+                # else:
+                self.renderer.DrawSolidPolygon(points, colorA)
 
         super(Simulation, self).Step(settings)

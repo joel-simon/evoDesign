@@ -66,6 +66,7 @@ except Exception as ex:
     print('(%s) %s' % (ex.__class__.__name__, ex))
     GUIEnabled = False
 
+GUIEnabled = False
 
 class PygameDraw(b2DrawExtended):
     """
@@ -220,7 +221,7 @@ class PygameFramework(FrameworkBase):
         self.running = True
 
         # Screen/rendering-related
-        self._viewZoom = 10.0
+        self._viewZoom = 8.0
         self._viewCenter = None
         self._viewOffset = None
         self.screenSize = None
@@ -363,7 +364,7 @@ class PygameFramework(FrameworkBase):
         clock = pygame.time.Clock()
         while self.running:
             self.running = self.checkEvents()
-            self.screen.fill((0, 0, 0))
+            self.screen.fill((255,255,255))
 
             # Check keys that should be checked every loop (not only on initial
             # keydown)
@@ -448,12 +449,14 @@ class PygameFramework(FrameworkBase):
                       ((self.screenSize.y - y + self.viewOffset.y) / self.viewZoom))
 
     def DrawStringAt(self, x, y, str, color=(229, 153, 153, 255)):
+        return
         """
         Draw some text, str, at screen coordinates (x, y).
         """
         self.screen.blit(self.font.render(str, True, color), (x, y))
 
     def Print(self, str, color=(229, 153, 153, 255)):
+        return
         """
         Draw some text at the top status lines
         and advance to the next line.
