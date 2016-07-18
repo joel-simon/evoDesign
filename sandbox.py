@@ -38,24 +38,33 @@ class Sandbox(Simulation):
 
     def Step(self, *args):
         super(Sandbox, self).Step(*args)
+
         # if self.stepCount%2 == 0:
         # pygame.image.save(self.screen, './out_temp/' + str(self.stepCount)+'.jpg')
         # print('saved')
 
-sim = Sandbox(dummy_genome, max_steps=None, verbose=False, bounds=50)
+sim = Sandbox(dummy_genome, max_steps=200, verbose=False, bounds=50)
 # cell = sim.create_cell(position=(0,0))
 # sim.cells.append(cell)
 
 # sim.cells.append(sim.create_cell((0,0)))
+# sim.cells.append(sim.create_cell((0,1)))
+# sim.cells.append(sim.create_cell((1,1)))
 # sim.cells.append(sim.create_cell((7,1)))
 # sim.cells.append(sim.create_cell((7,2)))
 # sim.cells.append(sim.create_cell((7,3)))
-for i in range(20):
-    sim.cells.append(sim.create_cell((i,1)))
-    sim.cells.append(sim.create_cell((i,0)))
+# for i in range(50):
+#     for j in range(50):
+#         sim.cells.append(sim.create_cell((i,j)))
+#     # sim.cells.append(sim.create_cell((i,0)))
 
-for i in range(2,20):
+for i in range(20):
+    sim.cells.append(sim.create_cell((i,0)))
+    sim.cells.append(sim.create_cell((i,1)))
+
+for i in range(2,18):
     sim.cells.append(sim.create_cell((19,i)))
+
 
 # for i in range(8):
 #     sim.cells.append(sim.create_cell((i,0)))

@@ -10,8 +10,30 @@ from neat import population, visualize
 from neat.config import Config
 from .cellGenome import CellGenome
 
-from .simulation import Simulation
-from .physics.softPhysics import SoftPhysics
+class Input(object):
+    """docstring for Input"""
+    def __init__(self, name, func):
+        self.name = name
+        self.func = func
+
+class Output(object):
+    """docstring for OutPut"""
+    def __init__(self, name, func, type='sigmoid', binary=True):
+        self.name = name
+        self.type = type
+        self.binary = binary
+        self.func = func
+
+    def __str__(self):
+        return "%s, type:%s, binary:%b" % (self.name, self.type, self.binary)
+    # def __val__(str):
+    #     return "%s, type:%s, binary:%b" % (self.name, self.type, self.binary)
+
+class OutputCluster(object):
+    """docstring for OutPutCluster"""
+    def __init__(self, name, outputs, func):
+        self.outputs = outputs
+        self.func = func
 
 class Experiment(object):
     def __init__(self, cores, generations, population, out_dir='./out/derp'):
@@ -20,12 +42,8 @@ class Experiment(object):
         self.out_dir = out_dir
         self.generations = generations
         self.population = population
-
-        # Simulation
-        self.simulation_config = {
-            'max_steps': 100,
-            'bounds' : 100
-        }
+        self.Simulation = None
+        self.final_renderer = None
 
         # Genome
         self.genome_config = {
@@ -36,14 +54,6 @@ class Experiment(object):
 
             'outputs': [
             ]
-
-        }
-
-        # Physics
-        self.physics = SoftPhysics
-        self.physics.render = True
-        self.physics_config = {
-            'max_steps': 200,
         }
 
         if path.exists(out_dir):
@@ -56,30 +66,27 @@ class Experiment(object):
         os.makedirs(out_dir)
 
     def evaluate_genome(self, genome):
-        physics = self.physics(**self.physics_config)
-        sim = Simulation(genome, physics, **self.simulation_config)
-        self.set_up(sim)
-        sim.run()
-        return self.fitness(sim)
+        simulation = self.Simulation(genome, **self.simulation_config)
+        self.set_up(simulation)
+        simulation.run()
+        return self.fitness(simulation)
 
     def evaluate_genomes(self, genomes):
         for g in genomes:
           g.fitness = self.evaluate_genome(g)
 
-    def pre_draw(self, screen):
-        pass
-
-    def post_draw(self, screen):
-        pass
-
     def report(self, pop):
         winner = pop.statistics.best_genome()
 
-        #Save the winner.
-        with open(path.join(self.out_dir,'population.p'), 'wb') as f:
-            pickle.dump(pop, f)
+        # print(dir(winner))
+        # print()
+        # print(vars(winner))
+        # print()
+        # # Save the winner.
+        # with open(path.join(self.out_dir,'winner.p'), 'wb') as f:
+        #     pickle.dump(winner, f)
 
-        genome_text = open(path.join(self.out_dir,'genome.txt'), 'w+')
+        genome_text = open(path.join(self.out_dir,'winner.txt'), 'w+')
         genome_text.write('fitness: %f\n' % winner.fitness)
         genome_text.write(str(winner))
 
@@ -93,17 +100,27 @@ class Experiment(object):
 
         # Visualize the best network.
         node_names = dict()
-        for i, name in enumerate(winner.inputs + winner.outputs):
-            node_names[i] = name
+        for i, inout in enumerate(winner.inputs + winner.outputs):
+            node_names[i] = inout.name
 
-        visualize.draw_net(winner, view=True, node_names=node_names,
+        print(node_names)
+
+        visualize.draw_net(winner, view=False, node_names=node_names,
                         filename=path.join(self.out_dir,"nn_winner.gv"))
 
-        if self.physicsVisual:
-            physics = self.physicsVisual(**self.physics_config)
-            sim = Simulation(winner, physics, **self.simulation_config)
-            self.set_up(sim)
-            sim.run()
+
+        if self.final_renderer:
+            self.simulation_config['verbose'] = True
+            simulation = self.Simulation(winner, **self.simulation_config)
+            simulation.renderer = self.final_renderer(simulation)
+            self.set_up(simulation)
+            simulation.run()
+            simulation.renderer.hold()
+        # if self.physicsVisual:
+        #     physics = self.physicsVisual(**self.physics_config)
+        #     sim = Simulation(winner, physics, **self.simulation_config)
+        #     self.set_up(sim)
+        #     sim.run()
 
         print('Report finished.')
 
@@ -111,7 +128,7 @@ class Experiment(object):
         raise NotImplementedError
 
     def run(self):
-        print('Running:')
+        print('Starting Experiment.')
         print(pprint(vars(self)))
 
         # Change the Genome used.

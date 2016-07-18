@@ -1,6 +1,8 @@
 from neat.genome import Genome
 from .neat_custom.genes import AttributeGene, MorphogenGene
 
+# from .experiment import Output, OutputCluster
+
 class CellType(object):
     """docstring for CellType"""
     def __init__(self, id, shape=[2], area_divide=8,
@@ -27,16 +29,16 @@ class CellGenome(Genome):
         self.num_morphogens = config.genome_config['num_morphogens']
         self.morphogen_thresholds = config.genome_config['morphogen_thresholds']
 
-        for i in range(self.num_morphogens):
-            # Create the morphogen gene with ranodm values.
-            self.morphogen_genes[i] = MorphogenGene(i)
+        # for i in range(self.num_morphogens):
+        #     # Create the morphogen gene with ranodm values.
+        #     self.morphogen_genes[i] = MorphogenGene(i)
 
-            # Create the inputs and outputs for this morphogen.
-            for t in range(self.morphogen_thresholds):
-                self.inputs.append('a%it%i' % (i, t))
+        #     # Create the inputs and outputs for this morphogen.
+        #     for t in range(self.morphogen_thresholds):
+        #         self.inputs.append('a%it%i' % (i, t))
 
-            self.outputs.append(('a'+str(i), 'sigmoid', False))
-            self.outputs.append(('h'+str(i), 'sigmoid', False))
+        #     self.outputs.append(Output('a'+str(i), 'sigmoid', boolean=False))
+        #     self.outputs.append(Output('h'+str(i), 'sigmoid', boolean=False))
 
         # print self.inputs
         self.num_inputs  = len(self.inputs)
@@ -72,10 +74,10 @@ class CellGenome(Genome):
 
         # Create output node genes.
         # print(c.outputs)
-        for (name, act_func, _) in c.outputs:
+        for output in c.outputs:
             node_gene = config.node_gene_type(node_id,
                                               node_type='OUTPUT',
-                                              activation_type=act_func)
+                                              activation_type=output.type)
             assert node_gene.ID not in c.node_genes
             c.node_genes[node_gene.ID] = node_gene
             node_id += 1
@@ -91,3 +93,24 @@ class CellGenome(Genome):
             for k, v in m.values().items():
                 s += '\n\t%s:%s' % (k,v)
         return s
+
+    # def dump(self):
+        # self.ID = ID
+        # self.config = config
+        # self.num_inputs = config.input_nodes
+        # self.num_outputs = config.output_nodes
+
+        # # (id, gene) pairs for connection and node gene sets.
+        # self.conn_genes = {}
+        # self.node_genes = {}
+
+        # self.fitness = None
+        # self.species_id = None
+
+        # # my parents id: helps in tracking genome's genealogy
+        # self.parent1_id = parent1_id
+        # self.parent2_id = parent2_id
+
+        # genome_text = open(path.join(self.out_dir,'genome.txt'), 'w+')
+        # genome_text.write('fitness: %f\n' % winner.fitness)
+        # genome_text.write(str(winner))

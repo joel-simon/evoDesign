@@ -16,7 +16,6 @@ class Map( object ):
         self.rows = shape[0]
         self.cols = shape[1]
 
-        # self.value
         self.values = [[value for _ in range(shape[1])] for _ in range(shape[0])]
 
     def __str__( self ):
@@ -34,12 +33,6 @@ class Map( object ):
         else:
             # return self.values[index]
             assert(False)
-    # def __setitem__(self,index,value):
-    #     self.values[index] = value
-    # @property
-    # def size( self ):
-    #   """Returns the size of the grid as a tuple (row, col)"""
-    #   return ( self.rows, self.cols )
 
     def distance( self, start, destination ):
         """Takes two hex coordinates and determine the distance between them."""
@@ -55,15 +48,17 @@ class Map( object ):
 
     def valid_coords( self, coords ):
         row, col = coords
+        assert(type(row) == type(1))
+        assert(type(col) == type(1))
         if col < 0 or col >= self.cols: return False
         if row < 0 or row >= self.rows: return False
         return True
 
     def is_occupied(self, coords):
-      return (self.valid_coords(coords) and self[coords])
+      return (self.valid_coords(coords) and bool(self[coords]))
 
-    def occupied_neighbors(self, center):
-        return filter( self.is_occupied, neighbors)
+    # def occupied_neighbors(self, center):
+    #     return filter( self.is_occupied, neighbors)
 
     def neighbors(self, center, labels=False):
         if labels:
@@ -75,6 +70,18 @@ class Map( object ):
                 if self.valid_coords(derp):
                     neighbors.append(derp)
             return neighbors
+
+
+    def neighbor(self, coords, direction):
+        assert(type(direction) == type(1))
+        d = self.directions(coords)[direction]
+        return (coords[0] + d[0], coords[1]+d[1])
+
+    # def beepbop(self, center, direction):
+    #     names = ['bottom','bottom_right', 'top_right',
+    #             'top', 'top_left', 'bottom_left']
+    #     coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
+    #     return dict(zip(names, coords))[direction]
 
     def named_neighbors(self, center):
         names = ['bottom','bottom_right', 'top_right',

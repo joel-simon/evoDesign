@@ -346,7 +346,7 @@ class PygameFramework(FrameworkBase):
 
         return True
 
-    def run(self):
+    def run(self, steps=None):
         """
         Main loop.
 
@@ -355,6 +355,8 @@ class PygameFramework(FrameworkBase):
 
         Updates the screen and tells the GUI to paint itself.
         """
+        self.stepCount = 0
+        self.running = True
 
         # If any of the test constructors update the settings, reflect
         # those changes on the GUI before running
@@ -379,6 +381,9 @@ class PygameFramework(FrameworkBase):
             pygame.display.flip()
             clock.tick(self.settings.hz)
             self.fps = clock.get_fps()
+
+            if steps and self.stepCount > steps:
+                self.running = False
 
         # self.world.contactListener = None
         # self.world.destructionListener = None

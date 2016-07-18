@@ -28,6 +28,19 @@ class Map( object ):
         else:
             return self.values[index]
 
+    def __iter__(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if self[row][col]:
+                    yield self[row][col]
+
+    def itemss(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                # if self[row][col]:
+                yield (row, col), self[row][col]
+
+
     # def __setitem__(self,index,value):
     #     self.values[index] = value
     # @property
@@ -61,6 +74,12 @@ class Map( object ):
     #     neighbors = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
     #     return list(filter( self.valid_coords, neighbors ))
 
+    def neighbor_coords(self, center, direction):
+        names = ['b','br', 'tr', 't', 'tl', 'bl']
+        d = self.directions(center)[names.index(direction)]
+        coords = (center[0]+d[0], center[1] + d[1])
+        return coords
+
     def is_occupied(self, coords):
       return (self.valid_coords(coords) and self[coords])
 
@@ -83,6 +102,7 @@ class Map( object ):
         return neighbors
 
     def named_neighbors(self, center):
+        print('$'*80)
         names = ['b','br', 'tr', 't', 'tl', 'bl']
         coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
         neighbors = []

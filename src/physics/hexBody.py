@@ -21,6 +21,7 @@ class HexBody(object):
         self.bodies = dict()
         self.world = world
         self.radius = radius
+        self.position = position
 
         hex_coords = [
             ( .5 * radius, 0 ), # bl
@@ -82,8 +83,12 @@ class HexBody(object):
             if derp not in self.bodies:
                 is_static = derp in static
                 self.bodies[derp] = self.create_body(positions[derp], is_static)
-        # print(self.bodies)
+
+
         assert(len(set(self.bodies.keys())) == 6)
+
+        for body in self.bodies.values():
+            body.userData['parents'].add(self)
 
         self.create_joint(self.bodies['top_left'], self.bodies['top_right'])
         self.create_joint(self.bodies['top_right'], self.bodies['right'])
@@ -92,33 +97,44 @@ class HexBody(object):
         self.create_joint(self.bodies['bottom_left'], self.bodies['left'])
         self.create_joint(self.bodies['left'], self.bodies['top_left'])
 
-        self.create_joint(self.bodies['top_left'], self.bodies['bottom_left'], hz=0)
-        self.create_joint(self.bodies['top_left'], self.bodies['bottom_right'], hz=0)
-        self.create_joint(self.bodies['bottom_right'], self.bodies['top_right'], hz=0)
-        self.create_joint(self.bodies['top_right'], self.bodies['bottom_left'], hz=0)
+        a = self.create_joint(self.bodies['top_left'], self.bodies['bottom_left'], hz=0)
+        b = self.create_joint(self.bodies['top_left'], self.bodies['bottom_right'], hz=0)
+        c = self.create_joint(self.bodies['bottom_right'], self.bodies['top_right'], hz=0)
 
-        self.create_joint(self.bodies['left'], self.bodies['right'], hz=0)
+        self.inner_joints = [a, b, c]
+        # self.create_joint(self.bodies['top_right'], self.bodies['bottom_left'], hz=0)
+
+        # self.create_joint(self.bodies['left'], self.bodies['right'], hz=0)
 
     def create_body(self, position, static):
+        body_params = {
+            'position': position,
+            'fixedRotation': True,
+            'linearDamping': 0,
+            'userData': { 'origin': position, 'parents': set([self]) }
+        }
         if static:
-            body = self.world.CreateStaticBody(
-              position=position,
-              fixedRotation=True,
-            )
+            body = self.world.CreateStaticBody(**body_params)
         else:
-            body = self.world.CreateDynamicBody(
-              position=position,
-              fixedRotation=True,
-              linearDamping=0
-            )
+            body = self.world.CreateDynamicBody(**body_params)
         body.CreateCircleFixture(
             shape=b2CircleShape(radius=self.radius/8),
             density=0,
             friction=0
         )
+        body.mass = 0
         return body
 
-    def create_joint(self, bodyA, bodyB, hz=0, dr=1):
+    def destroy(self):
+        for joint in self.inner_joints:
+            self.world.DestroyJoint(joint)
+
+        for body in self.bodies.values():
+            body.userData['parents'].remove(self)
+            if len(body.userData['parents']) == 0:
+                self.world.DestroyBody(body)
+
+    def create_joint(self, bodyA, bodyB, hz=0, dr=.9):
         joint = self.world.CreateDistanceJoint(
             frequencyHz=hz,
             dampingRatio=dr,
@@ -132,3 +148,4 @@ class HexBody(object):
             #     # 'parents': set([self]),
             # },
         )
+        return joint
