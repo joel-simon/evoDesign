@@ -3,9 +3,15 @@ import random
 import copy
 SQRT3 = math.sqrt( 3 )
 
-directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
+# directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
 # for a hex in an even column
-directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
+# directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
+['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
+
+directions_odd = [(1, -1),(1,0),(1,1),(0,1),(-1, 0),(0,-1)]
+# for a hex in an even column
+directions_even = [ (0, -1),(1,0),(0,1),(-1, 1),(-1, 0),(-1,-1)]
+
 
 class Map( object ):
     def __init__( self, shape, value=0):
@@ -66,14 +72,25 @@ class Map( object ):
             else:
                 yield None
 
+    def neighbor_coords(self, center):
+        # return self.directions(center)
+        for a, b in self.directions(center):
+            derp = (center[0]+a, center[1]+b)
+            yield derp
+        #     if self.valid_coords(derp):
+        #         yield derp
+        #     else:
+        #         yield None
+
     def neighbor(self, coords, direction):
         assert(type(direction) == type(1))
         d = self.directions(coords)[direction]
         return (coords[0] + d[0], coords[1]+d[1])
 
+
+
     # def named_neighbors(self, center):
-    #     names = ['bottom','bottom_right', 'top_right',
-    #             'top', 'top_left', 'bottom_left']
+    #     names = ['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
     #     coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
     #     neighbors = []
     #     for r, c in coords:

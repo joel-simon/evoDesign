@@ -43,39 +43,29 @@ class HexBody(object):
         self.userData = dict()
         self.nuke_bodies = []
 
-        # for i, neighbor in neighbors:
-        #     if not neighbor:
-        #         continues
-        # for direction, neighbor in neighbors.items():
-        # print(neighbors)
-        if neighbors[0]: #Top
-            # if neighbor:
-            self.bodies['top_left'] = neighbors[0].body.bodies['bottom_left']
-            self.bodies['top_right'] = neighbors[0].body.bodies['bottom_right']
+        if neighbors[1]: #Top
+            self.bodies['top_left'] = neighbors[1].body.bodies['bottom_left']
+            self.bodies['top_right'] = neighbors[1].body.bodies['bottom_right']
 
-        if neighbors[1]:# 'top_right':
-            self.bodies['top_right'] = neighbors[1].body.bodies['left']
-            self.bodies['right'] = neighbors[1].body.bodies['bottom_left']
+        if neighbors[2]:# 'top_right':
+            self.bodies['top_right'] = neighbors[2].body.bodies['left']
+            self.bodies['right'] = neighbors[2].body.bodies['bottom_left']
 
-        if neighbors[2]:# 'bottom_right':
-            self.bodies['right'] = neighbors[2].body.bodies['top_left']
-            self.bodies['bottom_right'] = neighbors[2].body.bodies['left']
+        if neighbors[3]:# 'bottom_right':
+            self.bodies['right'] = neighbors[3].body.bodies['top_left']
+            self.bodies['bottom_right'] = neighbors[3].body.bodies['left']
 
-        if neighbors[3]:# 'bottom':
-            self.bodies['bottom_right'] = neighbors[3].body.bodies['top_right']
-            self.bodies['bottom_left'] = neighbors[3].body.bodies['top_left']
+        if neighbors[4]:# 'bottom':
+            self.bodies['bottom_right'] = neighbors[4].body.bodies['top_right']
+            self.bodies['bottom_left'] = neighbors[4].body.bodies['top_left']
 
-        if neighbors[4]:# 'bottom_left':
-            self.bodies['left'] = neighbors[4].body.bodies['top_right']
-            self.bodies['bottom_left'] = neighbors[4].body.bodies['right']
+        if neighbors[5]:# 'bottom_left':
+            self.bodies['left'] = neighbors[5].body.bodies['top_right']
+            self.bodies['bottom_left'] = neighbors[5].body.bodies['right']
 
-        if neighbors[5]:# 'top_left':
-            self.bodies['left'] = neighbors[5].body.bodies['bottom_right']
-            self.bodies['top_left'] = neighbors[5].body.bodies['right']
-
-        # else:
-        #     print(direction)
-        #     assert(False)
+        if neighbors[0]:# 'top_left':
+            self.bodies['left'] = neighbors[0].body.bodies['bottom_right']
+            self.bodies['top_left'] = neighbors[0].body.bodies['right']
 
         for derp in positions.keys():
             if derp not in self.bodies:
@@ -98,8 +88,8 @@ class HexBody(object):
         a = self.create_joint(self.bodies['top_left'], self.bodies['bottom_left'], hz=0)
         b = self.create_joint(self.bodies['top_left'], self.bodies['bottom_right'], hz=0)
         c = self.create_joint(self.bodies['bottom_right'], self.bodies['top_right'], hz=0)
-
         self.inner_joints = [a, b, c]
+
         # self.create_joint(self.bodies['top_right'], self.bodies['bottom_left'], hz=0)
 
         # self.create_joint(self.bodies['left'], self.bodies['right'], hz=0)
@@ -133,6 +123,10 @@ class HexBody(object):
                 self.world.DestroyBody(body)
 
     def create_joint(self, bodyA, bodyB, hz=0, dr=.9):
+        for joint in bodyA.joints:
+            if joint.other == bodyB:
+                return joint.joint
+
         joint = self.world.CreateDistanceJoint(
             frequencyHz=hz,
             dampingRatio=dr,

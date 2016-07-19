@@ -2,13 +2,15 @@ import pyximport; pyximport.install(pyimport = True)
 import argparse
 
 from src.experiment import Experiment#, Input, Output, OutputCluster
-from src.hexSimulation import Simulation
-
+from src.hexSimulation import HexSimulation
 from src.hexVisualize import HexRenderer as Renderer
 
-class FixedSize(Simulation):
+class FixedSize(HexSimulation):
     """docstring for FixedSize"""
-    genome_config = {'num_morphogens': 0, 'morphogen_thresholds': 0}
+    genome_config = {
+        'num_morphogens': 0,
+        'morphogen_thresholds': 0
+    }
     genome_config['inputs'] = [
         'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
         'neighbor_bl', 'neighbor_tl'
@@ -18,21 +20,8 @@ class FixedSize(Simulation):
         'divide_b', 'divide_bl', 'divide_tl'
     ]
     def __init__(self, genome):
-        super(FixedSize, self).__init__(genome, max_steps = 40, bounds=(15,15))
-
-        self.target = 16
-        # self.Simulation = Simulation
-        # self.simulation_config = {
-        #     'max_steps': 40 ,
-        #     'bounds': (8, 8),
-            # 'verbose': True
-            # 'Renderer': Renderer
-        # }
-
-        # self.final_renderer = Renderer
-
-        # self.input_names = ['t', 'tr', 'br']
-
+        super(FixedSize, self).__init__(genome, max_steps = 40, bounds=(8,8))
+        self.target = 64
         # self.genome_config['inputs'] = [
         #     'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
         #     'neighbor_bl', 'neighbor_tl'
@@ -72,10 +61,9 @@ class FixedSize(Simulation):
         # ]
 
     def create_inputs(self, cell):
-        inputs = []
+        # inputs = []
         coords = cell.userData['coords']
         inputs = list(map(bool, self.hmap.neighbors(coords)))
-
         return inputs
 
     def handle_outputs(self, cell, outputs):
@@ -95,13 +83,8 @@ class FixedSize(Simulation):
         if outputs[6] > .5:
             self.divide_cell(cell, 5)
 
-    # def has_neighbor(self, cell, simulation, i):
-    #     coords = simulation.hmap.neighbor(cell.userData['coords'], i)
-    #     return int(simulation.hmap.is_occupied(coords))
-
     def set_up(self):
         cell = self.create_cell(coords=(0, 0))
-
 
     def fitness(self, sim):
         n = len(sim.cells)
@@ -112,7 +95,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
     parser.add_argument('-g', '--generations', help='', default=10 , type=int)
-    parser.add_argument('-p', '--population', help='', default=100, type=int)
+    parser.add_argument('-p', '--population', help='', default=10, type=int)
     parser.add_argument('-c', '--cores', help='', default=1, type=int)
     args = parser.parse_args()
 

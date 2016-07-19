@@ -90,7 +90,6 @@ class Experiment(object):
         visualize.draw_net(winner, view=False, node_names=node_names,
                         filename=path.join(self.out_dir,"nn_winner.gv"))
 
-
         if Renderer:
             renderer = Renderer()
             simulation = self.Simulation(winner)
@@ -100,9 +99,6 @@ class Experiment(object):
             renderer.hold()
 
         print('Report finished.')
-
-    # def set_up(self, sim):
-    #     raise NotImplementedError
 
     def run(self, Simulation, Renderer):
         self.Simulation = Simulation

@@ -12,9 +12,10 @@ cdef long SQRT3 = math.sqrt( 3 )
 cdef int simulate(genome, int rows, int cols, int max_steps):
     cdef int next_cell_id, last_change_step, hex_radius, step_count
 
-    cdef int[rows][cols]
+    # cdef int[rows][cols]
 
     cells = []
+
 
     physics = Framework()
     world = self.physics.world

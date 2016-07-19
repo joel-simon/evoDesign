@@ -3,15 +3,15 @@ import random
 import copy
 SQRT3 = math.sqrt( 3 )
 
-
-
 cpdef class Map( object ):
-    def __init__(self, int rows, int cols, value=0):
+    def __init__(self, int rows, int cols):
         #Map size
         self.rows = rows
         self.cols = cols
 
         cdef double values[rows][cols]
+
+        for
         # self.values = int [5][10]
         # self.values = [[value for _ in range(shape[1])] for _ in range(shape[0])]
 

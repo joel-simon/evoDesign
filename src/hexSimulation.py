@@ -8,7 +8,7 @@ from .physics.hexBody import HexBody
 from .hexmap import Map
 SQRT3 = math.sqrt( 3 )
 
-class Simulation(object):
+class HexSimulation(object):
     def __init__(self, genome, bounds, verbose=False,
                 max_steps=100, max_physics_step=10):
         self.hmap = Map(bounds, None)
@@ -30,6 +30,10 @@ class Simulation(object):
         self.step_count = 0
         self.max_physics_step = max_physics_step
 
+        # Step statistics
+        self.created_cells = 0
+        self.destroyed_cells = 0
+
     def _get_id(self):
         self.next_cell_id += 1
         return self.next_cell_id
@@ -46,6 +50,7 @@ class Simulation(object):
 
     def create_cell(self, coords, cell_type=0):
         assert(self.hmap.valid_coords(coords))
+        assert(not self.hmap[coords])
         self.last_change = self.step_count
         body = None
 
@@ -66,13 +71,16 @@ class Simulation(object):
         self.hmap[coords] = cell
         self.cells.append(cell)
 
+        self.created_cells += 1
         return cell
 
     def destroy_cell(self, cell):
         self.last_change = self.step_count
-        # cell.body.destroy()
+        if cell.body:
+            cell.body.destroy()
         self.cells.remove(cell)
         self.hmap[cell.userData['coords']] = 0
+        self.destroyed_cells += 1
 
     def divide_cell(self, cell, direction):
         coords = self.hmap.neighbor(cell.userData['coords'], direction)
@@ -88,9 +96,13 @@ class Simulation(object):
 
     def step(self, renderer=None):
         if self.verbose:
-            print('step', self.step_count)
-            print('\t', len(self.cells))
-        kill_cells = []
+            # print()
+            print('#'*40,'step', self.step_count,'#'*40)
+            # print('#'*40)
+
+        self.created_cells = 0
+        self.destroyed_cells = 0
+        # kill_cells = []
 
         for cell in self.cells:
             inputs = self.create_inputs(cell)
@@ -106,6 +118,12 @@ class Simulation(object):
 
         if renderer:
             renderer.render(self)
+
+        if self.verbose:
+            print('destroyed %i cells' % self.destroyed_cells)
+            print('created %i cells:' % self.created_cells)
+            print('final cells: %i' % len(self.cells))
+
 
         assert(len(self.cells) <= self.bounds[0] * self.bounds[1])
         self.step_count += 1
