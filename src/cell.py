@@ -52,20 +52,20 @@ class Cell(object):
 
         # return inputs
 #
-    def step(self, simulation):
-        inputs = [ inp.func(self, simulation) for inp in self.genome.inputs ]
-        raw_values = self.network.serial_activate(inputs)
+    # def output(self, simulation):
+    #     inputs = [ inp.func(self, simulation) for inp in self.genome.inputs ]
+    #     raw_values = self.network.serial_activate(inputs)
 
-        for value, output in zip(raw_values, self.genome.outputs):
-            if output.binary:
-                if output.type == 'sigmoid':
-                    if  value > .5:
-                        output.func(self, simulation)
-                elif output.type == 'tanh':
-                    if value > 0:
-                        output.func(self, simulation)
-                else:
-                    print(output.type)
-                    raise ValueError('Unexpected activation type.')
-            else:
-                output.func(value)
+        # for value, output in zip(raw_values, self.genome.outputs):
+        #     if output.binary:
+        #         if output.type == 'sigmoid':
+        #             if  value > .5:
+        #                 output.func(self, simulation)
+        #         elif output.type == 'tanh':
+        #             if value > 0:
+        #                 output.func(self, simulation)
+        #         else:
+        #             print(output.type)
+        #             raise ValueError('Unexpected activation type.')
+        #     else:
+        #         output.func(value)

@@ -77,7 +77,8 @@ class CellGenome(Genome):
         for output in c.outputs:
             node_gene = config.node_gene_type(node_id,
                                               node_type='OUTPUT',
-                                              activation_type=output.type)
+                                              activation_type='sigmoid')
+                                              # activation_type=output.type)
             assert node_gene.ID not in c.node_genes
             c.node_genes[node_gene.ID] = node_gene
             node_id += 1

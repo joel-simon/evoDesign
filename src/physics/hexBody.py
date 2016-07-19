@@ -43,41 +43,39 @@ class HexBody(object):
         self.userData = dict()
         self.nuke_bodies = []
 
+        # for i, neighbor in neighbors:
+        #     if not neighbor:
+        #         continues
+        # for direction, neighbor in neighbors.items():
+        # print(neighbors)
+        if neighbors[0]: #Top
+            # if neighbor:
+            self.bodies['top_left'] = neighbors[0].body.bodies['bottom_left']
+            self.bodies['top_right'] = neighbors[0].body.bodies['bottom_right']
 
-        for direction, neighbor in neighbors.items():
-            if direction == 'top':
-                if neighbor:
-                    self.bodies['top_left'] = neighbor.bodies['bottom_left']
-                    self.bodies['top_right'] = neighbor.bodies['bottom_right']
+        if neighbors[1]:# 'top_right':
+            self.bodies['top_right'] = neighbors[1].body.bodies['left']
+            self.bodies['right'] = neighbors[1].body.bodies['bottom_left']
 
-            elif direction == 'top_right':
-                if neighbor:
-                    self.bodies['top_right'] = neighbor.bodies['left']
-                    self.bodies['right'] = neighbor.bodies['bottom_left']
+        if neighbors[2]:# 'bottom_right':
+            self.bodies['right'] = neighbors[2].body.bodies['top_left']
+            self.bodies['bottom_right'] = neighbors[2].body.bodies['left']
 
-            elif direction == 'bottom_right':
-                if neighbor:
-                    self.bodies['right'] = neighbor.bodies['top_left']
-                    self.bodies['bottom_right'] = neighbor.bodies['left']
+        if neighbors[3]:# 'bottom':
+            self.bodies['bottom_right'] = neighbors[3].body.bodies['top_right']
+            self.bodies['bottom_left'] = neighbors[3].body.bodies['top_left']
 
-            elif direction == 'bottom':
-                if neighbor:
-                    self.bodies['bottom_right'] = neighbor.bodies['top_right']
-                    self.bodies['bottom_left'] = neighbor.bodies['top_left']
+        if neighbors[4]:# 'bottom_left':
+            self.bodies['left'] = neighbors[4].body.bodies['top_right']
+            self.bodies['bottom_left'] = neighbors[4].body.bodies['right']
 
-            elif direction == 'bottom_left':
-                if neighbor:
-                    self.bodies['left'] = neighbor.bodies['top_right']
-                    self.bodies['bottom_left'] = neighbor.bodies['right']
+        if neighbors[5]:# 'top_left':
+            self.bodies['left'] = neighbors[5].body.bodies['bottom_right']
+            self.bodies['top_left'] = neighbors[5].body.bodies['right']
 
-            elif direction == 'top_left':
-                if neighbor:
-                    self.bodies['left'] = neighbor.bodies['bottom_right']
-                    self.bodies['top_left'] = neighbor.bodies['right']
-
-            else:
-                print(direction)
-                assert(False)
+        # else:
+        #     print(direction)
+        #     assert(False)
 
         for derp in positions.keys():
             if derp not in self.bodies:

@@ -3,8 +3,6 @@ import random
 import copy
 SQRT3 = math.sqrt( 3 )
 
-from functools import partial
-
 directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
 # for a hex in an even column
 directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
@@ -12,7 +10,7 @@ directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
 class Map( object ):
     def __init__( self, shape, value=0):
         #Map size
-        self.shape  = shape
+        self.shape = shape
         self.rows = shape[0]
         self.cols = shape[1]
 
@@ -60,50 +58,32 @@ class Map( object ):
     # def occupied_neighbors(self, center):
     #     return filter( self.is_occupied, neighbors)
 
-    def neighbors(self, center, labels=False):
-        if labels:
-            return self.named_neighbors(center)
-        else:
-            neighbors = []
-            for a, b in self.directions(center):
-                derp = (center[0]+a, center[1]+b)
-                if self.valid_coords(derp):
-                    neighbors.append(derp)
-            return neighbors
-
+    def neighbors(self, center):
+        for a, b in self.directions(center):
+            derp = (center[0]+a, center[1]+b)
+            if self.valid_coords(derp):
+                yield self[derp[0], derp[1]]
+            else:
+                yield None
 
     def neighbor(self, coords, direction):
         assert(type(direction) == type(1))
         d = self.directions(coords)[direction]
         return (coords[0] + d[0], coords[1]+d[1])
 
-    # def beepbop(self, center, direction):
+    # def named_neighbors(self, center):
     #     names = ['bottom','bottom_right', 'top_right',
     #             'top', 'top_left', 'bottom_left']
     #     coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
-    #     return dict(zip(names, coords))[direction]
+    #     neighbors = []
+    #     for r, c in coords:
+    #         if self.valid_coords((r,c)):
+    #             neighbors.append(self.values[r][c])
+    #         else:
+    #             neighbors.append(False)
+    #     assert(len(neighbors) == 6)
+    #     return dict(zip(names, neighbors))
 
-    def named_neighbors(self, center):
-        names = ['bottom','bottom_right', 'top_right',
-                'top', 'top_left', 'bottom_left']
-        coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
-        neighbors = []
-        for r, c in coords:
-            if self.valid_coords((r,c)):
-                neighbors.append(self.values[r][c])
-            else:
-                neighbors.append(False)
-        assert(len(neighbors) == 6)
-        return dict(zip(names, neighbors))
-
-    # def num_occupied_neighbors(self, center):
-    #     n = 0
-    #     for a, b in self.directions(center):
-    #         if self.is_occupied((center[0] + a, center[1] + b)):
-    #             n += 1
-    #     return n
 
 if __name__ == '__main__':
     hex_map = Map((8,8), value=0)
-    # print(hex_map.ascii())
-

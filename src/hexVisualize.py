@@ -19,8 +19,7 @@ LIGHT_GREEN = (0, 200, 0, 10)
 
 class HexRenderer(object):
     """docstring for HexRenderer"""
-    def __init__(self, simulation):
-        self.simulation = simulation
+    def __init__(self):
         self.scale = 3
 
     def screen_xy(self, xy):
@@ -41,10 +40,10 @@ class HexRenderer(object):
         # red = int(200 * (a-m_range[0])/(1+m_range[1]-m_range[0]))
         # pygame.gfxdraw.filled_circle(screen, x, y, int(node.r), (200, 10, 10, red))
 
-    def render(self):
+    def render(self, simulation):
         print('render')
-        bodies = self.simulation.world.bodies
-        joints = self.simulation.world.joints
+        bodies = simulation.world.bodies
+        joints = simulation.world.joints
 
         print(len(bodies))
         print(len(joints))

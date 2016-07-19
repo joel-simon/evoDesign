@@ -5,12 +5,30 @@ import time
 from src.cell import Cell
 from .physics.empty_framework import Framework
 from .physics.hexBody import HexBody
-from .hexmap import Map
-SQRT3 = math.sqrt( 3 )
+# from .hexmap import Map
+cdef long SQRT3 = math.sqrt( 3 )
+
+
+cdef int simulate(genome, int rows, int cols, int max_steps):
+    cdef int next_cell_id, last_change_step, hex_radius, step_count
+
+    cdef int[rows][cols]
+
+    cells = []
+
+    physics = Framework()
+    world = self.physics.world
+     = 0
+
 
 class Simulation(object):
     def __init__(self, genome, bounds, verbose=False,
-                max_steps=100, max_physics_step=10):
+                max_steps=100, max_physics_step=10, Renderer=None):
+        if Renderer:
+            self.renderer = Renderer(self)
+        else:
+            self.renderer = None
+
         self.hmap = Map(bounds, None)
         self.genome = genome
 
@@ -47,12 +65,16 @@ class Simulation(object):
     def create_cell(self, coords, cell_type=0):
         assert(self.hmap.valid_coords(coords))
         self.last_change = self.step_count
-        body = None
 
+        body = None
         xy = self._coords_to_xy(coords)
         xy[1] += self.hex_radius
 
-        neighbors = list(self.hmap.neighbors(coords))
+        neighbors = self.hmap.neighbors(coords, labels=True)
+        for k, v in neighbors.items():
+            if v and v.body:
+                neighbors[k] = v.body
+
         static = []
         if coords[0] == 0:
             static = ['bottom_left', 'bottom_right']
@@ -80,21 +102,14 @@ class Simulation(object):
             self.last_change = self.step_count
             self.create_cell(coords)
 
-    def create_inputs(self, cell):
-        raise NotImplemented
-
-    def handle_outputs(self, cell):
-        raise NotImplemented
-
-    def step(self, renderer=None):
+    def step(self):
         if self.verbose:
             print('step', self.step_count)
             print('\t', len(self.cells))
         kill_cells = []
 
         for cell in self.cells:
-            inputs = self.create_inputs(cell)
-            self.handle_outputs(cell, cell.network.serial_activate(inputs))
+            cell.step(self)
 
         for body in self.world.bodies:
             if body.userData and body.userData['origin']:
@@ -102,16 +117,17 @@ class Simulation(object):
                 body.linearVelocity = (0,0)
                 body.angularVelocity = 0
 
+
         # self.physics.run(self.max_physics_step)
 
-        if renderer:
-            renderer.render(self)
+        if self.renderer:
+            self.renderer.render()
 
         assert(len(self.cells) <= self.bounds[0] * self.bounds[1])
         self.step_count += 1
 
-    def run(self, renderer=None):
+    def run(self):
         for _ in range(self.max_steps):
-            self.step(renderer)
+            self.step()
             if self.step_count - self.last_change > 3:
                 break

@@ -1,46 +1,62 @@
+import pyximport; pyximport.install(pyimport = True)
 import argparse
 
-from src.experiment import Experiment, Input, Output, OutputCluster
+from src.experiment import Experiment#, Input, Output, OutputCluster
 from src.hexSimulation import Simulation
 
 from src.hexVisualize import HexRenderer as Renderer
 
-class FixedSize(Experiment):
+class FixedSize(Simulation):
     """docstring for FixedSize"""
-    def __init__(self, *args, **kwargs):
-        super(FixedSize, self).__init__(*args, **kwargs)
+    genome_config = {'num_morphogens': 0, 'morphogen_thresholds': 0}
+    genome_config['inputs'] = [
+        'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
+        'neighbor_bl', 'neighbor_tl'
+    ]
+    genome_config['outputs'] = [
+        'apoptosis', 'divide_t', 'divide_tr', 'divide_br',
+        'divide_b', 'divide_bl', 'divide_tl'
+    ]
+    def __init__(self, genome):
+        super(FixedSize, self).__init__(genome, max_steps = 40, bounds=(15,15))
 
         self.target = 16
-        self.Simulation = Simulation
-        self.simulation_config = {
-            'max_steps':40 ,
-            'bounds':(8, 8),
+        # self.Simulation = Simulation
+        # self.simulation_config = {
+        #     'max_steps': 40 ,
+        #     'bounds': (8, 8),
             # 'verbose': True
             # 'Renderer': Renderer
-        }
+        # }
 
         # self.final_renderer = Renderer
 
-        self.genome_config['inputs'] = [
-            Input('neighbor_t',  lambda c,s:self.has_neighbor(c, s, 0)),
-            Input('neighbor_tr', lambda c,s:self.has_neighbor(c, s, 1)),
-            Input('neighbor_br', lambda c,s:self.has_neighbor(c, s, 2)),
-            Input('neighbor_b',  lambda c,s:self.has_neighbor(c, s, 3)),
-            Input('neighbor_bl', lambda c,s:self.has_neighbor(c, s, 4)),
-            Input('neighbor_tl', lambda c,s:self.has_neighbor(c, s, 5)),
-        ]
+        # self.input_names = ['t', 'tr', 'br']
+
+        # self.genome_config['inputs'] = [
+        #     'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
+        #     'neighbor_bl', 'neighbor_tl'
+        #     Input('neighbor_t',  lambda c,s:self.has_neighbor(c, s, 0)),
+        #     Input('neighbor_tr', lambda c,s:self.has_neighbor(c, s, 1)),
+        #     Input('neighbor_br', lambda c,s:self.has_neighbor(c, s, 2)),
+        #     Input('neighbor_b',  lambda c,s:self.has_neighbor(c, s, 3)),
+        #     Input('neighbor_bl', lambda c,s:self.has_neighbor(c, s, 4)),
+        #     Input('neighbor_tl', lambda c,s:self.has_neighbor(c, s, 5)),
+        # ]
         # ('divide_sin', 'tanh', False),
         # ('divide_cos', 'tanh', False),
         # Out('grow', out='sigmoid', binary=False),
 
-        self.genome_config['outputs'] = [
-            Output('apoptosis', func=lambda c, s: s.destroy_cell(c) ),
-            Output('divide_t',  func=lambda c, s: s.divide_cell(c, 0)),
-            Output('divide_tr', func=lambda c, s: s.divide_cell(c, 1)),
-            Output('divide_br', func=lambda c, s: s.divide_cell(c, 2)),
-            Output('divide_b',  func=lambda c, s: s.divide_cell(c, 3)),
-            Output('divide_bl', func=lambda c, s: s.divide_cell(c, 4)),
-            Output('divide_tl', func=lambda c, s: s.divide_cell(c, 5))
+        # self.genome_config['outputs'] = [
+        #     'apoptosis', 'divide_t', 'divide_tr', 'divide_br'
+        #     'divide_b', 'divide_bl', 'divide_tl'
+        #     Output('apoptosis', func=lambda c, s: s.destroy_cell(c) ),
+        #     Output('divide_t',  func=lambda c, s: s.divide_cell(c, 0)),
+        #     Output('divide_tr', func=lambda c, s: s.divide_cell(c, 1)),
+        #     Output('divide_br', func=lambda c, s: s.divide_cell(c, 2)),
+        #     Output('divide_b',  func=lambda c, s: s.divide_cell(c, 3)),
+        #     Output('divide_bl', func=lambda c, s: s.divide_cell(c, 4)),
+        #     Output('divide_tl', func=lambda c, s: s.divide_cell(c, 5))
             # OutputCluster(
             #     name='divide',
             #     outputs=[
@@ -53,14 +69,39 @@ class FixedSize(Experiment):
             #     ],
             #     func=lambda cell, outs: cell.divide(outs.index(max(out)))
             # )
-        ]
+        # ]
 
-    def has_neighbor(self, cell, simulation, i):
-        coords = simulation.hmap.neighbor(cell.userData['coords'], i)
-        return int(simulation.hmap.is_occupied(coords))
+    def create_inputs(self, cell):
+        inputs = []
+        coords = cell.userData['coords']
+        inputs = list(map(bool, self.hmap.neighbors(coords)))
 
-    def set_up(self, sim):
-        cell = sim.create_cell(coords=(0, 0))
+        return inputs
+
+    def handle_outputs(self, cell, outputs):
+        if outputs[0] > .5:
+            self.destroy_cell(cell)
+            return
+        if outputs[1] > .5:
+            self.divide_cell(cell, 0)
+        if outputs[2] > .5:
+            self.divide_cell(cell, 1)
+        if outputs[3] > .5:
+            self.divide_cell(cell, 2)
+        if outputs[4] > .5:
+            self.divide_cell(cell, 3)
+        if outputs[5] > .5:
+            self.divide_cell(cell, 4)
+        if outputs[6] > .5:
+            self.divide_cell(cell, 5)
+
+    # def has_neighbor(self, cell, simulation, i):
+    #     coords = simulation.hmap.neighbor(cell.userData['coords'], i)
+    #     return int(simulation.hmap.is_occupied(coords))
+
+    def set_up(self):
+        cell = self.create_cell(coords=(0, 0))
+
 
     def fitness(self, sim):
         n = len(sim.cells)
@@ -70,11 +111,11 @@ class FixedSize(Experiment):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-    parser.add_argument('-g', '--generations', help='', default=4 , type=int)
-    parser.add_argument('-p', '--population', help='', default=10, type=int)
+    parser.add_argument('-g', '--generations', help='', default=10 , type=int)
+    parser.add_argument('-p', '--population', help='', default=100, type=int)
     parser.add_argument('-c', '--cores', help='', default=1, type=int)
     args = parser.parse_args()
 
-    experiment = FixedSize(out_dir=args.out, generations=args.generations,
+    experiment = Experiment(out_dir=args.out, generations=args.generations,
                           cores=args.cores, population=args.population)
-    experiment.run()
+    experiment.run(FixedSize, Renderer)

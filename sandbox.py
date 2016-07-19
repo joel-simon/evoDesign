@@ -43,7 +43,7 @@ class Sandbox(Simulation):
         # pygame.image.save(self.screen, './out_temp/' + str(self.stepCount)+'.jpg')
         # print('saved')
 
-sim = Sandbox(dummy_genome, max_steps=200, verbose=False, bounds=50)
+sim = Sandbox(dummy_genome, max_steps=200, verbose=False, bounds=(8,8))
 # cell = sim.create_cell(position=(0,0))
 # sim.cells.append(cell)
 
