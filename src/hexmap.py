@@ -52,8 +52,6 @@ class Map( object ):
 
     def valid_coords( self, coords ):
         row, col = coords
-        assert(type(row) == type(1))
-        assert(type(col) == type(1))
         if col < 0 or col >= self.cols: return False
         if row < 0 or row >= self.rows: return False
         return True

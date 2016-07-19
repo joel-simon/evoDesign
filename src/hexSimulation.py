@@ -1,6 +1,7 @@
 import math
 import random
 import time
+import copy
 
 from src.cell import Cell
 from .physics.empty_framework import Framework
@@ -96,15 +97,13 @@ class HexSimulation(object):
 
     def step(self, renderer=None):
         if self.verbose:
-            # print()
             print('#'*40,'step', self.step_count,'#'*40)
-            # print('#'*40)
 
         self.created_cells = 0
         self.destroyed_cells = 0
         # kill_cells = []
 
-        for cell in self.cells:
+        for cell in copy.copy(self.cells):
             inputs = self.create_inputs(cell)
             self.handle_outputs(cell, cell.network.serial_activate(inputs))
 

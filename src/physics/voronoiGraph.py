@@ -2,7 +2,7 @@ import sys, time, math
 import random
 
 # from pyhull.delaunay import DelaunayTri
-import pyvoro
+# import pyvoro
 
 from collections import defaultdict
 import warnings

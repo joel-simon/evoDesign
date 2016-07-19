@@ -5,7 +5,6 @@ from src.cellGenome import CellGenome
 # from src.simulation2 import Simulation
 from src.hexSimulation import HexSimulation
 from src.hexVisualize import HexRenderer as Renderer
-# import pygame
 
 local_dir = os.path.dirname(__file__)
 config  = Config(os.path.join(local_dir, 'config.txt'))
@@ -29,7 +28,6 @@ class Sandbox(HexSimulation):
         pass
 
     def set_up(self):
-
         # for coords in self.hmap.neighbor_coords((4,4)):
         #     print(coords)
         #     self.create_cell(coords)
@@ -45,24 +43,9 @@ class Sandbox(HexSimulation):
         # for i in range(2,7):
         #     self.create_cell((7,i))
 
-        for i in range(8):
-            for j in range(8):
-                self.create_cell((i,j))
-
-
-        # self.create_cell((1,0))
-    # def _get_outputs(self):
-        # if self.stepCount == 100:
-        #     return [{'divide': True} for cell in self.cells]
-        # return [{'grow':1000} for cell in self.cells]
-        # if self.stepCount < 40:
-            # return [{'grow':1000} for cell in self.cells]
-
-            # return [{'contract':True} for cell in self.cells]
-        # else:
-        #     return [{'grow':1000} for cell in self.cells]
-        # print([cell.body.pressure for cell in self.cells])
-        # return [{} for cell in self.cells]
+        # for i in range(8):
+        #     for j in range(8):
+        #         self.create_cell((i,j))
 
     # def Step(self, *args):
     #     super(Sandbox, self).Step(*args)
@@ -77,24 +60,3 @@ simulation.verbose = True
 simulation.set_up()
 simulation.run(renderer)
 renderer.hold()
-
-# cell = sim.create_cell(position=(0,0))
-# sim.cells.append(cell)
-
-# sim.cells.append()
-# sim.cells.append(sim.create_cell((0,1)))
-# sim.cells.append(sim.create_cell((1,1)))
-# sim.cells.append(sim.create_cell((7,1)))
-# sim.cells.append(sim.create_cell((7,2)))
-# sim.cells.append(sim.create_cell((7,3)))
-# for i in range(50):
-#     for j in range(50):
-#         sim.cells.append(sim.create_cell((i,j)))
-#     # sim.cells.append(sim.create_cell((i,0)))
-
-
-# for i in range(8):
-#     sim.cells.append(sim.create_cell((i,0)))
-
-print('VALID')
-sim.run()

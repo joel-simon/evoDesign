@@ -1,9 +1,9 @@
-import pyximport; pyximport.install(pyimport = True)
+import pyximport; pyximport.install()
 import argparse
 
-from src.experiment import Experiment#, Input, Output, OutputCluster
+# from src.experiment import Experiment#, Input, Output, OutputCluster
 from src.hexSimulation import HexSimulation
-from src.hexVisualize import HexRenderer as Renderer
+from src.hexRenderer import HexRenderer as Renderer
 
 class FixedSize(HexSimulation):
     """docstring for FixedSize"""
@@ -20,8 +20,8 @@ class FixedSize(HexSimulation):
         'divide_b', 'divide_bl', 'divide_tl'
     ]
     def __init__(self, genome):
-        super(FixedSize, self).__init__(genome, max_steps = 40, bounds=(8,8))
-        self.target = 64
+        super(FixedSize, self).__init__(genome, max_steps = 40, bounds=(16,16))
+        self.target = 255
         # self.genome_config['inputs'] = [
         #     'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
         #     'neighbor_bl', 'neighbor_tl'
@@ -89,16 +89,5 @@ class FixedSize(HexSimulation):
     def fitness(self, sim):
         n = len(sim.cells)
         fitness = 1 - abs(n-self.target)/float(self.target)
+        fitness = min(.95, fitness)
         return fitness
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-    parser.add_argument('-g', '--generations', help='', default=10 , type=int)
-    parser.add_argument('-p', '--population', help='', default=10, type=int)
-    parser.add_argument('-c', '--cores', help='', default=1, type=int)
-    args = parser.parse_args()
-
-    experiment = Experiment(out_dir=args.out, generations=args.generations,
-                          cores=args.cores, population=args.population)
-    experiment.run(FixedSize, Renderer)
