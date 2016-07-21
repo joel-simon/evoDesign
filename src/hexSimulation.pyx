@@ -3,7 +3,7 @@ import random
 import time
 import copy
 
-from src.cell import Cell
+from .cell import Cell
 from .physics.empty_framework import Framework
 from .physics.hexBody import HexBody
 from .hexmap import Map

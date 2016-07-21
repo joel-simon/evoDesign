@@ -6,7 +6,7 @@ SQRT3 = math.sqrt( 3 )
 # directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
 # for a hex in an even column
 # directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
-['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
+# ['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
 
 directions_odd = [(1, -1),(1,0),(1,1),(0,1),(-1, 0),(0,-1)]
 # for a hex in an even column
@@ -64,11 +64,14 @@ class Map( object ):
 
     def neighbors(self, center):
         for a, b in self.directions(center):
-            derp = (center[0]+a, center[1]+b)
-            if self.valid_coords(derp):
-                yield self[derp[0], derp[1]]
-            else:
+            row = center[0]+a
+            col = center[1]+b
+            if col < 0 or col >= self.cols:
                 yield None
+            elif row < 0 or row >= self.rows:
+                yield None
+            else:
+                yield self.values[row][col]
 
     def neighbor_coords(self, center):
         # return self.directions(center)

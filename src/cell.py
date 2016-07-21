@@ -29,12 +29,12 @@ class Cell(object):
         self.network = nn.create_feed_forward_phenotype(genome)
 
     # Used by create inputs.
-    def get_threshold(self, c):
-        max_value = 20
-        p = c/max_value
-        p = min(p, .9999)
-        th = self.genome.morphogen_thresholds
-        return int(p*th)
+    # def get_threshold(self, c):
+    #     max_value = 20
+    #     p = c/max_value
+    #     p = min(p, .9999)
+    #     th = self.genome.morphogen_thresholds
+    #     return int(p*th)
 
     # def create_inputs(self):
 

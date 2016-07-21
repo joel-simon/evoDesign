@@ -26,7 +26,7 @@ def timing(f):
 
 @timing
 def run(steps, w, Da, Ra, Pa, Db, Rb, Pb, S, saturate=False):
-    a = make_array(w, 1) #concentration of activator
+    a = make_array(w, lambda: (random.random()*.1 +1)*Ra) #concentration of activator
     b = make_array(w, 1) #concentration of inhibitor
 
     a_new = make_array(w, 0)
@@ -48,7 +48,7 @@ def run(steps, w, Da, Ra, Pa, Db, Rb, Pb, S, saturate=False):
                 #activator
                 a_2 = (av**2)
 
-                if saturate: 
+                if saturate:
                     a_2 /= (1+.2*a_2)
 
                 if bv != 0:
@@ -105,13 +105,6 @@ def main():
     Da = 0.01    #diffusion of the activator (unit: , if regions on x-axis have a width of 1 mu)
     Ra = 0.02    #removal rate of the activator
     Pa = make_array(w, .001) #activator-independent activator production rate
-    # Pa = make_array(w, lambda: (random.random()*.1))
-    # Pa[0][19] = .1
-    Pa[0][20] = .1
-    # Pa[0][21] = .1
-
-    Pa[20][20] = .1
-    Pa[30][20] = .1
 
     Db = 0.20    #Diffusion of the inhibitor
     Rb = 0.02     #Removal rate of the inhibitor
