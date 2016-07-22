@@ -1,15 +1,17 @@
-cpdef make_array(n, v=0.0):
+import math
+def make_array(n, v=0.0):
     # if type(v) == type(lambda n:n):
     return [[v for x in range(n)] for y in range(n)]
     # else:
         # return [[v for x in range(n)] for y in range(n)]
 
-cpdef spread_morphogen(A, I, double Da, double Di, double Ra, double Ri,
-                    double Pa, double Pi, short steps=1000, saturate=False,
-                    step=None):
+# cpdef run(A, I, PA, PI, double Da, double Di, double Ra, double Ri,
+                    # short steps=1000, saturate=False):
+def run(A, I, PA, PI, Da, Di, Ra, Ri,
+         steps=1000, saturate=False):
 
-    cdef short rows, cols, s, r, c, _r, _c
-    cdef double a, i, a_2, a_prod, i_prod, a_diff, i_diff
+    # cdef short rows, cols, s, r, c, _r, _c
+    # cdef double a, i, Pa, Pi, a_2, a_prod, i_prod, a_diff, i_diff
 
     rows = len(A)
     cols = len(A[0])
@@ -25,6 +27,9 @@ cpdef spread_morphogen(A, I, double Da, double Di, double Ra, double Ri,
             for c in range(cols):
                 a = A[r][c]
                 i = I[r][c]
+                Pa = PA[r][c]
+                Pi = PI[r][c]
+
                 a_2 = a * a
                 if saturate:
                     a_2 /= (1+.2*a_2)
@@ -47,10 +52,17 @@ cpdef spread_morphogen(A, I, double Da, double Di, double Ra, double Ri,
                 A_next[r][c] = a + a_prod - (Ra * a) + Da*a_diff
                 I_next[r][c] = i + i_prod - (Ri * i) + Di*i_diff
 
+
         A_next, A = A, A_next
         I_next, I = I, I_next
-        if s%5 == 0:
-            if step:
-                step(A)
-        if s%100 == 0:
-            print(s)
+
+
+    for r in range(rows):
+        for c in range(cols):
+            if math.isnan(A[r][c]):
+                print('nan in A! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
+            if math.isnan(I[r][c]):
+                print('nan in I! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
+            assert(not math.isnan(A[r][c]))
+            assert(not math.isnan(I[r][c]))
+            # i = I[r][c]

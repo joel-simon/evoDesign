@@ -20,7 +20,6 @@ class CellGenome(Genome):
         # Start with one cell type with default params.
         self.cell_types = [CellType(0)]
 
-
         self.morphogen_genes = dict()
         self.attribute_genes = dict()
 
@@ -28,20 +27,21 @@ class CellGenome(Genome):
         self.outputs = config.genome_config['outputs']
         self.num_morphogens = config.genome_config['num_morphogens']
         self.morphogen_thresholds = config.genome_config['morphogen_thresholds']
-
-        # for i in range(self.num_morphogens):
-        #     # Create the morphogen gene with ranodm values.
-        #     self.morphogen_genes[i] = MorphogenGene(i)
+#
+        for i in range(self.num_morphogens):
+        #     # Create the morphogen gene with random values.
+            self.morphogen_genes[i] = MorphogenGene(i)
 
         #     # Create the inputs and outputs for this morphogen.
         #     for t in range(self.morphogen_thresholds):
         #         self.inputs.append('a%it%i' % (i, t))
 
-        #     self.outputs.append(Output('a'+str(i), 'sigmoid', boolean=False))
-        #     self.outputs.append(Output('h'+str(i), 'sigmoid', boolean=False))
+        #     self.outputs.append('a'+str(i))
+        #     self.outputs.append('h'+str(i))
 
         # print self.inputs
         self.num_inputs  = len(self.inputs)
+        # print('aaaaa',self.num_inputs)
         self.num_outputs = len(self.outputs)
         self.config.input_nodes = self.num_inputs
         self.config.output_nodes = self.num_outputs
@@ -49,8 +49,9 @@ class CellGenome(Genome):
     def mutate(self, innovation_indexer):
         super(CellGenome, self).mutate(innovation_indexer)
 
+        # TODO:
         # if condition:
-        #   add or subtract morphogen
+        #   Add or subtract morphogen.
 
         for mg in self.morphogen_genes.values():
             mg.mutate(self.config)

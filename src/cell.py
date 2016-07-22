@@ -19,11 +19,12 @@ class Cell(object):
         self.userData = dict()
         # cell_type = genome.cell_types[cell_type]
 
-        self.morphogens = [morph.values() for morph in self.genome.morphogen_genes.values()]
-        self.num_morphogens = genome.num_morphogens
+        # self.
+        # self.morphogens = [morph.values() for morph in self.genome.morphogen_genes.values()]
+        # self.num_morphogens = genome.num_morphogens
 
-        self.morphogen_concentrations = [[0, 0] for _ in range(self.num_morphogens)]
-        self.morphogen_productions    = [[0, 0] for _ in range(self.num_morphogens)]
+        # self.morphogen_concentrations = [[0, 0] for _ in range(self.num_morphogens)]
+        # self.morphogen_productions    = [[0, 0] for _ in range(self.num_morphogens)]
 
         # print(genome)
         self.network = nn.create_feed_forward_phenotype(genome)

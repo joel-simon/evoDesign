@@ -57,7 +57,7 @@ class Map( object ):
         return True
 
     def is_occupied(self, coords):
-      return (self.valid_coords(coords) and bool(self[coords]))
+        return (self.valid_coords(coords) and bool(self[coords]))
 
     # def occupied_neighbors(self, center):
     #     return filter( self.is_occupied, neighbors)

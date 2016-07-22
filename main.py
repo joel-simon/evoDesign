@@ -15,8 +15,8 @@ from src.cellGenome import CellGenome
 # i = importlib.import_module('src.experiment')
 # from src.hexSimulation import HexSimulation as Simulation
 from fixedSize import FixedSize as Simulation
-from src.hexRenderer import HexRenderer as Renderer
-
+# from src.hexRenderer import HexRenderer as Renderer
+Renderer = None
 
 # def plot_scores(genome, filename, n=10, view=True):
 #   pool = Pool()
@@ -114,9 +114,9 @@ def main(cores, generations, pop_size, out_dir):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-    parser.add_argument('-g', '--generations', help='', default=3 , type=int)
+    parser.add_argument('-g', '--generations', help='', default=100, type=int)
     parser.add_argument('-p', '--population', help='', default=100, type=int)
-    parser.add_argument('-c', '--cores', help='', default=1, type=int)
+    parser.add_argument('-c', '--cores', help='', default=6, type=int)
     args = parser.parse_args()
 
     main(args.cores, args.generations, args.population, args.out)
