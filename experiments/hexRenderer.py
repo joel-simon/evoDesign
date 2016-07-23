@@ -26,7 +26,7 @@ def hex_points(row, col, radius):
         ( 0, SQRT3 / 2 * radius ),
         ( .5 * radius, 0 )
     ]
-    return [((x + left), ( y + top)) for ( x, y ) in hex_coords]
+    return [(int(x + left), int( y + top)) for ( x, y ) in hex_coords]
 
 def draw_hex_map(grid):
     screen.fill((255,255,255))
@@ -55,6 +55,9 @@ def draw_hex_map(grid):
             for i, xy in enumerate(points):
                 points[i] = xy_to_screen(xy)
 
+            # print(points)
+            # pygame.draw.polygon(screen, color, points, 0)
+            # pygame.draw.polygon(screen, (20, 20, 20),points,  1)
             pygame.gfxdraw.filled_polygon(screen, points, color)
             pygame.gfxdraw.aapolygon(screen, points, (20, 20, 20, 100))
 

@@ -12,6 +12,15 @@ directions_odd = [(1, -1),(1,0),(1,1),(0,1),(-1, 0),(0,-1)]
 # for a hex in an even column
 directions_even = [ (0, -1),(1,0),(0,1),(-1, 1),(-1, 0),(-1,-1)]
 
+def cube_distance(a, b):
+    return (abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])) / 2.0
+
+def offset_to_cube(row, col):
+    x = col
+    z = row - (col - (col&1)) / 2.0
+    y = -x-z
+    return (x, y, z)
+
 
 class Map( object ):
     def __init__( self, shape, value=0):
@@ -40,11 +49,15 @@ class Map( object ):
 
     def distance( self, start, destination ):
         """Takes two hex coordinates and determine the distance between them."""
-        diffX = destination[0] - start[0]
-        diffY = destination[1] - start[1]
+        # diffX = destination[0] - start[0]
+        # diffY = destination[1] - start[1]
 
-        distance = min( abs( diffX ), abs( diffY ) ) + abs( diffX - diffY )
-        return distance
+        # distance = min( abs( diffX ), abs( diffY ) ) + abs( diffX - diffY )
+        # return distance
+        ac = offset_to_cube(*start)
+        bc = offset_to_cube(*destination)
+        return cube_distance(ac, bc)
+
 
     def directions(self, position):
         # for a hex in an odd column

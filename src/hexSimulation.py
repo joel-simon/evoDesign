@@ -4,8 +4,10 @@ import time
 import copy
 
 from .cell import Cell
-from .physics.empty_framework import Framework
-from .physics.hexBody import HexBody
+
+# from .physics.empty_framework import Framework
+# from .physics.hexBody import HexBody
+
 from .hexmap import Map
 from .morphogens import reaction_diffusion
 
@@ -25,8 +27,8 @@ class HexSimulation(object):
         self.PI = Map(bounds, 0)
 
 
-        self.physics = Framework()
-        self.world = self.physics.world
+        # self.physics = Framework()
+        # self.world = self.physics.world
 
         self.verbose = verbose
         self.max_steps = max_steps
@@ -58,7 +60,7 @@ class HexSimulation(object):
             Ra=values['activator_removal'],
             Ri=values['inhibitor_removal'],
             saturate=values['saturate'],
-            steps=500
+            steps=1000
         )
 
     def _get_id(self):
@@ -160,9 +162,6 @@ class HexSimulation(object):
         # self.physics.run(self.max_physics_step)
         #####
 
-        if renderer:
-            renderer.render(self)
-
         if self.verbose:
             print('destroyed %i cells' % self.destroyed_cells)
             print('created %i cells:' % self.created_cells)
@@ -173,7 +172,11 @@ class HexSimulation(object):
         self.step_count += 1
 
     def run(self, renderer=None):
+        if renderer:
+            renderer.render(self)
         for _ in range(self.max_steps):
             self.step(renderer)
+            if renderer:
+                renderer.render(self)
             if self.step_count - self.last_change > 3:
                 break

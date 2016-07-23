@@ -1,14 +1,19 @@
 import random
 
 class AttributeGene(object):
-    def __init__(self, ID, value=random.random(), minv=0, maxv=1, mutate_power=None):
+    def __init__(self, ID, value=None, minv=0, maxv=1, mutate_power=None):
         assert(value >= 0 and value <= 1)
         self.ID = ID
         self.minv = minv
         self.maxv = maxv
-        self.value = max(self.minv, min(self.maxv, value))
+
+        if value == None:
+            self.value = (random.random()/ (maxv - minv)) + minv
+        else:
+            self.value = max(self.minv, min(self.maxv, value))
+
         if mutate_power == None:
-            self.mutate_power = self.value/2
+            self.mutate_power = self.value/4
 
     def __str__(self):
         return 'Attribute Gene:'+str(self.value)

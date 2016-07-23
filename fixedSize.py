@@ -3,6 +3,9 @@ import argparse
 
 # from src.experiment import Experiment#, Input, Output, OutputCluster
 from src.hexSimulation import HexSimulation
+from src.hexmap import Map
+
+from src.classification import f1_score
 # from src.hexRenderer import HexRenderer as Renderer
 
 class FixedSize(HexSimulation):
@@ -12,8 +15,10 @@ class FixedSize(HexSimulation):
         'morphogen_thresholds': 4
     }
     genome_config['inputs'] = [
-        'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
-        'neighbor_bl', 'neighbor_tl', 'a0','a1','a2','a3'
+        'neighbor_t', 'neighbor_tr',
+        'neighbor_br', 'neighbor_b',
+        'neighbor_bl', 'neighbor_tl',
+        'a0t0','a0t1','a0t2','a0t3'
     ]
     genome_config['outputs'] = [
         'apoptosis', 'divide_t', 'divide_tr', 'divide_br',
@@ -21,34 +26,18 @@ class FixedSize(HexSimulation):
     ]
     def __init__(self, genome):
         super(FixedSize, self).__init__(genome,
-            max_steps = 40, bounds=(16,16))
+            max_steps = 60, bounds=(9, 9))
         self.target = 60
-        # self.genome_config['inputs'] = [
-        #     'neighbor_t', 'neighbor_tr', 'neighbor_br', 'neighbor_b',
-        #     'neighbor_bl', 'neighbor_tl'
-        #     Input('neighbor_t',  lambda c,s:self.has_neighbor(c, s, 0)),
-        # ]
-        # ('divide_sin', 'tanh', False),
-        # ('divide_cos', 'tanh', False),
-        # Out('grow', out='sigmoid', binary=False),
 
-        # self.genome_config['outputs'] = [
-        #     'apoptosis', 'divide_t', 'divide_tr', 'divide_br'
-        #     'divide_b', 'divide_bl', 'divide_tl'
+        # Where we want to have a cell
+        self.true = Map(self.bounds, 0)
 
-            # OutputCluster(
-            #     name='divide',
-            #     outputs=[
-            #         Output('0', type='sigmoid', binary=False),
-            #         Output('1', type='sigmoid', binary=False),
-            #         Output('2', type='sigmoid', binary=False),
-            #         Output('3', type='sigmoid', binary=False),
-            #         Output('4', type='sigmoid', binary=False),
-            #         Output('5', type='sigmoid', binary=False)
-            #     ],
-            #     func=lambda cell, outs: cell.divide(outs.index(max(out)))
-            # )
-        # ]
+        self.center = (4, 4)
+        for r in range(self.bounds[0]):
+            for c in range(self.bounds[1]):
+                if self.true.distance(self.center, (r,c)) < 3:
+                    self.true[r][c] = 1
+        self.true[4][4] = 0
 
     def _morphogen_inputs(self, cell):
         """Get the morphogens threshholds
@@ -56,10 +45,17 @@ class FixedSize(HexSimulation):
         inputs = [0.0] * 4
         coords = cell.userData['coords']
         value = self.A[coords[0]][coords[1]]
-        max_value = 10
-        p = value/max_value
+        max_value = 30
+
+        # value = max(cell.userData['max_a'], value)
+        if 'max_a' not in cell.userData:
+            cell.userData['max_a'] = 0.0
+        cell.userData['max_a'] = max(cell.userData['max_a'], value)
+
+        p = cell.userData['max_a']/max_value
         p = min(p, .9999)
         inputs[int(p*4)] = 1
+
         return inputs
 
     def create_inputs(self, cell):
@@ -73,28 +69,25 @@ class FixedSize(HexSimulation):
         if outputs[0] > .5:
             self.destroy_cell(cell)
             return
-        if outputs[1] > .5:
-            self.divide_cell(cell, 0)
-        if outputs[2] > .5:
-            self.divide_cell(cell, 1)
-        if outputs[3] > .5:
-            self.divide_cell(cell, 2)
-        if outputs[4] > .5:
-            self.divide_cell(cell, 3)
-        if outputs[5] > .5:
-            self.divide_cell(cell, 4)
-        if outputs[6] > .5:
-            self.divide_cell(cell, 5)
 
+        grow_outputs = outputs[1:-2]
+        assert(len(grow_outputs) == 6)
+
+        m = max(grow_outputs)
+        # if m > 0.5:
+        #     self.divide_cell(cell, grow_outputs.index(m))
+
+        for i in range(6):
+            if grow_outputs[i] > 0.5:
+                self.divide_cell(cell, i)
 
         # Update the morphogen production amounts
         coords = cell.userData['coords']
         self.PA[coords[0]][coords[1]] = outputs[-2]
         self.PI[coords[0]][coords[1]] = outputs[-1]
 
-
     def set_up(self):
-        cell = self.create_cell(coords=(8, 8))
+        cell = self.create_cell(coords=self.center)
 
     def fitness(self, sim):
         # n = len(sim.cells)
@@ -102,22 +95,7 @@ class FixedSize(HexSimulation):
         # fitness = min(.95, fitness)
         # return fitness
         # score = 0
-        TP = 0.0
-        FN = 0.0
-        FP = 0.0
-        dist = 4
-
-        cent = (8,8)
-        for row in range(16):
-            for col in range(16):
-                if self.hmap.distance(cent, (row,col) ) <= dist:
-                    if self.hmap[row][col]:
-                        TP += 1
-                    else:
-                        FN += 1
-                else:
-                    if self.hmap[row][col]:
-                        FP += 1
-                    else:
-                        pass
-        return TP / (TP + FN + FP)
+        score = f1_score(true=sum(self.true,[]), pred=sum(sim.hmap, []))
+        if self.hmap[self.center]:
+            score /= 2
+        return score

@@ -5,9 +5,10 @@ import sys
 import argparse
 import pickle
 from pprint import pprint
+import subprocess
 
 from neat.parallel import ParallelEvaluator
-from neat import population, visualize
+from neat import population#, visualize
 from neat.config import Config
 from src.cellGenome import CellGenome
 
@@ -15,19 +16,9 @@ from src.cellGenome import CellGenome
 # i = importlib.import_module('src.experiment')
 # from src.hexSimulation import HexSimulation as Simulation
 from fixedSize import FixedSize as Simulation
-# from src.hexRenderer import HexRenderer as Renderer
-Renderer = None
+from src.hexRenderer import HexRenderer as Renderer
+# Renderer = None
 
-# def plot_scores(genome, filename, n=10, view=True):
-#   pool = Pool()
-#   fitnesses = pool.map(fitness, repeat(genome, n))
-#   plt.hist(fitnesses)
-#   plt.title("Score Histogram for n=%i" % n)
-#   plt.savefig(filename)
-#   if view:
-#     plt.show()
-#   print fitnesses
-#   plt.close()
 
 def evaluate_genome(genome):
     simulation = Simulation(genome)
@@ -45,28 +36,27 @@ def report(pop, out_dir):
     with open(path.join(out_dir,'winner.p'), 'wb') as f:
         pickle.dump(winner, f)
 
+    with open(path.join(out_dir,'population.p'), 'wb') as f:
+        pickle.dump(pop, f)
+
     genome_text = open(path.join(out_dir,'winner.txt'), 'w+')
     genome_text.write('fitness: %f\n' % winner.fitness)
     genome_text.write(str(winner))
 
     # Plot the evolution of the best/average fitness.
-    visualize.plot_stats(pop.statistics, ylog=True,
-                        filename=path.join(out_dir,"nn_fitness.svg"))
+    # visualize.plot_stats(pop.statistics, ylog=True,
+    #                     filename=path.join(out_dir,"nn_fitness.svg"))
 
-    # Visualizes speciation
-    visualize.plot_species(pop.statistics,
-                    filename=path.join(out_dir,"nn_speciation.svg"))
+    # # Visualizes speciation
+    # visualize.plot_species(pop.statistics,
+    #                 filename=path.join(out_dir,"nn_speciation.svg"))
 
     # Visualize the best network.
-    node_names = dict()
-    for i, name in enumerate(winner.inputs + winner.outputs):
-        node_names[i] = name
-
-    visualize.draw_net(winner, view=False, node_names=node_names,
-                    filename=path.join(out_dir,"nn_winner.gv"))
+    subprocess.call(['./generate_graphs.sh', out_dir])
 
     if Renderer:
-        renderer = Renderer()
+        os.mkdir(path.join(out_dir, 'temp'))
+        renderer = Renderer(save=path.join(out_dir, 'temp'))
         simulation = Simulation(winner)
         simulation.verbose = True
         simulation.set_up()
@@ -114,7 +104,7 @@ def main(cores, generations, pop_size, out_dir):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-    parser.add_argument('-g', '--generations', help='', default=100, type=int)
+    parser.add_argument('-g', '--generations', help='', default=50, type=int)
     parser.add_argument('-p', '--population', help='', default=100, type=int)
     parser.add_argument('-c', '--cores', help='', default=6, type=int)
     args = parser.parse_args()
