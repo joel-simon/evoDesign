@@ -6,7 +6,7 @@ import argparse
 import pickle
 from pprint import pprint
 import subprocess
-
+from datetime import datetime
 from neat.parallel import ParallelEvaluator
 from neat import population#, visualize
 from neat.config import Config
@@ -18,7 +18,7 @@ from src.cellGenome import CellGenome
 from fixedSize import FixedSize as Simulation
 from src.hexRenderer import HexRenderer as Renderer
 # Renderer = None
-
+from shutil import copyfile
 
 def evaluate_genome(genome):
     simulation = Simulation(genome)
@@ -43,14 +43,6 @@ def report(pop, out_dir):
     genome_text.write('fitness: %f\n' % winner.fitness)
     genome_text.write(str(winner))
 
-    # Plot the evolution of the best/average fitness.
-    # visualize.plot_stats(pop.statistics, ylog=True,
-    #                     filename=path.join(out_dir,"nn_fitness.svg"))
-
-    # # Visualizes speciation
-    # visualize.plot_species(pop.statistics,
-    #                 filename=path.join(out_dir,"nn_speciation.svg"))
-
     # Visualize the best network.
     subprocess.call(['./generate_graphs.sh', out_dir])
 
@@ -61,7 +53,9 @@ def report(pop, out_dir):
         simulation.verbose = True
         simulation.set_up()
         simulation.run(renderer)
-        renderer.hold()
+
+    copyfile('./fixedSize.py', path.join(out_dir, 'fixedSize.py'))
+    copyfile('./config.txt', path.join(out_dir, 'fixedSize.txt'))
 
     print('Report finished.')
 
@@ -73,7 +67,6 @@ def main(cores, generations, pop_size, out_dir):
           os.system("rm -rf " + out_dir)
         else:
           sys.exit(0)
-    os.makedirs(out_dir)
 
     print('Starting Experiment.')
     print(pprint({
@@ -99,14 +92,16 @@ def main(cores, generations, pop_size, out_dir):
     else:
         pop.run(evaluate_genomes, generations)
     print('Experiment finished.')
+    os.makedirs(out_dir)
     report(pop, out_dir)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--out', help='Output directory', default='./out/derp')
-    parser.add_argument('-g', '--generations', help='', default=50, type=int)
-    parser.add_argument('-p', '--population', help='', default=100, type=int)
-    parser.add_argument('-c', '--cores', help='', default=6, type=int)
+    default_dir = './out/'+"{:%B_%d_%Y_%H-%M}".format(datetime.now())
+    parser.add_argument('-o', '--out', help='Output directory', default=default_dir)
+    parser.add_argument('-g', '--generations', help='', default=2, type=int)
+    parser.add_argument('-p', '--population', help='', default=10, type=int)
+    parser.add_argument('-c', '--cores', help='', default=1, type=int)
     args = parser.parse_args()
 
     main(args.cores, args.generations, args.population, args.out)
