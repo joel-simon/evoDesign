@@ -21,11 +21,10 @@ class HexSimulation(object):
         self.hmap = Map(bounds, None)
 
         # Morphogen grids
-        self.A = Map(bounds, 0)
-        self.I = Map(bounds, 0)
-        self.PA = Map(bounds, 0)
-        self.PI = Map(bounds, 0)
-
+        self.A  = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
+        self.I  = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
+        self.PA = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
+        self.PI = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
 
         # self.physics = Framework()
         # self.world = self.physics.world
@@ -48,20 +47,22 @@ class HexSimulation(object):
         self.destroyed_cells = 0
 
     def _step_morphogens(self):
-        morph_gene = list(self.genome.morphogen_genes.values())[0]
-        values = morph_gene.values()
-        reaction_diffusion.run(
-            A=self.A.values,
-            I=self.I.values,
-            PA=self.PA.values,
-            PI=self.PI.values,
-            Da=values['activator_diffusion'],
-            Di=values['inhibitor_diffusion'],
-            Ra=values['activator_removal'],
-            Ri=values['inhibitor_removal'],
-            saturate=values['saturate'],
-            steps=1000
-        )
+        for i in range(self.genome.num_morphogens):
+            morph_gene = list(self.genome.morphogen_genes.values())[i]
+            values = morph_gene.values()
+            reaction_diffusion.run(
+                A=self.A[i].values,
+                I=self.I[i].values,
+                mask=self.hmap,
+                PA=self.PA[i].values,
+                PI=self.PI[i].values,
+                Da=values['activator_diffusion'],
+                Di=values['inhibitor_diffusion'],
+                Ra=values['activator_removal'],
+                Ri=values['inhibitor_removal'],
+                saturate=values['saturate'],
+                steps=200
+            )
 
     def _get_id(self):
         self.next_cell_id += 1
@@ -131,11 +132,11 @@ class HexSimulation(object):
         self.destroyed_cells = 0
 
         # Reinitialize morphogen production values.
-        # if self.genome.num_morphogens > 0:
         for row in range(self.bounds[0]):
             for col in range(self.bounds[1]):
-                self.PA[row][col] = 0.0
-                self.PI[row][col] = 0.0
+                for i in range(self.genome.num_morphogens):
+                    self.PA[i][row][col] = 0.0
+                    self.PI[i][row][col] = 0.0
 
         for cell in copy.copy(self.cells):
             inputs = self.create_inputs(cell)
@@ -174,9 +175,19 @@ class HexSimulation(object):
     def run(self, renderer=None):
         if renderer:
             renderer.render(self)
+
         for _ in range(self.max_steps):
             self.step(renderer)
             if renderer:
                 renderer.render(self)
-            if self.step_count - self.last_change > 3:
-                break
+
+            if self.step_count > 3:
+                fitness = self.fitness()
+                min_fitness = self.step_count / float(self.max_steps)
+                if fitness < min_fitness:
+                    return fitness
+            # if self.step_count - self.last_change > 3:
+            #     break
+        return fitness
+
+

@@ -7,7 +7,7 @@ def make_array(n, v=0.0):
 
 # cpdef run(A, I, PA, PI, double Da, double Di, double Ra, double Ri,
                     # short steps=1000, saturate=False):
-def run(A, I, PA, PI, Da, Di, Ra, Ri,
+def run(A, I, mask, PA, PI, Da, Di, Ra, Ri,
          steps=1000, saturate=False):
 
     # cdef short rows, cols, s, r, c, _r, _c
@@ -25,32 +25,33 @@ def run(A, I, PA, PI, Da, Di, Ra, Ri,
     for s in range(steps):
         for r in range(rows):
             for c in range(cols):
-                a = A[r][c]
-                i = I[r][c]
-                Pa = PA[r][c]
-                Pi = PI[r][c]
+                if mask[r][c]:
+                    a = A[r][c]
+                    i = I[r][c]
+                    Pa = PA[r][c]
+                    Pi = PI[r][c]
 
-                a_2 = a * a
-                if saturate:
-                    a_2 /= (1+.2*a_2)
+                    a_2 = a * a
+                    if saturate:
+                        a_2 /= (1+.2*a_2)
 
-                if i != 0:
-                    a_prod = (a_2 / i) + Pa
-                else:
-                    a_prod = a_2 + Pa
+                    if i != 0:
+                        a_prod = (a_2 / i) + Pa
+                    else:
+                        a_prod = a_2 + Pa
 
-                i_prod = a*a + Pi
+                    i_prod = a*a + Pi
 
-                a_diff = 0.0
-                i_diff = 0.0
-                for _r, _c in foo[c%2]:
-                    if (r+_r >=0 and r+_r < rows) and (c+_c >=0 and c+_c < cols):
-                        a_diff += A[r+_r][c+_c] - a
-                        i_diff += I[r+_r][c+_c] - i
+                    a_diff = 0.0
+                    i_diff = 0.0
+                    for _r, _c in foo[c%2]:
+                        if (r+_r >=0 and r+_r < rows) and (c+_c >=0 and c+_c < cols):
+                            a_diff += A[r+_r][c+_c] - a
+                            i_diff += I[r+_r][c+_c] - i
 
-                # Sum the production, diffusion and decay components
-                A_next[r][c] = a + a_prod - (Ra * a) + Da*a_diff
-                I_next[r][c] = i + i_prod - (Ri * i) + Di*i_diff
+                    # Sum the production, diffusion and decay components
+                    A_next[r][c] = a + a_prod - (Ra * a) + Da*a_diff
+                    I_next[r][c] = i + i_prod - (Ri * i) + Di*i_diff
 
 
         A_next, A = A, A_next

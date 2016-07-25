@@ -11,7 +11,7 @@ reproduction_type    = DefaultReproduction
 input_nodes          = 5
 hidden_nodes         = 0
 output_nodes         = 5
-initial_connection   = fs_neat
+initial_connection   = partial 0.2
 max_weight           = +30
 min_weight           = -30
 feedforward          = 0
@@ -47,7 +47,7 @@ weight_coefficient      = 0.5
 
 [DefaultStagnation]
 species_fitness_func = mean
-max_stagnation       = 5
+max_stagnation       = 10
 
 [DefaultReproduction]
 elitism              = 5

@@ -112,20 +112,21 @@ class HexRenderer(object):
         values = []
         for row in range(rows):
             for col in range(cols):
-                values.append(A.values[row][col])
+                values.append(A[0][row][col])
 
         min_a = min(values)
         max_a = max(values)
 
         for row in range(rows):
             for col in range(cols):
-                v = C.values[row][col]
-                a = A.values[row][col]
+                v = C[row][col]
+                a = A[0][row][col]
 
-                if max_a > 0:
-                    scaled = (a - min_a) / (max_a - min_a)
-                else:
-                    scaled = 0
+                scaled = (min(a,30) / 30.)
+                # if max_a > 0:
+                #     scaled = (a - min_a) / (max_a - min_a)
+                # else:
+                #     scaled = 0
 
                 points = hex_points(row, col, radius)
                 for i, xy in enumerate(points):
@@ -137,7 +138,7 @@ class HexRenderer(object):
 
                 if v:
                     pygame.draw.polygon(screen, (10,200,10), points, 5)
-                pygame.draw.polygon(screen, (20, 20, 20),points,  1)
+                # pygame.draw.polygon(screen, (20, 20, 20),points,  1)
 
         screen.blit(font.render("min %f"%(min_a), True, (0,0,0)), (10, 20))
         screen.blit(font.render("max %f"%(max_a), True, (0,0,0)), (10, 40))

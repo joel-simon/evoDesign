@@ -1,4 +1,3 @@
-
 import os
 from os import path
 import sys
@@ -12,19 +11,16 @@ from neat import population#, visualize
 from neat.config import Config
 from src.cellGenome import CellGenome
 
-# import importlib
-# i = importlib.import_module('src.experiment')
-# from src.hexSimulation import HexSimulation as Simulation
-from fixedSize import FixedSize as Simulation
+import importlib
+
 from src.hexRenderer import HexRenderer as Renderer
-# Renderer = None
+
 from shutil import copyfile
 
 def evaluate_genome(genome):
     simulation = Simulation(genome)
-    simulation.set_up()
-    simulation.run()
-    return simulation.fitness(simulation)
+    return simulation.run()
+    # return simulation.fitness(simulation)
 
 def evaluate_genomes(genomes):
     for g in genomes:
@@ -91,6 +87,7 @@ def main(cores, generations, pop_size, out_dir):
         pop.run(pe.evaluate, generations)
     else:
         pop.run(evaluate_genomes, generations)
+
     print('Experiment finished.')
     os.makedirs(out_dir)
     report(pop, out_dir)
@@ -99,9 +96,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     default_dir = './out/'+"{:%B_%d_%Y_%H-%M}".format(datetime.now())
     parser.add_argument('-o', '--out', help='Output directory', default=default_dir)
-    parser.add_argument('-g', '--generations', help='', default=2, type=int)
-    parser.add_argument('-p', '--population', help='', default=10, type=int)
+    parser.add_argument('-g', '--generations', help='', default=50, type=int)
+    parser.add_argument('-p', '--population', help='', default=100, type=int)
     parser.add_argument('-c', '--cores', help='', default=1, type=int)
+    parser.add_argument('-E', '--experiment', help='', required=True)
+
     args = parser.parse_args()
+
+    try:
+        mod = importlib.import_module('experiments.%s' % args.experiment)
+    except ImportError:
+        print('ERR: Cannot find experiment "./experiments/%s"' % args.experiment)
+        sys.exit(0)
+
+    try:
+        global Simulation
+        Simulation = getattr(mod, 'Simulation')
+    except AttributeError:
+        print('ERR: Cannot find class "Simulation" in module.')
+        sys.exit(0)
 
     main(args.cores, args.generations, args.population, args.out)

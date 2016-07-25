@@ -34,7 +34,6 @@ def main(args):
         renderer = Renderer(save=tmp)
         simulation = Simulation(best_genome)
         simulation.verbose = True
-        simulation.set_up()
         simulation.run(renderer)
 
 
