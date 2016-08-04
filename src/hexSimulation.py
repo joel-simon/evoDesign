@@ -4,9 +4,12 @@ import time
 import copy
 
 from .cell import Cell
-
 # from .physics.empty_framework import Framework
+
 # from .physics.hexBody import HexBody
+
+from .springs.Spring2D import World
+
 
 from .hexmap import Map
 from .morphogens import reaction_diffusion
@@ -14,20 +17,22 @@ from .morphogens import reaction_diffusion
 SQRT3 = math.sqrt( 3 )
 
 class HexSimulation(object):
-    def __init__(self, genome, bounds, verbose=False,
-                max_steps=100, max_physics_step=10):
+    def __init__(self, genome, bounds=(8,8), verbose=False,
+                max_steps=100, max_physics_step=100, cellData = dict(),
+                break_on_repeat=False):
 
         self.genome = genome
         self.hmap = Map(bounds, None)
 
-        # Morphogen grids
-        self.A  = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
-        self.I  = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
-        self.PA = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
-        self.PI = [ Map(bounds, 0) for _ in range(genome.num_morphogens) ]
+        self.break_on_repeat = break_on_repeat
+        if self.break_on_repeat:
+            self.seen_states = set()
 
         # self.physics = Framework()
         # self.world = self.physics.world
+        # self.world = World()
+
+        self.cellData = cellData
 
         self.verbose = verbose
         self.max_steps = max_steps
@@ -39,37 +44,16 @@ class HexSimulation(object):
         self.hex_radius = 5
         self.bounds = bounds
 
-        self.step_count = 0
         self.max_physics_step = max_physics_step
 
         # Step statistics
+        self.step_count = 0
         self.created_cells = 0
         self.destroyed_cells = 0
-
-    def _step_morphogens(self):
-        for i in range(self.genome.num_morphogens):
-            morph_gene = list(self.genome.morphogen_genes.values())[i]
-            values = morph_gene.values()
-            reaction_diffusion.run(
-                A=self.A[i].values,
-                I=self.I[i].values,
-                mask=self.hmap,
-                PA=self.PA[i].values,
-                PI=self.PI[i].values,
-                Da=values['activator_diffusion'],
-                Di=values['inhibitor_diffusion'],
-                Ra=values['activator_removal'],
-                Ri=values['inhibitor_removal'],
-                saturate=values['saturate'],
-                steps=200
-            )
 
     def _get_id(self):
         self.next_cell_id += 1
         return self.next_cell_id
-
-    def _get_outputs(self):
-        return [cell.outputs() for cell in self.hmap]
 
     def _coords_to_xy(self, coords):
         row, col = coords
@@ -81,6 +65,10 @@ class HexSimulation(object):
     def create_cell(self, coords, cell_type=0):
         assert(self.hmap.valid_coords(coords))
         assert(not self.hmap[coords])
+
+        if self.hmap[coords]:
+            return None
+
         self.last_change = self.step_count
         body = None
 
@@ -93,9 +81,9 @@ class HexSimulation(object):
         #     static = ['bottom_left', 'bottom_right']
 
         # body = HexBody(self.world, xy, self.hex_radius, neighbors=neighbors, static=static)
-        cell = Cell(self._get_id(), self.genome, body)
+        cell = Cell(self._get_id(), self.genome, body, copy.copy(self.cellData))
 
-        cell.userData['coords'] = coords
+        cell.userData['coords'] = (coords[0], coords[1])
         # body.userData['cell'] = cell
 
         self.hmap[coords] = cell
@@ -113,9 +101,14 @@ class HexSimulation(object):
         self.destroyed_cells += 1
 
     def divide_cell(self, cell, direction):
-        coords = self.hmap.neighbor(cell.userData['coords'], direction)
+        parent_coords = cell.userData['coords']
+        coords = self.hmap.neighbor(parent_coords, direction)
+
         if self.hmap.valid_coords(coords) and not self.hmap[coords]:
-            self.last_change = self.step_count
+            # self.hmap[parent_coords] = 0
+            # cell.userData['coords'] = coords
+            # self.hmap[coords] = cell
+            # self.create_cell(parent_coords)
             self.create_cell(coords)
 
     def create_inputs(self, cell):
@@ -124,6 +117,9 @@ class HexSimulation(object):
     def handle_outputs(self, cell):
         raise NotImplemented
 
+    def clear_state(self):
+        pass
+
     def step(self, renderer=None):
         if self.verbose:
             print('#'*40,'step', self.step_count,'#'*40)
@@ -131,28 +127,25 @@ class HexSimulation(object):
         self.created_cells = 0
         self.destroyed_cells = 0
 
-        # Reinitialize morphogen production values.
-        for row in range(self.bounds[0]):
-            for col in range(self.bounds[1]):
-                for i in range(self.genome.num_morphogens):
-                    self.PA[i][row][col] = 0.0
-                    self.PI[i][row][col] = 0.0
-
-        for cell in copy.copy(self.cells):
+        # First collect all inputs before active on them so simulation
+        # state does not change during input collection
+        all_outputs = []
+        for cell in self.cells:
             inputs = self.create_inputs(cell)
-            # inputs.extend(self._morphogen_inputs(cell))
 
-            # Compute outputs with NN
-            outputs = cell.network.serial_activate(inputs)
+            for module in self.genome.gene_modules:
+                inputs.extend(module.create_input(cell, self))
+            assert(len(inputs) == self.genome.num_inputs)
+            all_outputs.append(cell.outputs(inputs))
+            assert(len(all_outputs[-1]) == self.genome.num_outputs)
 
-            # Handle non morphogen outputs.
-            self.handle_outputs(cell, outputs)
+        # Make a list copy because self.cells will change during iteration.
+        for cell, out in list(zip(self.cells, all_outputs)):
+            nmi = self.genome.non_module_outputs
+            self.handle_outputs(cell, out[:nmi])
+            self.genome.gene_modules[0].handle_output(cell, out[nmi:])
 
-
-        #### MORPHOGENS
-        self._step_morphogens()
-
-        #### PHYSICS
+        ### PHYSICS
         # Reset Bodies
         # for body in self.world.bodies:
         #     if body.userData and body.userData['origin']:
@@ -160,14 +153,16 @@ class HexSimulation(object):
         #         body.linearVelocity = (0,0)
         #         body.angularVelocity = 0
 
-        # self.physics.run(self.max_physics_step)
+        # for i in range(self.max_physics_step):
+        #     self.physics.Step(self.physics.settings)
+        #     if renderer:
+        #         renderer.render(self)
         #####
 
         if self.verbose:
             print('destroyed %i cells' % self.destroyed_cells)
             print('created %i cells:' % self.created_cells)
             print('final cells: %i' % len(self.cells))
-
 
         assert(len(self.cells) <= self.bounds[0] * self.bounds[1])
         self.step_count += 1
@@ -180,14 +175,20 @@ class HexSimulation(object):
             self.step(renderer)
             if renderer:
                 renderer.render(self)
+            # if self.step_count > 3:
+            #     fitness = self.fitness()
+            #     min_fitness = self.step_count / float(self.max_steps)
+            #     if fitness < min_fitness:
+            #         return fitness
+            if self.step_count - self.last_change > 5:
+                break
 
-            if self.step_count > 3:
-                fitness = self.fitness()
-                min_fitness = self.step_count / float(self.max_steps)
-                if fitness < min_fitness:
-                    return fitness
-            # if self.step_count - self.last_change > 3:
-            #     break
-        return fitness
+            if self.break_on_repeat:
+                state_hash = self.hmap.hash()
+                if state_hash in self.seen_states:
+                    return self.fitness()
+                self.seen_states.add(state_hash)
+
+        return 0.0
 
 

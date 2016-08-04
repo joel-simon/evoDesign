@@ -25,7 +25,8 @@ def run(A, I, mask, PA, PI, Da, Di, Ra, Ri,
     for s in range(steps):
         for r in range(rows):
             for c in range(cols):
-                if mask[r][c]:
+                # if mask[r][c]:
+                if True:
                     a = A[r][c]
                     i = I[r][c]
                     Pa = PA[r][c]
@@ -61,9 +62,11 @@ def run(A, I, mask, PA, PI, Da, Di, Ra, Ri,
     for r in range(rows):
         for c in range(cols):
             if math.isnan(A[r][c]):
-                print('nan in A! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
+                A[r][c] = 0
+                # print('nan in A! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
             if math.isnan(I[r][c]):
-                print('nan in I! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
+                I[r][c] = 0
+                # print('nan in I! Da=%f, Di=%f, Ra=%f, Ri=%f'%(Da, Di, Ra, Ri))
             assert(not math.isnan(A[r][c]))
             assert(not math.isnan(I[r][c]))
             # i = I[r][c]

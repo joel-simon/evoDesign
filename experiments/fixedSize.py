@@ -1,14 +1,9 @@
-# import pyximport; pyximport.install()
 import argparse
-
-# from src.experiment import Experiment#, Input, Output, OutputCluster
 from src.hexSimulation import HexSimulation
 from src.hexmap import Map
-
 from src.classification import f1_score, joel_score, precision_recall
-# from src.hexRenderer import HexRenderer as Renderer
 
-class Simulationn(HexSimulation):
+class Simulation(HexSimulation):
     """docstring for Simulation"""
     genome_config = {
         'num_morphogens': 1,

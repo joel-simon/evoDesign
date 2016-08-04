@@ -32,7 +32,7 @@ class HexPhysicsRenderer(object):
 
     def draw_body(self, body):
         x, y = self.screen_xy(body.position)
-        radius = max(int(body.fixtures[0].shape.radius), 2)
+        radius = 2#max(int(body.fixtures[0].shape.radius), 2)
         # pygame.gfxdraw.aacircle(self.screen, x, y, radius, (10, 10, 10))
         pygame.draw.circle(self.screen, (10, 10, 10), (x, y), radius)
 
@@ -49,9 +49,9 @@ class HexPhysicsRenderer(object):
             self.draw_body(body)
 
         if len(joints):
-            max_force = max(j.GetReactionForce(.60).Normalize() for j in joints)
+            max_force = 0#max(j.GetReactionForce(.60).Normalize() for j in joints)
             for joint in joints:
-                force = joint.GetReactionForce(.60).Normalize()
+                # force = joint.GetReactionForce(.60).Normalize()
                 if max_force == 0:
                     color = (0, 10, 10)
                 else:
@@ -102,27 +102,30 @@ class HexRenderer(object):
         self.save = save
         self.frame = 0
 
+    # def draw_map(self, map, x, y):
+
+
     def render(self, simulation):
         C = simulation.hmap
-        A = simulation.A
+        # A = simulation.A
         rows, cols = simulation.bounds
 
         screen.fill((255,255,255))
 
-        values = []
-        for row in range(rows):
-            for col in range(cols):
-                values.append(A[0][row][col])
+        # values = []
+        # for row in range(rows):
+        #     for col in range(cols):
+        #         values.append(A[0][row][col])
 
-        min_a = min(values)
-        max_a = max(values)
+        # min_a = min(values)
+        # max_a = max(values)
 
         for row in range(rows):
             for col in range(cols):
                 v = C[row][col]
-                a = A[0][row][col]
+                # a = A[0][row][col]
 
-                scaled = (min(a,30) / 30.)
+                # scaled = (min(a,30) / 30.)
                 # if max_a > 0:
                 #     scaled = (a - min_a) / (max_a - min_a)
                 # else:
@@ -132,17 +135,31 @@ class HexRenderer(object):
                 for i, xy in enumerate(points):
                     points[i] = xy_to_screen(xy)
 
-
-                color = (int(scaled * 255), 100, 100)
-                pygame.draw.polygon(screen, color, points)
+                # color = (int(scaled * 255), 100, 100)
+                # pygame.draw.polygon(screen, color, points)
 
                 if v:
-                    pygame.draw.polygon(screen, (10,200,10), points, 5)
-                # pygame.draw.polygon(screen, (20, 20, 20),points,  1)
+                    pygame.draw.polygon(screen, (10,200,10), points)
+                pygame.draw.polygon(screen, (20, 20, 20),points,  1)
 
-        screen.blit(font.render("min %f"%(min_a), True, (0,0,0)), (10, 20))
-        screen.blit(font.render("max %f"%(max_a), True, (0,0,0)), (10, 40))
-        screen.blit(font.render("dif %f"%(max_a- min_a), True, (0,0,0)), (10, 60))
+        # for row in range(rows):
+        #     for col in range(cols):
+        #         points = hex_points(row, col, radius)
+        #         for i, xy in enumerate(points):
+        #             points[i] = xy_to_screen(xy)
+        #             points[i] = (points[i][0]+ 300, points[i][1])
+
+        #         if simulation.target[row][col]:
+        #             pygame.draw.polygon(screen, (10,200,10), points)
+        #         pygame.draw.polygon(screen, (20, 20, 20),points,  1)
+
+
+        # screen.blit(font.render("min %f"%(min_a), True, (0,0,0)), (10, 20))
+        # screen.blit(font.render("max %f"%(max_a), True, (0,0,0)), (10, 40))
+        # screen.blit(font.render("dif %f"%(max_a- min_a), True, (0,0,0)), (10, 60))
+
+
+        screen.blit(font.render("fitness %f"%(simulation.fitness()), True, (0,0,0)), (400, 60))
 
         pygame.display.flip()
 

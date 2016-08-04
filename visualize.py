@@ -5,7 +5,8 @@ import argparse
 import pickle
 import subprocess
 # TODO allow passing experiment name
-from fixedSize import FixedSize as Simulation
+# from fixedSize import FixedSize as Simulation
+from experiments.tree import Simulation
 from src.hexRenderer import HexRenderer as Renderer
 
 
@@ -44,8 +45,8 @@ def main(args):
         # os.system("rm -rf %s" % tmp)
         print('Created video file.')
 
-    # if Renderer:
-    #     renderer.hold()
+    if Renderer:
+        renderer.hold()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

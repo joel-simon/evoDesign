@@ -3,14 +3,10 @@ import random
 import copy
 SQRT3 = math.sqrt( 3 )
 
-# directions_odd = [(-1, 0), (0,1), (1,1), (1,0), (1, -1), (0,-1)]
-# for a hex in an even column
-# directions_even = [(-1, 0), (-1, 1), (0,1), (1,0), (0, -1), (-1,-1)]
-# ['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
-
-directions_odd = [(1, -1),(1,0),(1,1),(0,1),(-1, 0),(0,-1)]
-# for a hex in an even column
-directions_even = [ (0, -1),(1,0),(0,1),(-1, 1),(-1, 0),(-1,-1)]
+directions = [
+    [ (0, 1), (1, 0), (0, -1), (-1, -1), (-1, 0), (-1, 1)],
+    [ (1, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (0, 1)]
+]
 
 def cube_distance(a, b):
     return (abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])) / 2.0
@@ -47,13 +43,18 @@ class Map( object ):
             # return self.values[index]
             assert(False)
 
+    def hash(self):
+        string_list = []
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if self.values[r][c]:
+                    string_list.append('1')
+                else:
+                    string_list.append('0')
+        return hash(''.join(string_list))
+
     def distance( self, start, destination ):
         """Takes two hex coordinates and determine the distance between them."""
-        # diffX = destination[0] - start[0]
-        # diffY = destination[1] - start[1]
-
-        # distance = min( abs( diffX ), abs( diffY ) ) + abs( diffX - diffY )
-        # return distance
         ac = offset_to_cube(*start)
         bc = offset_to_cube(*destination)
         return cube_distance(ac, bc)
@@ -61,9 +62,11 @@ class Map( object ):
 
     def directions(self, position):
         # for a hex in an odd column
-        return directions_even if position[1] % 2 == 0 else directions_odd
+        return directions[position[1] % 2]
 
     def valid_coords( self, coords ):
+        if coords == None:
+            return False
         row, col = coords
         if col < 0 or col >= self.cols: return False
         if row < 0 or row >= self.rows: return False
@@ -71,9 +74,6 @@ class Map( object ):
 
     def is_occupied(self, coords):
         return (self.valid_coords(coords) and bool(self[coords]))
-
-    # def occupied_neighbors(self, center):
-    #     return filter( self.is_occupied, neighbors)
 
     def neighbors(self, center):
         for a, b in self.directions(center):
@@ -86,15 +86,15 @@ class Map( object ):
             else:
                 yield self.values[row][col]
 
-    def neighbor_coords(self, center):
-        # return self.directions(center)
+    def neighbor_coords(self, center, filter_valid=False):
         for a, b in self.directions(center):
-            derp = (center[0]+a, center[1]+b)
-            yield derp
-        #     if self.valid_coords(derp):
-        #         yield derp
-        #     else:
-        #         yield None
+            coords = (center[0]+a, center[1]+b)
+            if filter_valid:
+                if self.valid_coords(coords):
+                    yield coords
+            else:
+                yield coords
+
 
     def neighbor(self, coords, direction):
         assert(type(direction) == type(1))
@@ -102,18 +102,11 @@ class Map( object ):
         return (coords[0] + d[0], coords[1]+d[1])
 
 
+    def zero(self):
+        for row in range(self.rows):
+            for col in range(self.cols):
+                self.values[row][col] = 0
 
-    # def named_neighbors(self, center):
-    #     names = ['bottom','bottom_right', 'top_right','top', 'top_left', 'bottom_left']
-    #     coords = [ (center[0] +a, center[1] + b) for a, b in self.directions(center)]
-    #     neighbors = []
-    #     for r, c in coords:
-    #         if self.valid_coords((r,c)):
-    #             neighbors.append(self.values[r][c])
-    #         else:
-    #             neighbors.append(False)
-    #     assert(len(neighbors) == 6)
-    #     return dict(zip(names, neighbors))
 
 
 if __name__ == '__main__':

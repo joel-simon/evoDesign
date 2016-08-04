@@ -107,7 +107,7 @@ class HexBody(object):
             body = self.world.CreateDynamicBody(**body_params)
         body.CreateCircleFixture(
             shape=b2CircleShape(radius=self.radius/8),
-            density=0,
+            density=10,
             friction=0
         )
         body.mass = 0
