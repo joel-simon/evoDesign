@@ -1,6 +1,8 @@
 import math
 import random
 import copy
+import itertools
+
 SQRT3 = math.sqrt( 3 )
 
 directions = [
@@ -31,13 +33,13 @@ class Map( object ):
         return "Map (%d, %d)" % ( self.rows, self.cols )
 
     def __getitem__(self, index):
-        if type(index) == type(tuple()):
+        if isinstance(index, tuple):
             return self.values[index[0]][index[1]]
         else:
             return self.values[index]
 
     def __setitem__(self, index, value):
-        if type(index) == type(tuple()):
+        if isinstance(index, tuple):
             self.values[index[0]][index[1]] = value
         else:
             # return self.values[index]
@@ -59,6 +61,16 @@ class Map( object ):
         bc = offset_to_cube(*destination)
         return cube_distance(ac, bc)
 
+    def coords(self):
+        for row in range(self.shape[0]):
+            for col in range(self.shape[1]):
+                yield (row, col)
+        # return itertools.product(*self.shape)
+
+    def iter_values(self):
+        for row in range(self.shape[0]):
+            for col in range(self.shape[1]):
+                yield self.values[row][col]
 
     def directions(self, position):
         # for a hex in an odd column
@@ -95,19 +107,16 @@ class Map( object ):
             else:
                 yield coords
 
-
     def neighbor(self, coords, direction):
         assert(type(direction) == type(1))
         d = self.directions(coords)[direction]
         return (coords[0] + d[0], coords[1]+d[1])
-
 
     def zero(self):
         for row in range(self.rows):
             for col in range(self.cols):
                 self.values[row][col] = 0
 
-
-
 if __name__ == '__main__':
     hex_map = Map((8,8), value=0)
+    print(list(hex_map.coords()))

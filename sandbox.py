@@ -1,86 +1,91 @@
-import os, math, random
+""" A testing and experimentation enviornment.
+"""
+import os
+
 from neat.config import Config
-from neat import ctrnn
+from neat import ctrnn, nn
+
 from src.cellGenome import CellGenome
-
+from src.hexmap import Map
 from src.hexSimulation import HexSimulation
-from src.hexRenderer import HexRenderer as Renderer
+from src.views import View
+from src.modules.physics import PhysicsModule
 
-from experiments.shapes import Shapes
+from experiments.tree import Simulation, genome_config
 
-local_dir = os.path.dirname(__file__)
-config  = Config(os.path.join(local_dir, 'config.txt'))
-config.node_gene_type = ctrnn.CTNodeGene
-config.genome_config = {
-    'inputs': ['derp'],
-    'outputs':['foo'],
-    'num_morphogens': 1,
-    'morphogen_thresholds': 4
-}
-dummy_genome = CellGenome.create_unconnected(1, config)
+# bounds = (8, 12)
+# static_map = Map(bounds)
+# for col in range(bounds[1]):
+#     static_map[0][col] = 1
 
-class Sandbox(HexSimulation):
-    # """Extend the simualtion to inject arbitrary cell behavior."""
-    def __init__(self, *args, **kwargs):
-        super(Sandbox, self).__init__(dummy_genome)
+LOCAL_DIR = os.path.dirname(__file__)
+CONFIG = Config(os.path.join(LOCAL_DIR, 'config.txt'))
+# CONFIG.node_gene_type = ctrnn.CTNodeGene
+CONFIG.genome_config = genome_config
+# CONFIG.genome_config = {
+#     'inputs': [],
+#     'outputs':[],
+#     'modules' : [
+#         (PhysicsModule, {'static_map': static_map})
+#     ],
+# }
+DUMMY_GENOME = CellGenome.create_unconnected(1, CONFIG)
+network = nn.create_recurrent_phenotype(DUMMY_GENOME)
+# print(network)
+# print(network.activate([0]*8))
 
-        # for i in range(self.bounds[0]):
-        #     for j in range(self.bounds[1]):
+class Sandbox(Simulation):
+    """ Extend the simualtion to inject arbitrary cell behavior. """
+    def __init__(self):
+        super(Sandbox, self).__init__(DUMMY_GENOME)
+        # super(Sandbox, self).__init__(DUMMY_GENOME, max_steps=10, bounds=bounds)
+        for i in range(self.bounds[0]):
+            for j in range(self.bounds[1]):
         #         d = self.hmap.distance((i,j), (4,4))
         #         if d == 3 or d == 4:
-        #             self.create_cell((i, j))
+                if not self.hmap[i][j]:
+                    self.create_cell((i, j))
 
         # self._calculate_light()
-
         # self.filter_unconnected()
-        self.create_cell((0,0))
-        # for coords in list(self.hmap.neighbor_coords((4,4)))[:2]:
-        #     self.create_cell(coords)
 
-    def create_target(self):
-        return []
+        # stem_col= 0
+        # for i in range(1, 12):#self.bounds[0]-1):
+        #     if not self.hmap[i][stem_col]:
+        #         self.create_cell((i, stem_col))
 
-    def create_inputs(self, cell):
-        return [0]
 
-    def handle_outputs(self, cell, outputs):
-        self.divide_cell(cell, 5)
-        pass
+        # for j in range(self.bounds[1]):
+        #     if not self.hmap[8][j]:
+        #         self.create_cell((8, j))
 
-    def get_outputs(self):
-        return [0,0,-1.0]
 
-    def fitness(self):
-        return 0
-        # for coords in self.hmap.neighbor_coords((4,4)):
-        #     print(coords)
-        #     self.create_cell(coords)
+    # def step(self):
+        # if self.step_count == 2:
+        #     self.destroy_cell(self.hmap[1][2])
+        # super(Sandbox, self).step()
+        # print(self.genome)
 
-        # self.create_cell((4,4))
-        # self.create_cell((1,4))
-        # self.create_cell((1,5))
-        # self.create_cell((1,5))
-        # for i in range(7):
-        #
-        #     self.create_cell((i,1))
+    # def create_inputs(self, cell):
+    #     # return []
+    #     inputs = super(Sandbox, self).create_inputs(cell)
+    #     print inputs
+    #     return inputs
 
-        # for i in range(2,7):
-        #     self.create_cell((7,i))
+    # def handle_outputs(self, cell, outputs):
+        # print(cell.userData['coords'], outputs)
+        # pass
 
-        # for i in range(8):
-        #     for j in range(8):
-        #         self.create_cell((i,j))
+    # def get_outputs(self):
+    #     return []
 
-    # def Step(self, *args):
-    #     super(Sandbox, self).Step(*args)
+    # def fitness(self):
+    #     return 0
 
-        # if self.stepCount%2 == 0:
-        # pygame.image.save(self.screen, './out_temp/' + str(self.stepCount)+'.jpg')
-        # print('saved')
 
-renderer = Renderer()
-# simulation = Sandbox()
-simulation = Sandbox(max_steps=2, verbose=False, bounds=(8,8))
+simulation = Sandbox()
 simulation.verbose = True
-simulation.run(renderer)
-renderer.hold()
+
+view = View(600, 800, simulation)
+simulation.run(view)
+view.hold()

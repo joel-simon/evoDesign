@@ -1,20 +1,21 @@
 from .vector import Vect2D as Vect
+from copy import copy
 
 class World(object):
     """docstring for World"""
-    def __init__(self):
+    def __init__(self, gravity=-10, resolve_steps=100):
         self.joints = []
         self.bodies = []
-        self.gravity = Vect(0, -2)
+        self.gravity = Vect(0, gravity)
+        self.resolve_steps = resolve_steps
+        self.delta = 1.0 / self.resolve_steps
 
     def CreateStaticBody(self, **kwargs):
-        p = kwargs['position']
-        self.bodies.append(StaticBody(p[0], p[1]))
+        self.bodies.append(StaticBody(**kwargs))
         return self.bodies[-1]
 
     def CreateDynamicBody(self, **kwargs):
-        p = kwargs['position']
-        self.bodies.append(Body(p[0], p[1]))
+        self.bodies.append(Body(**kwargs))
         return self.bodies[-1]
 
     def CreateDistanceJoint(self, bodyA, bodyB, **kwargs):
@@ -25,35 +26,49 @@ class World(object):
         return self.joints[-1]
 
     def DestroyBody(self, body):
+        assert(body in self.bodies)
+        for joint in copy(body.joints):
+            self.DestroyJoint(joint)
         self.bodies.remove(body)
         return
 
     def DestroyJoint(self, joint):
+        if joint._destroyed:
+            raise ValueError('Attempt to destroy a destroyed joint', joint)
         joint.bodyA.joints.remove(joint)
         joint.bodyB.joints.remove(joint)
-        self.bodies.remove(joint)
+        self.joints.remove(joint)
+        joint._destroyed = True
         return
 
     def step(self):
-        steps = 1000
-        delta = 1.0 / steps
-
-        for j in range(steps):
+        for j in range(self.resolve_steps):
             for joint in self.joints:
                 joint.resolve()
 
             for body in self.bodies:
                 body.accelerate(self.gravity)
-                body.simulate(delta)
+                body.simulate(self.delta)
+
+    def check_valid(self):
+        """ Only used for debugging.
+        """
+        for joint in self.joints:
+            assert(joint in joint.bodyA.joints)
+            assert(joint in joint.bodyB.joints)
+
+        for body in self.bodies:
+            for joint in body.joints:
+                assert(joint in self.joints)
 
 class Body(object):
     """docstring for Body"""
-    def __init__(self, x, y, userData={}):
+    def __init__(self, x, y, mass=1.0, userData={}):
         self.position = Vect(x, y)
         self.previous = Vect(x, y)
         self.acceleration = Vect(0., 0.)
         self.userData = userData
-        self.mass = 1
+        self.mass = mass
         self.joints = []
 
     def accelerate(self, vect):
@@ -69,7 +84,6 @@ class Body(object):
         self.position = position
         self.acceleration.zero()
 
-
 class StaticBody(Body):
     def accelerate(self, vect):
         pass
@@ -77,7 +91,6 @@ class StaticBody(Body):
         pass
     def simulate(self, delta):
         pass
-
 
 class Joint(object):
     """docstring for Joint"""
@@ -88,9 +101,11 @@ class Joint(object):
         self.bodyA = bodyA
         self.bodyB = bodyB
         self.target = bodyA.position.distance(bodyB.position)
+        self._destroyed = False
         self.userData = userData
 
     def resolve(self):
+        assert(not self._destroyed)
         pos1 = self.bodyA.position
         pos2 = self.bodyB.position
         direction = pos2.sub(pos1)
@@ -102,5 +117,9 @@ class Joint(object):
         correction.imul(-1)
         self.bodyB.correct(correction)
 
-    def GetReactionForce(self, i):
-        return Vect(0,0)
+    def GetReactionForce(self):
+        assert(not self._destroyed)
+        pos1 = self.bodyA.position
+        pos2 = self.bodyB.position
+        deviation = self.target - pos1.distance(pos2)
+        return deviation * deviation

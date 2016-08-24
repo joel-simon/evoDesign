@@ -1,70 +1,74 @@
-import math
 from src.hexSimulation import HexSimulation
 from src.hexmap import Map
 from src.classification import f1_score, joel_score, precision_recall
-from src.gene_modules import signals
 
-def angular_distance(theta_1, theta_2, mod=2*math.pi):
-    difference = abs(theta_1 % mod - theta_2 % mod)
-    return min(difference, mod - difference)
+from src.modules import signals, Module, physics, light, water, \
+                        neighbors_continuous, divide_theta
+
+from src.views.drawHexMap import draw_hex_map
+from src.views.drawUtils import draw_text
 
 genome_config = {
-    'gene_modules' : [
-        { 'gene':signals.Signal4, 'prob_add':.2, 'max_genes':5 }],
-    'inputs': [
-        'neighbor_t', 'neighbor_tr',
-        'neighbor_br', 'neighbor_b',
-        'neighbor_bl', 'neighbor_tl'],
-    'outputs': [
-        ('apoptosis', 'sigmoid'),
-        ('divide', 'sigmoid'),
-        ('axis_cos', 'identity'),
-        ('axis_sin', 'identity'),
-    ]
+    'modules' : [
+        # (Module, {'gene':signals.Signal1,'prob_add':.2,'max_genes':5}),
+        (neighbors_continuous.NeighborModule, {}),
+        (divide_theta.DivideThetaModule, {}),
+    ],
+
+    'inputs': [],
+    'outputs': [ ('apoptosis', 'sigmoid')]
 }
 
-class Shapes(HexSimulation):
-    """docstring for Shapes"""
+class Shape(HexSimulation):
+    """docstring for Shape"""
     def __init__(self, genome):
-        super(Shapes, self).__init__(genome, max_steps=100, bounds=(8, 8),
-                                     break_on_repeat=True)
+        super(Shape, self).__init__(genome, max_steps=50, bounds=(8, 8),
+                                    break_on_repeat=True)
         # Create starting cells
         self.start = (0, 0)
         cell = self.create_cell(coords=self.start)
 
         # Target to be scored against.
         self.target = self.create_target()
-        self.hex_angles = map(math.radians, [30, 90, 150, 210, 270, 330])
 
-    def create_inputs(self, cell):
-        coords = cell.userData['coords']
-        inputs = list(map(bool, self.hmap.neighbors(coords)))
+    def create_input(self, cell):
+        return []
 
-        assert(len(inputs) == len(genome_config['inputs']))
-        return inputs
-
-    def handle_outputs(self, cell, outputs):
-        assert(len(outputs) == len(genome_config['outputs']))
-        coords = cell.userData['coords']
-
+    def handle_output(self, cell, outputs):
         if outputs[0] > .5:
             self.destroy_cell(cell)
-            return
-
-        if outputs[1] > .5:
-            a = math.atan2(outputs[3], outputs[2])
-            grow_direction = min(
-                self.hex_angles,
-                key=lambda b: angular_distance(b, a)
-            )
-            self.divide_cell(cell, self.hex_angles.index(grow_direction))
 
     def fitness(self):
         true = sum(self.target,[])
         pred = sum(self.hmap, [])
+        return f1_score(true, pred)
         return joel_score(true, pred)
 
-class E(Shapes):
+    def _draw_hex(self, coord, hexview):
+        if self.hmap[coord]:
+            hexview.fill((50, 50, 50))
+            hexview.border()
+            # if self.target[coord]:
+            #     hexview.border((0,0,0))
+            # else:
+            #     hexview.border((200,0,0))
+        else:
+            # pass
+            # # # hexview.fill((255, 255, 255))
+            # # else:
+            # #     hexview.fill((210, 166, 121))
+            if self.target[coord]:
+                hexview.fill((200, 200, 200))
+            #     hexview.border((0,0,0), 2)
+            # else:
+        hexview.border((0,0,0), 1)
+
+    def render(self, surface):
+        draw_hex_map(surface, self.hmap, self._draw_hex)
+        draw_text(surface, (2, 10), "Num cells:%i"%len(self.cells))
+        draw_text(surface, (2, 30), "Fitness :%f"%self.fitness())
+
+class E(Shape):
     def create_target(self):
         target = Map(self.bounds, 0)
         for i in range(self.bounds[1]):
@@ -84,7 +88,7 @@ class E(Shapes):
             target[i][1] = 1
         return target
 
-class O(Shapes):
+class O(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(self.bounds[1]):
@@ -99,7 +103,7 @@ class O(Shapes):
             target[(i, 7)] = 1
         return target
 
-class R(Shapes):
+class R(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(8):
@@ -117,7 +121,7 @@ class R(Shapes):
 
         return target
 
-class Y(Shapes):
+class Y(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(6):
@@ -129,7 +133,7 @@ class Y(Shapes):
             target[coords] = 1
         return target
 
-class X(Shapes):
+class X(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(8):
@@ -143,7 +147,7 @@ class X(Shapes):
         target[(5,4)] = 1
         return target
 
-class stripes(Shapes):
+class stripes(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(self.bounds[0]):
@@ -151,7 +155,7 @@ class stripes(Shapes):
                 target[(i, j)] = 1
         return target
 
-class loops(Shapes):
+class loops(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for r in range(self.bounds[0]):
@@ -160,7 +164,7 @@ class loops(Shapes):
                     target[(r, c)] = 1
         return target
 
-class dots(Shapes):
+class dots(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(0, 8, 3):
@@ -168,7 +172,7 @@ class dots(Shapes):
                 target[(i+j%2, j)] = 1
         return target
 
-class checkerboard(Shapes):
+class checkerboard(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for i in range(0, 8, 3):
@@ -178,7 +182,7 @@ class checkerboard(Shapes):
                     target[coords] = 1
         return target
 
-class circles(Shapes):
+class circles(Shape):
     def create_target(self):
         target = Map(self.bounds)
         for center in [(1,1), (6,1), (1, 6), (6,6)]:

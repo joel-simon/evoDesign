@@ -6,58 +6,73 @@ import pickle
 from pprint import pprint
 import subprocess
 from datetime import datetime
-
-from neat.parallel import ParallelEvaluator
-from neat import population#, visualize
-from neat.config import Config
-from src.neat_custom import ctrnn
-from src.cellGenome import CellGenome
-import inspect
+from shutil import copyfile
+# import traceback
+import logging
 import importlib
 
-from src.hexRenderer import HexRenderer as Renderer
+from neat.parallel import ParallelEvaluator
+from neat import population
+from neat.config import Config
 
-from shutil import copyfile
+from src.neat_custom import ctrnn
+from src.cellGenome import CellGenome
+from src.views import View
+
+logging.basicConfig(level=logging.DEBUG, filename='./debug/derp.log')
 
 def evaluate_genome(genome):
-    simulation = Simulation(genome)
-    return simulation.run()
-    # return simulation.fitness(simulation)
+    try:
+        simulation = Simulation(genome)
+        return simulation.run()
+
+    except KeyError as e:
+        print '!'*80
+        print "Exception in evaluating genome. Creating Debug file."
+        print '!'*80
+        print
+        prefix = "({:%B_%d_%Y_%H-%M})".format(datetime.now())
+        logging.exception("Error in evaluate_genome")
+
+        with open(path.join('debug', prefix+'_genome.p'), 'wb') as f2:
+            pickle.dump(genome, f2)
+
+        raise e
+
+        # return 0
 
 def evaluate_genomes(genomes):
-    for g in genomes:
-        g.fitness = evaluate_genome(g)
-    best = max(genomes, key=lambda g:g.fitness)
-    if Renderer:
-        renderer = Renderer()
-        simulation = Simulation(best)
-        simulation.run(renderer)
+    for genome in genomes:
+        genome.fitness = evaluate_genome(genome)
+
+    best = max(genomes, key=lambda genome: genome.fitness)
+    simulation = Simulation(best)
+    view = View(800, 800, simulation)
+    simulation.run(renderer=view)
 
 def report(pop, out_dir, experiment):
-    winner = pop.statistics.best_genome()
+    genome = pop.statistics.best_genome()
 
-    with open(path.join(out_dir,'winner.p'), 'wb') as f:
-        pickle.dump(winner, f)
+    with open(path.join(out_dir, 'genome.p'), 'wb') as f:
+        pickle.dump(genome, f)
 
-    with open(path.join(out_dir,'population.p'), 'wb') as f:
+    with open(path.join(out_dir, 'population.p'), 'wb') as f:
         pickle.dump(pop, f)
 
-    genome_text = open(path.join(out_dir,'winner.txt'), 'w+')
-    genome_text.write('fitness: %f\n' % winner.fitness)
-    genome_text.write(str(winner))
+    genome_text = open(path.join(out_dir, 'genome.txt'), 'w+')
+    genome_text.write('fitness: %f\n' % genome.fitness)
+    genome_text.write(str(genome))
 
     # Visualize the best network.
     subprocess.call(['./generate_graphs.sh', out_dir])
 
-    if Renderer:
-        os.mkdir(path.join(out_dir, 'temp'))
-        renderer = Renderer(save=path.join(out_dir, 'temp'))
-        simulation = Simulation(winner)
-        simulation.verbose = True
-        simulation.run(renderer)
+    # Save step animation.
+    os.mkdir(path.join(out_dir, 'img'))
+    simulation = Simulation(genome)
+    view = View(800, 800, simulation, save=path.join(out_dir, 'img'))
+    simulation.verbose = True
+    simulation.run(renderer=view)
 
-    # with open (path.join(out_dir,'simulation.p'), 'w') as f:
-    #     inspect.getsourcelines(Simulation)
     copyfile('./config.txt', path.join(out_dir, 'config.txt'))
     copyfile('./experiments/%s.py' % experiment, path.join(out_dir, '%s.py.txt' % experiment))
 
@@ -68,9 +83,9 @@ def main(cores, generations, pop_size, out_dir, experiment):
         print('"%s" already exists'% out_dir)
         erase = raw_input('Delete existing out folder? (y/n) :')
         if erase.lower() in ['y', 'yes']:
-          os.system("rm -rf " + out_dir)
+            os.system("rm -rf " + out_dir)
         else:
-          sys.exit(0)
+            sys.exit(0)
 
     print('Starting Experiment.')
     print(pprint({
@@ -85,7 +100,7 @@ def main(cores, generations, pop_size, out_dir, experiment):
     config.genotype = CellGenome
     config.genome_config = genome_config
     config.pop_size = pop_size
-    config.node_gene_type = ctrnn.CTNodeGene
+    # config.node_gene_type = ctrnn.CTNodeGene
 
     # Create a population.
     pop = population.Population(config)

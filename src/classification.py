@@ -1,8 +1,8 @@
 def precision_recall(true, pred):
     assert(len(pred) == len(true))
-    tp = 0 # true positives.
-    fp = 0 # false positives.
-    fn = 0 # false positives.
+    tp = 0 # True positives.
+    fp = 0 # False positives.
+    fn = 0 # False negatives.
     precision = 0
     recall = 0
 
