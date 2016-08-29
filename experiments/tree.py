@@ -1,8 +1,10 @@
+import math
+
 from src.hexSimulation import HexSimulation
 from src.hexmap import Map
 
 from src.modules import signals, Module, physics, light, water, \
-                        neighbors_continuous, divide_theta
+                        neighbors_continuous, divide_theta, fea, truss
 
 from src.views.drawHexMap import draw_hex_map
 from src.views.drawUtils import draw_text
@@ -22,7 +24,7 @@ genome_config = {
         (divide_theta.DivideThetaModule, {}),
         (light.LightModule, {'light_coverage': 1}),
         (water.WaterModule, {'production_map': dirt_map, 'cell_input':False}),
-        (physics.PhysicsModule, {'static_map': dirt_map}),
+        (truss.TrussModule, {'static_map': dirt_map}),
         (Module, {'gene':signals.Signal0Gene,
                   'simulation':signals.Signal0Simulation,
                   'prob_add':.1, 'min_genes':1, 'max_genes':1 })
@@ -92,9 +94,9 @@ class Simulation(HexSimulation):
             print("Filtered %i unconnected"%count_destroyed)
 
     def fail(self):
-        for cell in self.cells:
-            if cell.userData['stress'] >= 1:
-                return True
+        # for cell in self.cells:
+        #     if cell.userData['stress'] >= 1:
+        #         return True
 
         return False
 
@@ -102,25 +104,27 @@ class Simulation(HexSimulation):
         if len(self.cells) == 0:
             return 0
 
-        if self.fail():
-            return 0.0
+        # if self.fail():
+        #     return 0.0
 
         MAX_LIGHT = float(self.bounds[1])
 
         light_fitness = 0
 
-        # water_map = self.module_simulations[3].water_map
+        water_map = self.module_simulations[3].water_map
         for cell in self.cells:
             # Cells without water cannot colelct light.
-            # if water_map[cell.userData['coords']]:
-            light_fitness += cell.userData['light']
+            if water_map[cell.userData['coords']]:
+                light_fitness += cell.userData['light']
 
         light_fitness /= MAX_LIGHT
         weight_fitness = 1-(len(self.cells)/float(self.bounds[0]*self.bounds[1]))
 
-        light_bias = .2
+        # light_bias = .2
+        fos = self.module_simulations[4].truss.fos_total
+        fos_fitness = 1 / (1 + math.exp(-10*(fos-1)))
 
-        return light_fitness
+        return light_fitness * fos_fitness
         # return light_fitness*(.5+light_bias) + weight_fitness*(.5-light_bias)
 
     def _draw_hex(self, coord, hexview):

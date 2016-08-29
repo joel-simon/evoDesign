@@ -38,26 +38,31 @@ class Sandbox(Simulation):
     """ Extend the simualtion to inject arbitrary cell behavior. """
     def __init__(self):
         super(Sandbox, self).__init__(DUMMY_GENOME)
-        # super(Sandbox, self).__init__(DUMMY_GENOME, max_steps=10, bounds=bounds)
-        for i in range(self.bounds[0]):
-            for j in range(self.bounds[1]):
-        #         d = self.hmap.distance((i,j), (4,4))
-        #         if d == 3 or d == 4:
-                if not self.hmap[i][j]:
-                    self.create_cell((i, j))
+        # super(Sandbox, self).__init__(DUMMY_GENOME)
+        # for i in range(self.bounds[0]):
+        #     for j in range(self.bounds[1]):
+        # #         d = self.hmap.distance((i,j), (4,4))
+        # #         if d == 3 or d == 4:
+        #         if not self.hmap[i][j]:
+        #             self.create_cell((i, j))
 
         # self._calculate_light()
         # self.filter_unconnected()
 
-        # stem_col= 0
-        # for i in range(1, 12):#self.bounds[0]-1):
-        #     if not self.hmap[i][stem_col]:
-        #         self.create_cell((i, stem_col))
+        # self.create_cell((3, 4))
 
+        stem_col= 0
+        for i in range(1, 12):#self.bounds[0]-1):
+            if not self.hmap[i][stem_col]:
+                self.create_cell((i, stem_col))
 
-        # for j in range(self.bounds[1]):
-        #     if not self.hmap[8][j]:
-        #         self.create_cell((8, j))
+        for i in range(1, 12):#self.bounds[0]-1):
+            if not self.hmap[i][7]:
+                self.create_cell((i, 7))
+
+        for j in range(self.bounds[1]):
+            if not self.hmap[8][j]:
+                self.create_cell((8, j))
 
 
     # def step(self):
@@ -85,7 +90,7 @@ class Sandbox(Simulation):
 
 simulation = Sandbox()
 simulation.verbose = True
-
 view = View(600, 800, simulation)
 simulation.run(view)
+simulation.step()
 view.hold()

@@ -67,7 +67,7 @@ class LightSimulation(BaseModuleSimulation):
             total_light += cell.userData['light']
 
         draw_hex_map(surface, self.simulation.hmap, self._draw_hex)
-        draw_text(surface, (10, 10), "total_light:%f"%total_light)
+        draw_text(surface, (10, 10), "light:%f"%total_light)
         draw_text(surface, (10, 30), "light_percentage:%f"%(total_light/max_light))
 
 class LightModule(Module):

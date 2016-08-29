@@ -1,7 +1,6 @@
 import math
 from src.modules import Module, BaseModuleSimulation
 from src.springs.Spring2D import World
-# from src.hexmap import Map
 from src.springs.hexBody import HexBody
 from src.views.drawSpringWorld import drawSpringWorld, draw_text
 

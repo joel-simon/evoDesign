@@ -121,9 +121,6 @@ class HexSimulation(object):
 
             all_outputs.append(cell.outputs(inputs))
 
-            if len(all_outputs[-1]) != self.genome.num_outputs:
-                print len(all_outputs[-1]), self.genome.inputs
-
             assert(len(all_outputs[-1]) == self.genome.num_outputs)
 
         return all_outputs
@@ -175,8 +172,8 @@ class HexSimulation(object):
         self.step_count += 1
 
     def run(self, renderer=None):
-        if renderer:
-            renderer.render()
+        # if renderer:
+        #     renderer.render()
 
         for _ in range(self.max_steps):
             self.step()
