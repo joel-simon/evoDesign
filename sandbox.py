@@ -2,73 +2,95 @@
 """
 import os
 
-from neat.config import Config
+from src.neat_custom.config import Config
 from neat import ctrnn, nn
 
 from src.cellGenome import CellGenome
 from src.hexmap import Map
 from src.hexSimulation import HexSimulation
 from src.views import View
-from src.modules.physics import PhysicsModule
 
-from experiments.tree import Simulation, genome_config
+# from experiments.tree import Simulation, genome_config
+# from experiments.shapes import genome_config, R as Simulation
+from experiments.table import Simulation, genome_config
 
-# bounds = (8, 12)
-# static_map = Map(bounds)
-# for col in range(bounds[1]):
-#     static_map[0][col] = 1
+from src.modules.morphogen import MorphogenModule
+import time
+# genome_config['modules'] = [
+#     (MorphogenModule, {'start_genes': 1, 'min_genes': 0})
+    # (Signal3Module, {'prob_add': .0, 'prob_remove': .0,
+    #                  'min_genes': 0, 'start_genes': 3, 'max_genes': 6 }),
+
+    # (neighbors_continuous.NeighborModule, {}),
+    # (divide_theta.DivideThetaModule, {}),
+
+    # (neighbors_distinct.NeighborModule, {}),
+    # (divide_distinct.DivideDistinctModule, {})
+# ]
+
 
 LOCAL_DIR = os.path.dirname(__file__)
-CONFIG = Config(os.path.join(LOCAL_DIR, 'config.txt'))
-# CONFIG.node_gene_type = ctrnn.CTNodeGene
+CONFIG = Config(os.path.join(LOCAL_DIR, 'experiments/shape_config.txt'))
 CONFIG.genome_config = genome_config
-# CONFIG.genome_config = {
-#     'inputs': [],
-#     'outputs':[],
-#     'modules' : [
-#         (PhysicsModule, {'static_map': static_map})
-#     ],
-# }
 DUMMY_GENOME = CellGenome.create_unconnected(1, CONFIG)
 network = nn.create_recurrent_phenotype(DUMMY_GENOME)
-# print(network)
-# print(network.activate([0]*8))
 
 class Sandbox(Simulation):
     """ Extend the simualtion to inject arbitrary cell behavior. """
     def __init__(self):
         super(Sandbox, self).__init__(DUMMY_GENOME)
-        # super(Sandbox, self).__init__(DUMMY_GENOME)
-        # for i in range(self.bounds[0]):
-        #     for j in range(self.bounds[1]):
-        # #         d = self.hmap.distance((i,j), (4,4))
-        # #         if d == 3 or d == 4:
-        #         if not self.hmap[i][j]:
-        #             self.create_cell((i, j))
 
+        for row in range(1, self.bounds[0]):
+            self.create_cell((row, 0))
+
+        for row in range(self.bounds[0]-1):
+            self.create_cell((row, 1))
+
+        for col in range(1, self.bounds[1]):
+            self.create_cell((5, col))
+        # for row in range(0, 4):
+        #     for col in range(2, self.bounds[1]-2):
+        #         self.destroy_cell(self.hmap[row][col])
+        #
+        #     self.create_cell((5, col))
         # self._calculate_light()
         # self.filter_unconnected()
 
-        # self.create_cell((3, 4))
+        # self.create_cell((0, 0))
+        # self.create_cell((0, 1))
+        # self.create_cell((4, 0))
+        # self.create_cell((4, 1))
+        # self.create_cell((5, 1))
+        # self.create_cell((5, 2))
+        # self.create_cell((4, 2))
+        # self.create_cell((3, 1))
 
-        stem_col= 0
-        for i in range(1, 12):#self.bounds[0]-1):
-            if not self.hmap[i][stem_col]:
-                self.create_cell((i, stem_col))
+        # self.destroy_cell(self.hmap[4][1])
+        # self.create_cell((4,1))
 
-        for i in range(1, 12):#self.bounds[0]-1):
-            if not self.hmap[i][7]:
-                self.create_cell((i, 7))
+        # self.create_cell((1, 6))
 
-        for j in range(self.bounds[1]):
-            if not self.hmap[8][j]:
-                self.create_cell((8, j))
+    def create_beam(self):
+        for i in [self.bounds[0]-1, 0]:
+            for j in range(self.bounds[1]):
+                if not self.hmap[i][j]:
+                    self.create_cell((i, j))
 
 
-    # def step(self):
-        # if self.step_count == 2:
+        for i in range(self.bounds[0]):
+            for j in [4, 8, self.bounds[1]-1]:
+                if not self.hmap[i][j]:
+                    self.create_cell((i, j))
+
+    def step(self):
+        # if self.step_count > 0 and self.step_count < self.bounds[1]:
+        #     self.create_cell((5, self.step_count))
         #     self.destroy_cell(self.hmap[1][2])
-        # super(Sandbox, self).step()
+        super(Sandbox, self).step()
+        time.sleep(1)
+        # for cell in [c for c in self.cells]:
+        #     for i in range(6):
+        #         self.divide_cell(cell, i)
         # print(self.genome)
 
     # def create_inputs(self, cell):
@@ -89,6 +111,7 @@ class Sandbox(Simulation):
 
 
 simulation = Sandbox()
+simulation.max_steps = 2
 simulation.verbose = True
 view = View(600, 800, simulation)
 simulation.run(view)

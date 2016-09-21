@@ -9,6 +9,10 @@ margin = 2
 
 def xy_to_screen(x, y, surface):
     w, h = surface.get_size()
+    # Prevent pygame overflow errors.
+    x = max(min(x, 10000), -10000)
+    y = max(min(y, 10000), -10000)
+
     return (int(x+margin), int(h-y-margin))
 
 def draw_polygon(surface, points, color, t=0):
@@ -32,5 +36,11 @@ def draw_text(surface, position, string, color=BLACK):
 def rgb_int(c):
     return tuple((min(255, max(0, int(c_*255))) for c_ in c))
     # return (int(c[0]*255), int(c[1]*255), int(c[2]*255))
+
+# def draw_arrow(surface, position, direction, color=BLACK, scale=1):
+#     (0, 0, 0), ((0, 100), (0, 200), (200, 200), (200, 300), (300, 150), (200, 0), (200, 100))
+#     pygame.draw.polygon(surface, )
+
+    
 
 # print rgb_int((.5, .5, 2))

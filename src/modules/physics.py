@@ -13,7 +13,7 @@ class PhysicsSimulation(BaseModuleSimulation):
         self.static_map = static_map
         self.gravity = gravity
         self.max_physics_steps = 100
-        self.hex_radius = 14/1
+        self.hex_radius = 20#14/1
         self.forces = dict()
         self.world = World(gravity, resolve_steps=150)
 

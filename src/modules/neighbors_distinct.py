@@ -1,10 +1,5 @@
 from src.modules import Module, BaseModuleSimulation
 
-def to_int(x):
-    """ The presence of neighbors objects is encoded as 1, else 0
-    """
-    return int(bool(x))
-
 class NeighborSimulation(BaseModuleSimulation):
     """docstring for NeighborSimulation"""
     def __init__(self, simulation, module):
@@ -14,7 +9,9 @@ class NeighborSimulation(BaseModuleSimulation):
         """ Binary encoding of six neighbors.
         """
         coords = cell.userData['coords']
-        inputs = list(map(to_int, self.simulation.hmap.neighbors(coords)))
+        inputs = [0] * 6
+        for i, n, in enumerate(self.simulation.hmap.neighbors(coords)):
+            inputs[i] = int(bool(n))
         return inputs
 
 class NeighborModule(Module):

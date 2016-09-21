@@ -3,31 +3,35 @@ import math
 from src.hexSimulation import HexSimulation
 from src.hexmap import Map
 
-from src.modules import signals, Module, physics, light, water, \
-                        neighbors_continuous, divide_theta, fea, truss
+from src.modules import signals, light, water, truss, \
+                        neighbors_distinct, divide_theta, divide_distinct
 
 from src.views.drawHexMap import draw_hex_map
 from src.views.drawUtils import draw_text
 
-BOUNDS = (12, 8)
+BOUNDS = (12, 9)
 PERCENT_DIRT = .25
 DIRT_HEIGHT = int(BOUNDS[0] * PERCENT_DIRT)
-
+print DIRT_HEIGHT
 dirt_map = Map(BOUNDS)
 for row in range(0, DIRT_HEIGHT):
     for col in range(0, BOUNDS[1]):
-        dirt_map[row][col] = 1
+        dirt_map[row][col] = 0b111111
+
+def add_loads(hmap, truss):
+    pass
 
 genome_config = {
     'modules': [
-        (neighbors_continuous.NeighborModule, {}),
-        (divide_theta.DivideThetaModule, {}),
+
+        (neighbors_distinct.NeighborModule, {}),
+        (divide_distinct.DivideDistinctModule, {}),
+        # (divide_theta.DivideThetaModule, {}),
+
         (light.LightModule, {'light_coverage': 1}),
-        (water.WaterModule, {'production_map': dirt_map, 'cell_input':False}),
-        (truss.TrussModule, {'static_map': dirt_map}),
-        (Module, {'gene':signals.Signal0Gene,
-                  'simulation':signals.Signal0Simulation,
-                  'prob_add':.1, 'min_genes':1, 'max_genes':1 })
+        (water.WaterModule, {'production_map': dirt_map, 'cell_input': True}),
+        (truss.TrussModule, {'static_map': dirt_map, 'add_loads': add_loads}),
+
     ],
     'inputs': ['underground'],
     'outputs': [('apoptosis', 'sigmoid')]
@@ -36,8 +40,9 @@ genome_config = {
 class Simulation(HexSimulation):
     """docstring for Simulation"""
     def __init__(self, genome):
-        super(Simulation, self).__init__(genome, max_steps=50, bounds=BOUNDS,
-                                            break_on_repeat=True)
+        max_steps = int(BOUNDS[0] * BOUNDS[1] / 2.0)
+        super(Simulation, self).__init__(genome, max_steps=max_steps,
+                                         bounds=BOUNDS, break_on_repeat=True)
         self.start = (DIRT_HEIGHT-1, int(self.bounds[1]/2.))
 
         # CREATE STARTING CELLS.
@@ -56,12 +61,6 @@ class Simulation(HexSimulation):
     def handle_output(self, cell, outputs):
         if outputs[0] > .5: # Apoptosis.
             self.destroy_cell(cell)
-
-    # def divide_cell(self, cell, direction):
-    #     """ Override super method to only allow division if enough water.
-    #     """
-    #     if self.module_simulations[3].water_map[cell.userData['coords']] >= 1:
-    #         super(Simulation, self).divide_cell(cell, direction)
 
     def _filter_unconnected(self):
         seen = set()
@@ -93,19 +92,9 @@ class Simulation(HexSimulation):
         if self.verbose:
             print("Filtered %i unconnected"%count_destroyed)
 
-    def fail(self):
-        # for cell in self.cells:
-        #     if cell.userData['stress'] >= 1:
-        #         return True
-
-        return False
-
     def fitness(self):
         if len(self.cells) == 0:
             return 0
-
-        # if self.fail():
-        #     return 0.0
 
         MAX_LIGHT = float(self.bounds[1])
 
@@ -118,14 +107,15 @@ class Simulation(HexSimulation):
                 light_fitness += cell.userData['light']
 
         light_fitness /= MAX_LIGHT
+
         weight_fitness = 1-(len(self.cells)/float(self.bounds[0]*self.bounds[1]))
 
-        # light_bias = .2
         fos = self.module_simulations[4].truss.fos_total
-        fos_fitness = 1 / (1 + math.exp(-10*(fos-1)))
+        fos_fitness = (math.atan((fos - 1) * 10) / math.pi) + 0.5
 
+        # if fos < 1:
+        #     return 0
         return light_fitness * fos_fitness
-        # return light_fitness*(.5+light_bias) + weight_fitness*(.5-light_bias)
 
     def _draw_hex(self, coord, hexview):
         if self.hmap[coord]:

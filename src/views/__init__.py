@@ -16,7 +16,7 @@ class View(object):
 
         self.simulation = simulation
         self.mod_sims = [m for m in simulation.module_simulations if m.has_render]
-        print simulation.module_simulations[0].has_render
+        # print simulation.module_simulations[0].has_render
 
         self.x_divisions = 2
         self.y_divisions = 2

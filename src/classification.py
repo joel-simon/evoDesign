@@ -28,7 +28,7 @@ def f1_score(true, pred):
         return 0
     return 2 * precision * recall / (precision + recall)
 
-def joel_score(true, pred):
+def balanced_accuracy_score(true, pred):
     true_pos = 0
     true_neg = 0
 
@@ -44,7 +44,6 @@ def joel_score(true, pred):
     a = true_neg / num_neg
     b = true_pos / num_pos
 
-    # return 2 * a * b / (a+b)
     return (a+b)/2
 
 if __name__ == '__main__':
@@ -58,17 +57,17 @@ if __name__ == '__main__':
     pred = [1,1,1,1,1,1]
     print sklearn_f1(true, pred)
     print roc_auc_score(true, pred)
-    print(joel_score(true, pred))
+    print(balanced_accuracy_score(true, pred))
 
     true = [0,0,0,0,1,0]
     pred = [0,0,0,0,0,0]
     print sklearn_f1(true, pred)
     print roc_auc_score(true, pred)
-    print(joel_score(true, pred))
+    print(balanced_accuracy_score(true, pred))
 
 
     # # print accuracy_score(true,pred, sample_weight=[1,1,4,1,1])
-    # print joel_score(true, pred)
+    # print balanced_accuracy_score(true, pred)
     # print roc_auc_score(true, pred)
     # true = [0,0,0]
     # pred = [0,0,0]

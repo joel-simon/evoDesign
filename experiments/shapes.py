@@ -1,18 +1,29 @@
 from src.hexSimulation import HexSimulation
 from src.hexmap import Map
-from src.classification import f1_score, joel_score, precision_recall
+from src.classification import balanced_accuracy_score
 
-from src.modules import signals, Module, physics, light, water, \
-                        neighbors_continuous, divide_theta
+from src.modules import neighbors_continuous, divide_theta, neighbors_distinct, \
+                        divide_distinct
+
+from src.modules.signals.signal_3 import Signal3Module
+# from src.modules.signals.signal_0 import Signal0Module
+# from src.modules.signals.signal_2 import Signal2Module
+from src.modules.morphogen import MorphogenModule
 
 from src.views.drawHexMap import draw_hex_map
 from src.views.drawUtils import draw_text
 
 genome_config = {
     'modules' : [
-        # (Module, {'gene':signals.Signal1,'prob_add':.2,'max_genes':5}),
-        (neighbors_continuous.NeighborModule, {}),
-        (divide_theta.DivideThetaModule, {}),
+        # (Signal3Module, {'prob_add': .0, 'prob_remove': .0,
+        #                  'min_genes': 0, 'start_genes': 3, 'max_genes': 6 }),
+        (MorphogenModule, {'prob_add': .0, 'prob_remove': .0,
+                           'min_genes': 0, 'start_genes': 2, 'max_genes': 6 }),
+        # (neighbors_continuous.NeighborModule, {}),
+        # (divide_theta.DivideThetaModule, {}),
+
+        (neighbors_distinct.NeighborModule, {}),
+        (divide_distinct.DivideDistinctModule, {})
     ],
 
     'inputs': [],
@@ -22,7 +33,7 @@ genome_config = {
 class Shape(HexSimulation):
     """docstring for Shape"""
     def __init__(self, genome):
-        super(Shape, self).__init__(genome, max_steps=50, bounds=(8, 8),
+        super(Shape, self).__init__(genome, max_steps=32, bounds=(8, 8),
                                     break_on_repeat=True)
         # Create starting cells
         self.start = (0, 0)
@@ -41,26 +52,15 @@ class Shape(HexSimulation):
     def fitness(self):
         true = sum(self.target,[])
         pred = sum(self.hmap, [])
-        return f1_score(true, pred)
-        return joel_score(true, pred)
+        return balanced_accuracy_score(true, pred)
 
     def _draw_hex(self, coord, hexview):
         if self.hmap[coord]:
-            hexview.fill((50, 50, 50))
+            hexview.fill((50, 200, 50))
             hexview.border()
-            # if self.target[coord]:
-            #     hexview.border((0,0,0))
-            # else:
-            #     hexview.border((200,0,0))
         else:
-            # pass
-            # # # hexview.fill((255, 255, 255))
-            # # else:
-            # #     hexview.fill((210, 166, 121))
             if self.target[coord]:
                 hexview.fill((200, 200, 200))
-            #     hexview.border((0,0,0), 2)
-            # else:
         hexview.border((0,0,0), 1)
 
     def render(self, surface):

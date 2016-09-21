@@ -9,9 +9,9 @@ reproduction_type    = DefaultReproduction
 
 [phenotype]
 input_nodes          = 0
-hidden_nodes         = 0
+hidden_nodes         = 2
 output_nodes         = 0
-initial_connection   = fs_neat
+initial_connection   = fully_connected
 max_weight           = +30
 min_weight           = -30
 feedforward          = 0

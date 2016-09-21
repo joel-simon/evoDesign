@@ -59,7 +59,7 @@ class HexArtist(object):
 
 def draw_hex_map(surface, hmap, draw_func):
     # TODO calculate radius by surface dimensions and map size
-    artist = HexArtist(surface, radius=14./1)
+    artist = HexArtist(surface, radius=10)
     for coord in hmap.coords():
         artist.set_hex(coord)
         draw_func(coord, artist)

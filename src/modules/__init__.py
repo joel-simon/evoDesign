@@ -3,7 +3,7 @@ from copy import copy
 
 class BaseModuleSimulation(object):
     """ A module may have its own simulation where it handles its logic. """
-    
+
     def __init__(self, simulation, module, has_render=True):
         self.simulation = simulation
         self.module = module
@@ -34,7 +34,7 @@ class BaseModuleGene(object):
     """
     def __init__(self, ID, inputs, outputs):
         self.ID = ID
-        self.node_genes = []
+        self.node_gene_ids = []
         self.inputs = inputs
         self.outputs = outputs
 
@@ -42,33 +42,58 @@ class BaseModuleGene(object):
         raise NotImplementedError()
 
     def copy(self):
-        raise NotImplementedError()
+        S = self.__class__(self.ID)
+        S.inputs = copy(self.inputs)
+        S.outputs = copy(self.outputs)
+        S.node_gene_ids = copy(self.node_gene_ids)
+        return S
 
-    def create_child(self):
-        raise NotImplementedError()
+    def get_child(self, other):
+        """ Default has no crossover operation.
+        """
+        return self.copy()
+
+    def __str__(self):
+        ids_str = ', '.join(map(str, self.node_gene_ids))
+        return "ModuleGene(ID=%i, node_gene_ids=[%s])" % (self.ID, ids_str)
 
 class Module(object):
     """ A module is a discrete group of logic that connects cells, their state
         and their inputs and outputs.
     """
     def __init__(self, gene, simulation,
-                 gene_config={}, prob_add=.1, prob_remove=.02,
-                 min_genes=0, max_genes=None):
-
+                 gene_config={}, prob_add=.2, prob_remove=.1,
+                 min_genes=0, start_genes=None,  max_genes=99):
         self.gene = gene
         self.gene_config = gene_config
 
         self.simulation = simulation
         self.simulation_config = dict()
 
+        # Gene config data
+        assert(min_genes <= max_genes)
         self.min_genes = min_genes
         self.max_genes = max_genes
+
+        if start_genes is None:
+            self.start_genes = min_genes
+        else:
+            assert(start_genes <= max_genes and start_genes >= min_genes)
+            self.start_genes = start_genes
+
         self.prob_add = prob_add
         self.prob_remove = prob_remove
 
+        # TODO: maybe genes have different connection configs
+        # self.initial_connection = initial_connection
+
+        # These are not part of module genes.
         self.inputs = []
         self.outputs = []
+
+        # id => instance of gene
         self.genes = {}
+        self.next_gene_id = 0
 
     def __str__(self):
         mod = self.__class__.__name__
@@ -76,19 +101,29 @@ class Module(object):
         sim = self.simulation.__name__ if self.simulation else 'None'
         return "%s(gene:%s, simulation:%s, num_genes=%i)" % (mod, gene, sim, len(self.genes))
 
+    def total_inputs(self):
+        return sum((g.inputs for g in self.genes.values()), self.inputs)
+
+    def total_outputs(self):
+        return sum((g.outputs for g in self.genes.values()), self.outputs)
+
     def next_id(self):
-        return len(self.genes)
+        # gid = self.next_gene_id
+        # self.next_gene_id += 1
+        gid = 0#len(self.genes)
+        while gid in self.genes:
+            gid += 1
+        return gid
 
     def create_gene(self):
         ID = self.next_id()
         gene = self.gene(ID, **self.gene_config)
+        assert ID not in self.genes
         self.genes[ID] = gene
-        self.inputs.extend(gene.inputs)
-        self.outputs.extend(gene.outputs)
         return gene
 
-    def destroy_gene(self, gene):
-        pass
+    # def destroy_gene(self, gene):
+    #     raise NotImplementedError
 
     def create_simulation(self):
         """ An instance of a modules simulation class is owned by parent simulation """

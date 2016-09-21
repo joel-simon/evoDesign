@@ -8,10 +8,8 @@ stagnation_type      = DefaultStagnation
 reproduction_type    = DefaultReproduction
 
 [phenotype]
-input_nodes          = 0
 hidden_nodes         = 0
-output_nodes         = 0
-initial_connection   = fs_neat
+initial_connection   = fully_connected
 max_weight           = +30
 min_weight           = -30
 feedforward          = 0
@@ -21,11 +19,11 @@ weight_stdev         = 1.0
 [genetic]
 pop_size                = 0
 max_fitness_threshold   = 1.0
-prob_add_conn           = 0.3
-prob_add_node           = 0.2
-prob_delete_conn        = 0.05
-prob_delete_node        = 0.05
-prob_mutate_bias        = 0.05
+prob_add_conn           = 0.6
+prob_add_node           = 0.3
+prob_delete_conn        = 0.1
+prob_delete_node        = 0.1
+prob_mutate_bias        = 0.1
 bias_mutation_power     = 0.25
 prob_mutate_response    = 0.1
 response_mutation_power = 0.25
@@ -38,7 +36,7 @@ reset_on_extinction     = 1
 
 
 [genotype compatibility]
-compatibility_threshold = 3.0
+compatibility_threshold = 1.2
 excess_coefficient      = 1.0
 disjoint_coefficient    = 1.0
 weight_coefficient      = 0.5
@@ -48,8 +46,5 @@ species_fitness_func = max
 max_stagnation       = 5
 
 [DefaultReproduction]
-elitism              = 2
+elitism              = 4
 survival_threshold   = 0.2
-
-[attributes]
-prob_replace_attribute = 0.01

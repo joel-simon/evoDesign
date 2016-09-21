@@ -5,6 +5,8 @@ import itertools
 
 SQRT3 = math.sqrt( 3 )
 
+# import numpy
+
 directions = [
     [ (0, 1), (1, 0), (0, -1), (-1, -1), (-1, 0), (-1, 1)],
     [ (1, 1), (1, 0), (1, -1), (0, -1), (-1, 0), (0, 1)]
@@ -19,6 +21,11 @@ def offset_to_cube(row, col):
     y = -x-z
     return (x, y, z)
 
+def distance(start, destination):
+    """Takes two hex coordinates and determine the distance between them."""
+    ac = offset_to_cube(*start)
+    bc = offset_to_cube(*destination)
+    return cube_distance(ac, bc)
 
 class Map( object ):
     def __init__( self, shape, value=0):
@@ -55,11 +62,16 @@ class Map( object ):
                     string_list.append('0')
         return hash(''.join(string_list))
 
-    def distance( self, start, destination ):
+    def distance(self, start, destination):
         """Takes two hex coordinates and determine the distance between them."""
         ac = offset_to_cube(*start)
         bc = offset_to_cube(*destination)
         return cube_distance(ac, bc)
+
+    def items(self):
+        for row in range(self.shape[0]):
+            for col in range(self.shape[1]):
+                yield (row, col), self.values[row][col]
 
     def coords(self):
         for row in range(self.shape[0]):
@@ -79,6 +91,7 @@ class Map( object ):
     def valid_coords( self, coords ):
         if coords == None:
             return False
+
         row, col = coords
         if col < 0 or col >= self.cols: return False
         if row < 0 or row >= self.rows: return False

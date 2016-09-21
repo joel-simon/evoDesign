@@ -1,10 +1,14 @@
+import pyximport
+import numpy
+pyximport.install(setup_args={"include_dirs":numpy.get_include()},
+                  reload_support=True)
 import time
 import math
 from src.modules import Module, BaseModuleSimulation
 from hexBody import HexBody
-
 from src.modules.truss.truss import Truss
 from src.modules.truss.drawTruss import drawTruss
+from numpy.linalg import LinAlgError
 
 SQRT3 = math.sqrt(3)
 
@@ -13,9 +17,10 @@ class TrussSimulation(BaseModuleSimulation):
     def __init__(self, simulation, module, static_map):
         super(TrussSimulation, self).__init__(simulation, module)
         self.static_map = static_map
-        self.hex_radius = 14
+        self.hex_radius = 1
+        self.truss = Truss()
 
-    def _create_body(self, truss, cell):
+    def _create_body(self, cell):
         """ Create a physical representation of cell.
         """
         coords = cell.userData['coords']
@@ -35,7 +40,7 @@ class TrussSimulation(BaseModuleSimulation):
 
         cell.userData['body'] = HexBody(
             ID=cell.id,
-            truss=truss,
+            truss=self.truss,
             position=(left, top),
             radius=self.hex_radius,
             neighbors=neighbor_bodies,
@@ -44,32 +49,36 @@ class TrussSimulation(BaseModuleSimulation):
 
     def cell_init(self, cell):
         cell.userData['stress'] = 0.0
+        self._create_body(cell)
 
-    def step(self):
-        start = time.time()
-        truss = Truss()
-        self.truss = truss
+    def cell_destroy(self, cell):
+        if 'body' in cell.userData:
+            body = cell.userData['body']
+            body.destroy()
 
+    def calculate(self):
         if len(self.simulation.cells) == 0:
             return
 
+        # self.add_loads(self.simulation.hmap, self.truss)
+
+        try:
+            self.truss.calc_fos()
+        except LinAlgError as e:
+            print('LinAlgError!')
+            print(e)
+            print(len(self.truss.joints))
+            print(len(self.truss.members))
+
+            self.truss.fos_total = 0
+            for member in self.truss.members:
+                member.fos = 0
+
         for cell in self.simulation.cells:
             if 'body' in cell.userData:
-                del cell.userData['body']
+                body = cell.userData['body']
+                cell.userData['fos'] = min(m.fos for m in body.members)
 
-        for cell in self.simulation.cells:
-            self._create_body(truss, cell)
-
-        truss.calc_mass()
-        truss.calc_fos()
-
-        for cell in self.simulation.cells:
-            body = cell.userData['body']
-            cell.userData['fos'] = min(m.fos for m in body.members)
-        
-        
-        # print('Truss ran in: %f\n'%(time.time() - start))
-    
     def handle_output(self, cell, outputs):
         """ The phsyics module has no outputs.
         """
@@ -78,7 +87,10 @@ class TrussSimulation(BaseModuleSimulation):
     def create_input(self, cell):
         """
         """
-        return [cell.userData['fos']-1]
+        if 'fos' in cell.userData:
+            return [cell.userData['fos']-1]
+        else:
+            return [0]
 
     def render(self, surface):
         drawTruss(self.truss, surface)

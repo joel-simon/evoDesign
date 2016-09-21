@@ -1,0 +1,44 @@
+[Types]
+stagnation_type      = DefaultStagnation
+reproduction_type    = DefaultReproduction
+
+[phenotype]
+hidden_nodes         = 0
+initial_connection   = fully_connected
+max_weight           = 30
+min_weight           = -30
+feedforward          = 0
+activation_functions = sigmoid
+weight_stdev         = 0.9
+
+[genetic]
+pop_size              = 0
+max_fitness_threshold = 1.0
+prob_add_conn         = 0.6
+prob_add_node         = 0.2
+prob_delete_conn      = 0.1
+prob_delete_node      = 0.1
+prob_mutate_bias      = 0.1
+bias_mutation_power   = 1.0
+prob_mutate_response  = 0.2
+response_mutation_power = 0.1
+prob_mutate_weight    = 0.8
+prob_replace_weight   = 0.1
+weight_mutation_power = 1.0
+prob_mutate_activation  = 0.0
+prob_toggle_link      = 0.01
+reset_on_extinction     = 1
+
+[genotype compatibility]
+compatibility_threshold = 2.0
+excess_coefficient      = 1.0
+disjoint_coefficient    = 1.0
+weight_coefficient      = 0.5
+
+[DefaultStagnation]
+species_fitness_func = max
+max_stagnation      = 5
+
+[DefaultReproduction]
+survival_threshold  = 0.2
+elitism               = 2

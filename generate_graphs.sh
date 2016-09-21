@@ -28,8 +28,8 @@ def main(args):
                             filename=join(out_dir,"nn_fitness.svg"))
 
         # Visualizes speciation
-        # visualize.plot_species(pop.statistics,
-        #                 filename=join(out_dir,"nn_speciation.svg"))
+        visualize.plot_species(pop.statistics,
+                        filename=join(out_dir,"nn_speciation.svg"))
 
         print('Generated population graphs.')
 

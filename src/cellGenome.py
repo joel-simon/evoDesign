@@ -1,8 +1,40 @@
+from __future__ import print_function
 from neat.genome import Genome
 from .neat_custom.genes import AttributeGene, MorphogenGene
 
 from copy import copy
-from random import random, choice, gauss
+from random import random, choice, gauss, shuffle
+
+def valid_genome(genome):
+    # return
+    """ Only for testing. Do not use in production.
+    """
+    in_genes = [g for g in genome.node_genes.values() if g.type == 'INPUT']
+    hid_genes = [g for g in genome.node_genes.values() if g.type == 'HIDDEN']
+    out_genes = [g for g in genome.node_genes.values() if g.type == 'OUTPUT']
+
+    assert(len(genome.inputs) == genome.num_inputs)
+    assert(len(in_genes) == genome.num_inputs)
+    assert(len(genome.inputs) == len(set(genome.inputs))) # No repeats
+
+    assert(len(genome.outputs) == genome.num_outputs)
+    assert(len(out_genes) == genome.num_outputs)
+    assert(len(genome.outputs) == len(set(genome.outputs))) # No repeats
+
+    for module in genome.modules:
+        assert(len(module.genes) >= module.min_genes)
+        if module.max_genes != None:
+            assert(len(module.genes) <= module.max_genes)
+
+        assert(set(module.total_inputs()) <= set(genome.inputs))
+        assert(set(module.total_outputs()) <= set(genome.outputs))
+
+        for gene in module.genes.values():
+            assert(set(gene.node_gene_ids) <= set(genome.node_genes.keys()))
+            assert(set(gene.inputs) <= set(genome.inputs))
+            assert(set(gene.outputs) <= set(genome.outputs))
+            assert(len(gene.node_gene_ids) == len(gene.inputs)+len(gene.outputs))
+
 
 class CellGenome(Genome):
     """Extend the default genome with more behavior."""
@@ -15,14 +47,6 @@ class CellGenome(Genome):
         self.non_module_inputs  = len(config.genome_config['inputs'])
         self.non_module_outputs = len(config.genome_config['outputs'])
 
-        self.update_inout()
-
-    def update_inout(self):
-        """
-        Calculate the number of input and output nodes so the rest of
-        NEAT can work properly.
-        """
-        # Lists of node names.
         self.inputs = copy(self.config.genome_config['inputs'])
         self.outputs = copy(self.config.genome_config['outputs'])
 
@@ -30,126 +54,183 @@ class CellGenome(Genome):
             self.inputs.extend(module.inputs)
             self.outputs.extend(module.outputs)
 
-        self.num_inputs  = len(self.inputs)
+        self.num_inputs = len(self.inputs)
         self.num_outputs = len(self.outputs)
 
-    def create_module_gene(self, module, innovation_indexer):
-        # print 'create_module_gene'
-        assert(module in self.modules)
-        module_gene = module.create_gene()
-        in_genes = []
-        out_genes = []
-
-        # Each module recieves a 1000 block,
-        # each gene recieves a 50 block (20 genes per module max).
-        ID = 1000 * (self.modules.index(module)) + len(module.genes)*50
-
-        for i, name in enumerate(module_gene.inputs):
-            assert ID not in self.node_genes
-            ng = self.config.node_gene_type(ID, 'INPUT')
-            self.node_genes[ng.ID] = ng
-            self.node_names[ng.ID] = name
-            module_gene.node_genes.append(ng.ID)
-            in_genes.append(ng)
-            ID += 1
-
-        for i, (name, act_func) in enumerate(module_gene.outputs):
-            assert ID not in self.node_genes
-            ng = self.config.node_gene_type(ID, 'OUTPUT', activation_type=act_func)
-            self.node_genes[ng.ID] = ng
-            self.node_names[ng.ID] = name
-            module_gene.node_genes.append(ng.ID)
-            out_genes.append(ng)
-            ID += 1
-
-        # TODO use config here
-        if False: #  use fs_neat
-            # Randomly connect one input to all hidden and output nodes (FS-NEAT).
-            ig = choice(in_genes)
-            # out_genes = [g for g in self.node_genes.values() if g.type == 'OUTPUT']
-            for og in out_genes:
-                weight = gauss(0, self.config.weight_stdev)
-                innovation_id = innovation_indexer.get_innovation_id(ig.ID, og.ID)
-                cg = self.config.conn_gene_type(innovation_id, ig.ID, og.ID, weight, True)
-                self.conn_genes[cg.key] = cg
-
-
-        self.update_inout()
-        return module_gene
-
-    def remove_module_gene(self, module, gene):
-        nodes_to_delete = set()
-        keys_to_delete = set()
-
-        for n_id, node in gene.node_genes:
-            nodes_to_delete.add(n_id)
-
-        for key, value in self.conn_genes.items():
-            if value.in_node_id in nodes_to_delete or value.out_node_id in nodes_to_delete:
-                keys_to_delete.add(key)
-
-        for key in keys_to_delete:
-            del self.conn_genes[key]
-
-        for n_id in nodes_to_delete:
-            del self.node_genes[n_id]
-
-        module.genes.remove(gene)
-
-        assert len(self.conn_genes) > 0
-        assert len(self.node_genes) >= self.num_inputs + self.num_outputs
-
-        # return node_id
-
     def inherit_genes(self, parent1, parent2):
-        """ Applies the crossover operator to modules. """
+        """ Applies the crossover operator to modules.
+            The mgene nodes are autoamtically inherited but without the mgene object.
+        """
         super(CellGenome, self).inherit_genes(parent1, parent2)
-        assert(len(parent1.modules) == len(parent2.modules))
-        for mg, mg1, mg2 in zip(self.modules, parent1.modules, parent2.modules):
-            for g_id, g1 in mg1.genes.items():
-                mg.genes[g_id] = g1.copy()
-                mg.inputs.extend(g1.inputs)
-                mg.outputs.extend(g1.outputs)
+        assert(len(self.modules) == len(parent1.modules))
+        assert(len(self.modules) == len(parent2.modules))
 
-        self.node_names = copy(parent1.node_names)
-        self.valid()
-        self.update_inout()
+        for i, module in enumerate(self.modules):
+            p1_module = parent1.modules[i]
+            p2_module = parent2.modules[i]
+
+            # For every module_gene in the module
+            for mg_id, mg1 in p1_module.genes.items():
+                if mg_id in p2_module.genes:
+                    mg2 = p2_module.genes[mg_id]
+                    module.genes[mg_id] = mg1.get_child(mg2)
+                else:
+                    module.genes[mg_id] = mg1.copy()
+
+                self.inputs.extend(module.genes[mg_id].inputs)
+                self.outputs.extend(module.genes[mg_id].outputs)
+                self.num_inputs += len(module.genes[mg_id].inputs)
+                self.num_outputs += len(module.genes[mg_id].outputs)
+
+        # valid_genome(self)
+        # self.node_names = copy(parent1.node_names)
 
     def mutate(self, innovation_indexer):
         for ag in self.attribute_genes.values():
             ag.mutate(self.config)
 
+        # All modules
         for module in self.modules:
             self.mutate_module(module, innovation_indexer)
 
-        self.update_inout()
-
+        # self.update_inout()
         super(CellGenome, self).mutate(innovation_indexer)
 
+        # valid_genome(self)
         return self
 
-    def valid(self):
-        for module in self.modules:
-            # assert(len(module.inputs) = len(module.genes))
-            for gene in module.genes.values():
-                assert(len(gene.node_genes) == len(gene.inputs) + len(gene.outputs))
-                for n_id in gene.node_genes:
-                    assert(n_id in self.node_genes)
+    def remove_module_gene(self, module):
+        # valid_genome(self)
+        gene_id, mgene = choice(module.genes.items())
+        nodes_to_delete = set(mgene.node_gene_ids)
+        conns_to_delete = []
+
+        # print(self)
+
+        for key, value in self.conn_genes.items():
+            if value.in_node_id in nodes_to_delete or value.out_node_id in nodes_to_delete:
+                conns_to_delete.append(key)
+
+        for conn_id in conns_to_delete:
+            del self.conn_genes[conn_id]
+
+        for node_id in nodes_to_delete:
+            del self.node_genes[node_id]
+
+        del module.genes[gene_id]
+
+        self.num_inputs -= len(mgene.inputs)
+        self.num_outputs -= len(mgene.outputs)
+
+        for input in mgene.inputs:
+            self.inputs.remove(input)
+        for output in mgene.outputs:
+            self.outputs.remove(output)
+
+        # print(self)
+        # valid_genome(self)
 
     def mutate_module(self, module, innovation_indexer):
-        assert(module in self.modules)
+        """ Called by self.mutate
+        """
+        if module.gene is None:
+            return
+
         for gene in module.genes.values():
             gene.mutate()
 
-        # Add gene
-        if module.gene and len(module.genes) < module.max_genes and random() < module.prob_add:
-            self.create_module_gene(module, innovation_indexer)
+        # Add mgene
+        if random() < module.prob_add and len(module.genes) < module.max_genes:
+            mgene = self.create_unconnected_mgene(module)
 
-        # TODO Remove gene
-        # if random() < module.prob_remove:
-        #     self.genes.remove(choice(self.genes))
+            if self.config.initial_connection == 'fully_connected':
+                self.connect_mgene_full(mgene, innovation_indexer)
 
-        self.valid()
+            elif self.config.initial_connection == 'partial':
+                self.connect_mgene_partial(mgene, innovation_indexer, self.config.connection_fraction)
+
+            elif self.config.initial_connection == 'fs_neat':
+                raise NotImplementedError
+
+        # Remove mgene
+        if random() < module.prob_remove and len(module.genes) > module.min_genes:
+            self.remove_module_gene(module)
+        valid_genome(self)
+
+    def add_connection(self, g1, g2, innovation_indexer):
+        weight = gauss(0, self.config.weight_stdev)
+        innovation_id = innovation_indexer.get_innovation_id(g1.ID, g2.ID)
+        cg = self.config.conn_gene_type(innovation_id, g1.ID, g2.ID, weight, True)
+        self.conn_genes[cg.key] = cg
+
+    def compute_full_mgene_connections(self, mgene):
+        in_genes = [g for g in self.node_genes.values() if g.type == 'INPUT']
+        hid_genes = [g for g in self.node_genes.values() if g.type == 'HIDDEN']
+        out_genes = [g for g in self.node_genes.values() if g.type == 'OUTPUT']
+
+        mgene_nodes = [self.node_genes[ID] for ID in mgene.node_gene_ids]
+        new_in = [g for g in mgene_nodes if g.type == 'INPUT']
+        new_out = [g for g in mgene_nodes if g.type == 'OUTPUT']
+
+        connections = []
+
+        for ng in new_in:
+            for og in hid_genes + out_genes:
+                connections.append((ng, og))
+
+        for og in new_out:
+            for ig in hid_genes + [g for g in in_genes if g not in new_in]:
+                connections.append((ig, og))
+
+        return connections
+
+    def connect_mgene_full(self, mgene, innovation_indexer):
+        for g1, g2 in self.compute_full_mgene_connections(mgene):
+            self.add_connection(g1, g2, innovation_indexer)
+
+    def connect_mgene_partial(self, mgene, innovation_indexer, fraction):
+        assert 0 <= fraction <= 1
+        all_connections = self.compute_full_connections()
+        shuffle(all_connections)
+        num_to_add = int(round(len(all_connections) * fraction))
+        for g1, g2 in all_connections[:num_to_add]:
+            self.add_connection(g1, g2, innovation_indexer)
+
+    def create_unconnected_mgene(self, module):
+        mgene = module.create_gene()
+
+        self.inputs.extend(mgene.inputs)
+        self.outputs.extend(mgene.outputs)
+        self.num_inputs += len(mgene.inputs)
+        self.num_outputs += len(mgene.outputs)
+
+        # Each module recieves a 1000 block
+        # Each gene recieves a 50 block (20 genes per module max).
+        ID = 1000*(self.modules.index(module)+1) + mgene.ID*50
+
+        for name in mgene.inputs:
+            if ID in self.node_genes:
+                print(ID)
+                print(name)
+                print(self)
+
+            assert ID not in self.node_genes
+            ng = self.config.node_gene_type(ID, 'INPUT')
+            self.node_genes[ng.ID] = ng
+            self.node_names[ng.ID] = name
+            mgene.node_gene_ids.append(ng.ID)
+            ID += 1
+
+        for (name, act_func) in mgene.outputs:
+            assert ID not in self.node_genes
+            ng = self.config.node_gene_type(ID, 'OUTPUT', activation_type=act_func)
+            self.node_genes[ng.ID] = ng
+            self.node_names[ng.ID] = name
+            mgene.node_gene_ids.append(ng.ID)
+            ID += 1
+
+        # valid_genome(self)
+        return mgene
 
     # Override create_unconnected function. to take custom activation_types.
     @classmethod
@@ -173,20 +254,24 @@ class CellGenome(Genome):
             c.node_genes[node_gene.ID] = node_gene
             node_id += 1
 
-        # print('have create_unconnected',node_id, len(c.node_genes), c.num_inputs)
-        # assert node_id == len(c.node_genes)
         for module in c.modules:
-            for i in range(module.min_genes):
-                c.create_module_gene(module, None)
+            for i in range(module.start_genes):
+                c.create_unconnected_mgene(module)
+            # print(module, len(module.genes))
+        # assert(False)
+        # valid_genome(c)
         return c
 
     def __str__(self):
         s = '#'*80 + '\n'
-        s += 'Inputs:' + str(self.inputs)
-        s += '\nOutputs:' + str(self.outputs) + '\n'
-        s += super(CellGenome, self).__str__()
+        s += 'Inputs:\n\t' + ', '.join(self.inputs)
+        s += '\nOutputs:\n\t' + '; '.join(n+':'+t for n, t in self.outputs)
         s += '\nModules:\n'
         for module in self.modules:
-            s += '\t'+str(module)
+            s += '\t'+str(module)+'\n'
+            for gene in module.genes.values():
+                s+= '\t\t' + str(gene) + '\n'
+        # s += '\n'
+        s += super(CellGenome, self).__str__()
         s += '\n' + '#'*80
         return s

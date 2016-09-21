@@ -1,3 +1,4 @@
+from __future__ import print_function
 import copy
 from .cell import Cell
 from .hexmap import Map
@@ -5,30 +6,12 @@ from .views.drawHexMap import draw_hex_map
 from .modules import Module
 
 class HexSimulation(object):
-    def __init__(self, genome, bounds=(8,8), verbose=False,
-                max_steps=100, max_physics_step=100, cellData = dict(),
-                break_on_repeat=False):
-
+    def __init__(self, genome, bounds=(8,8), verbose=False, max_steps=64,
+                                                         break_on_repeat=False):
         self.genome = genome
         self.bounds = bounds
         self.verbose = verbose
         self.max_steps = max_steps
-        self.max_physics_step = max_physics_step
-        self.cellData = cellData
-
-        self.module_simulations = []
-
-        for module in genome.modules:
-            # sim = module.create_simulation(self)
-            # if sim:
-            #     self.module_simulations.append(sim)
-            if module.simulation:
-                sim = module.simulation(self, module, **module.simulation_config)
-                self.module_simulations.append(sim)
-
-        self.break_on_repeat = break_on_repeat
-        if self.break_on_repeat:
-            self.seen_states = set()
 
         # State data
         self.hmap = Map(bounds, 0)
@@ -36,19 +19,36 @@ class HexSimulation(object):
         self.next_cell_id = 0
         self.last_change = 0
 
-        self.last_fitness = 0
-
         # Step statistics
         self.step_count = 0
         self.created_cells = 0
         self.destroyed_cells = 0
 
-    def _get_id(self):
+        self.module_simulations = []
+        self._init_module_simulations()
+
+        self.break_on_repeat = break_on_repeat
+        if self.break_on_repeat:
+            self.seen_states = set()
+
+    def _init_module_simulations(self):
+        """ Each module may have its own simulation class. Initialize them here.
+            Only called from self.init
+        """
+        for module in self.genome.modules:
+            if module.simulation:
+                sim = module.simulation(self, module, **module.simulation_config)
+                self.module_simulations.append(sim)
+
+    def _get_cell_id(self):
         self.next_cell_id += 1
         return self.next_cell_id
 
-    def create_cell(self, coords, cell_type=0):
+    def cell_init(self, cell):
+        for module in self.module_simulations:
+            module.cell_init(cell)
 
+    def create_cell(self, coords, cell_type=0):
         assert(self.hmap.valid_coords(coords))
         assert(not self.hmap[coords])
 
@@ -57,7 +57,7 @@ class HexSimulation(object):
 
         self.last_change = self.step_count
 
-        cell = Cell(self._get_id(), self.genome, copy.copy(self.cellData))
+        cell = Cell(self._get_cell_id(), self.genome)
 
         cell.userData['coords'] = (coords[0], coords[1])
         self.hmap[coords] = cell
@@ -65,8 +65,7 @@ class HexSimulation(object):
 
         self.created_cells += 1
 
-        for module in self.module_simulations:
-            module.cell_init(cell)
+        self.cell_init(cell)
 
         return cell
 
@@ -96,25 +95,22 @@ class HexSimulation(object):
     def handle_output(self, cell, outputs):
         raise NotImplementedError()
 
-    def clear_state(self):
+    def step(self):
         pass
 
-    def fail(self):
-        """ TODO: explain
-        """
-        return False
-
     def create_all_outputs(self):
+        """ Collect all inputs first so simulation
+            state does not change during input collection
+        """
         all_outputs = []
-        # First collect all inputs before action on them so simulation
-        # state does not change during input collection
+
         for cell in self.cells:
             inputs = self.create_input(cell)
             assert len(inputs) == self.genome.non_module_inputs
 
             for mod_sim in self.module_simulations:
                 mod_input = mod_sim.create_input(cell)
-                assert(len(mod_input) == len(mod_sim.module.inputs))
+                assert(len(mod_input) == len(mod_sim.module.total_inputs()))
                 inputs.extend(mod_input)
 
             assert(len(inputs) == self.genome.num_inputs)
@@ -138,7 +134,7 @@ class HexSimulation(object):
             # Handle Module outputs
             i = nmi
             for module, sim in zip(self.genome.modules, self.module_simulations):
-                k = len(module.outputs)
+                k = len(module.total_outputs())
                 module_output = outputs[i:i+k]
                 assert(len(module_output) == k)
                 sim.handle_output(cell, module_output)
@@ -146,20 +142,20 @@ class HexSimulation(object):
                 if not cell.alive:
                     break
 
-    def step(self):
+    def super_step(self):
         self.created_cells = 0
         self.destroyed_cells = 0
 
         if self.verbose:
             print('#'*40,'step', self.step_count,'#'*40)
 
-        if self.step_count == 0:
-            for mod_sim in self.module_simulations:
-                mod_sim.step()
+        all_outputs = self.create_all_outputs()
+        self.handle_all_outputs(all_outputs)
 
-        self.handle_all_outputs(self.create_all_outputs())
+        # Handle experiment logic.
+        self.step()
 
-        # Do any module_simulation computations.
+        ### Handle Module Logic
         for mod_sim in self.module_simulations:
             mod_sim.step()
 
@@ -168,29 +164,34 @@ class HexSimulation(object):
             print('created %i cells:' % self.created_cells)
             print('final cells: %i' % len(self.cells))
 
-        assert(len(self.cells) <= self.bounds[0] * self.bounds[1])
         self.step_count += 1
 
     def run(self, renderer=None):
+        max_fitness = 0
+
         # if renderer:
         #     renderer.render()
 
         for _ in range(self.max_steps):
-            self.step()
+            self.super_step()
 
-            # if self.fail():
-            #     if self.verbose:
-            #         print('Simulation end due to failure.')
-            #     return 0
+            max_fitness = max(max_fitness, self.fitness())
 
             if renderer:
                 renderer.render()
 
+            # We are repeating the run to visualize. So we dont want to render
+            # past reaching the max score.
+            if self.genome.fitness and max_fitness == self.genome.fitness:
+                return max_fitness
+
+            # Check for inactivity.
             if self.step_count - self.last_change > 5:
                 if self.verbose:
                     print('Simulation end due to inactivity.')
-                return self.fitness()
+                return max_fitness
 
+            # Check for looping.
             if self.break_on_repeat:
                 state_hash = self.hmap.hash()
                 if state_hash in self.seen_states:
@@ -200,7 +201,7 @@ class HexSimulation(object):
 
                 self.seen_states.add(state_hash)
 
-        return 0#self.fitness()
+        return max_fitness
 
 
     def render(self, surface):

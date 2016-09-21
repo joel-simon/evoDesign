@@ -7,114 +7,88 @@ from pprint import pprint
 import subprocess
 from datetime import datetime
 from shutil import copyfile
-# import traceback
+
 import logging
 import importlib
 
 from neat.parallel import ParallelEvaluator
 from neat import population
-from neat.config import Config
 
+from src.neat_custom.config import Config as NeatConfig
 from src.neat_custom import ctrnn
 from src.cellGenome import CellGenome
 from src.views import View
 
-logging.basicConfig(level=logging.DEBUG, filename='./debug/derp.log')
+class Experiment(object):
+    def __init__(self, simulation, genome_config, neat_config):
+        self.simulation = simulation
+        self.genome_config = genome_config
+        self.neat_config = neat_config
 
-def evaluate_genome(genome):
-    try:
-        simulation = Simulation(genome)
-        return simulation.run()
+        neat_config.genotype = CellGenome
+        neat_config.genome_config = genome_config
+        # neat_config.node_gene_type = ctrnn.CTNodeGene
 
-    except KeyError as e:
-        print '!'*80
-        print "Exception in evaluating genome. Creating Debug file."
-        print '!'*80
-        print
-        prefix = "({:%B_%d_%Y_%H-%M})".format(datetime.now())
-        logging.exception("Error in evaluate_genome")
+    def evaluate_genome(self, genome):
+        sim = self.simulation(genome)
+        return sim.run()
 
-        with open(path.join('debug', prefix+'_genome.p'), 'wb') as f2:
-            pickle.dump(genome, f2)
+    def evaluate_genomes(self, genomes):
+        for genome in genomes:
+            genome.fitness = self.evaluate_genome(genome)
 
-        raise e
+        best = max(genomes, key=lambda genome: genome.fitness)
+        sim = self.simulation(best)
+        view = View(800, 800, sim)
+        sim.run(renderer=view)
 
-        # return 0
+    def report(self, pop, out_dir, config_path):
+        assert not path.exists(out_dir)
+        os.makedirs(out_dir)
 
-def evaluate_genomes(genomes):
-    for genome in genomes:
-        genome.fitness = evaluate_genome(genome)
+        genome = pop.statistics.best_genome()
 
-    best = max(genomes, key=lambda genome: genome.fitness)
-    simulation = Simulation(best)
-    view = View(800, 800, simulation)
-    simulation.run(renderer=view)
+        with open(path.join(out_dir, 'genome.p'), 'wb') as genome_out:
+            pickle.dump(genome, genome_out)
 
-def report(pop, out_dir, experiment):
-    genome = pop.statistics.best_genome()
+        with open(path.join(out_dir, 'population.p'), 'wb') as population_out:
+            pickle.dump(pop, population_out)
 
-    with open(path.join(out_dir, 'genome.p'), 'wb') as f:
-        pickle.dump(genome, f)
+        genome_text = open(path.join(out_dir, 'genome.txt'), 'w+')
+        genome_text.write('fitness: %f\n' % genome.fitness)
+        genome_text.write(str(genome))
 
-    with open(path.join(out_dir, 'population.p'), 'wb') as f:
-        pickle.dump(pop, f)
+        # Visualize the best network.
+        subprocess.call(['./generate_graphs.sh', out_dir])
 
-    genome_text = open(path.join(out_dir, 'genome.txt'), 'w+')
-    genome_text.write('fitness: %f\n' % genome.fitness)
-    genome_text.write(str(genome))
+        # Save step animation.
+        os.mkdir(path.join(out_dir, 'img'))
+        simulation = self.simulation(genome)
+        view = View(800, 800, simulation, save=path.join(out_dir, 'img'))
+        simulation.verbose = True
+        simulation.run(renderer=view)
 
-    # Visualize the best network.
-    subprocess.call(['./generate_graphs.sh', out_dir])
+        copyfile(config_path, path.join(out_dir, 'config.txt'))
+        # copyfile('./experiments/%s.py' % experiment, path.join(out_dir, '%s.py.txt' % experiment))
 
-    # Save step animation.
-    os.mkdir(path.join(out_dir, 'img'))
-    simulation = Simulation(genome)
-    view = View(800, 800, simulation, save=path.join(out_dir, 'img'))
-    simulation.verbose = True
-    simulation.run(renderer=view)
+        print('Report finished.')
 
-    copyfile('./config.txt', path.join(out_dir, 'config.txt'))
-    copyfile('./experiments/%s.py' % experiment, path.join(out_dir, '%s.py.txt' % experiment))
+    def run(self, cores, generations, pop_size):
+        assert isinstance(cores, int)
+        assert isinstance(generations, int)
 
-    print('Report finished.')
-
-def main(cores, generations, pop_size, out_dir, experiment):
-    if path.exists(out_dir):
-        print('"%s" already exists'% out_dir)
-        erase = raw_input('Delete existing out folder? (y/n) :')
-        if erase.lower() in ['y', 'yes']:
-            os.system("rm -rf " + out_dir)
+        # print "Running experiment"
+        # print "\tcores: %i" % cores
+        # print "\tgenerations: %i" % generations
+        # print "\tgenerations: %i" % generations
+        self.neat_config.pop_size = pop_size
+        pop = population.Population(self.neat_config)
+        if cores > 1:
+            pe = ParallelEvaluator(cores, self.evaluate_genome)
+            pop.run(pe.evaluate, generations)
         else:
-            sys.exit(0)
-
-    print('Starting Experiment.')
-    print(pprint({
-        'generations': generations,
-        'pop_size':pop_size,
-        'out_dir': out_dir
-    }))
-
-    # Change the Genome used.
-    local_dir = path.dirname(__file__)
-    config = Config(path.join(local_dir, 'config.txt'))
-    config.genotype = CellGenome
-    config.genome_config = genome_config
-    config.pop_size = pop_size
-    # config.node_gene_type = ctrnn.CTNodeGene
-
-    # Create a population.
-    pop = population.Population(config)
-
-    # Run single or multi core.
-    if cores > 1:
-        pe = ParallelEvaluator(cores, evaluate_genome)
-        pop.run(pe.evaluate, generations)
-    else:
-        pop.run(evaluate_genomes, generations)
-
-    print('Experiment finished.')
-    os.makedirs(out_dir)
-    report(pop, out_dir, experiment)
+            pop.run(self.evaluate_genomes, generations)
+        return pop
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -124,27 +98,25 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--cores', default=1, type=int)
     parser.add_argument('-e', '--experiment', required=True)
     parser.add_argument('-s', '--simulation', default='Simulation')
+    parser.add_argument('--config', help='NEAT config file', required=True)
 
     args = parser.parse_args()
-    default_dir = './out/'+args.experiment+"({:%B_%d_%Y_%H-%M})".format(datetime.now())
-
-    try:
-        mod = importlib.import_module('experiments.%s' % args.experiment)
-    except ImportError, e:
-        print('ERR: Cannot find experiment "./experiments/%s"' % args.experiment)
-        print(e)
-        sys.exit(0)
-
-    try:
-        global Simulation, genome_config
-        Simulation = getattr(mod, args.simulation)
-        genome_config = getattr(mod, 'genome_config')
-    except AttributeError:
-        print('ERR: Cannot find class "Simulation" in module.')
-        sys.exit(0)
 
     if args.out == '':
-        out = default_dir
-    else:
-        out = args.out
-    main(args.cores, args.generations, args.population, out, args.experiment)
+        args.out = './out/'+args.experiment+"({:%B_%d_%Y_%H-%M})".format(datetime.now())
+
+    mod = importlib.import_module('experiments.%s' % args.experiment)
+    simulation = getattr(mod, args.simulation)
+    genome_config = getattr(mod, 'genome_config')
+
+    if path.exists(args.out):
+        print('"%s" already exists'% args.out)
+        sys.exit(0)
+
+    run_config = {'generations': args.generations, 'cores': args.cores, 'pop_size':args.population}
+    neat_config = NeatConfig(args.config)
+    neat_config.pop_size = args.population
+
+    experiment = Experiment(simulation, genome_config, neat_config)
+    pop = experiment.run(**run_config)
+    experiment.report(pop, args.out, args.config)

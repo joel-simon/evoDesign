@@ -5,7 +5,7 @@ import argparse
 import pickle
 import subprocess
 # TODO allow passing experiment name
-from experiments.tree import Simulation
+from experiments.table import Simulation
 from src.views import View
 
 def main(args):
