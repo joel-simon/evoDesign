@@ -9,19 +9,19 @@ from src.modules.truss.handle_results import handle_results
 g = 9.80665
 from copy import copy
 import numpy as np
-from array import array
+
 PI = np.pi
 rho = 200
 elastic_modulus = 5e8
 Fy = 5e8
 
-# def valid_info(truss_info):
-#     assert(truss_info['elastic_modulus'].shape == (len(self.members),))
-#     assert(truss_info['area'].shape == (len(self.members),))
-#     assert(truss_info['coordinates'].shape == (len(self.joints), 3))
-#     assert(truss_info['connections'].shape == (len(self.members), 2))
-#     assert(truss_info['reactions'].shape == (3, len(self.joints)))
-#     assert(truss_info['loads'].shape == (3, len(self.joints)))
+def valid_info(truss_info):
+    assert(truss_info['elastic_modulus'].shape == (len(self.members),))
+    assert(truss_info['area'].shape == (len(self.members),))
+    assert(truss_info['coordinates'].shape == (len(self.joints), 3))
+    assert(truss_info['connections'].shape == (len(self.members), 2))
+    assert(truss_info['reactions'].shape == (3, len(self.joints)))
+    assert(truss_info['loads'].shape == (3, len(self.joints)))
 
 class Member(object):
     def __init__(self, r, joint_a, joint_b):
@@ -54,7 +54,10 @@ class Truss(object):
 
         # Member data
         self.members = []
+        self.radii = []
+        # self.lengths = []
         self.moi = []# moments of inertias
+        # self.buckling_constants = []
         self.areas = [] # cross sectional areas
         self.masses = []
 
@@ -67,9 +70,20 @@ class Truss(object):
         self.joint_to_idx = dict()
 
     def add_member(self, joint_a, joint_b, r=.1):
+        # moi = (PI/4)*r**4
         area = (PI*r*r)
+        # LW = area * rho
+
+        # end_a = self.coordinates[self.joint_index(joint_a)]
+        # end_b = self.coordinates[self.joint_index(joint_b)]
+
+        # length = numpy.linalg.norm(end_a - end_b)
+        # mass = length * LW
+        # buckling_constant = -((PI**2)*elastic_modulus*moi/(length**2))
+
         member = Member(r, joint_a, joint_b)
 
+        self.radii.append(r)
         # self.lengths.append(length)
         # self.moi.append(moi)
         # self.buckling_constants.append(buckling_constant)
@@ -123,7 +137,12 @@ class Truss(object):
         member.joint_b.members.remove(member)
 
         del self.members[index]
+        del self.radii[index]
+        # del self.lengths[index]
+        # del self.moi[index]
+        # del self.buckling_constants[index]
         del self.areas[index]
+        # del self.masses[index]
         member.alive = False
 
     def calc_mass(self):
@@ -161,8 +180,85 @@ class Truss(object):
             "area": numpy.array(self.areas)
         }
 
+
         results = evaluate.the_forces(**truss_info)
         self.foo(results)
 
     def foo(self, results):
         handle_results(self, *results)
+
+# def handle_results(truss, forces, deflections, reactions):
+#     fos_total = 10000
+
+#     lengths = []
+#     for m, force in zip(truss.members, forces):
+#         end_a = numpy.array(m.joint_a.coordinates)
+#         end_b = numpy.array(m.joint_b.coordinates)
+#         length = numpy.linalg.norm(end_a - end_b)
+#         r = m.r
+#         moi = (PI/4)*r**4
+#         area = (PI*r*r)
+#         LW = area * rho
+#         mass = length * LW
+
+#         if force != 0:
+#             fos_yielding = Fy * area / abs(force)
+#         else:
+#             fos_yielding = 10000
+
+#         if force != 0:
+#             fos_buckling = -((PI**2)*elastic_modulus*moi/(length**2)) / force
+#             if fos_buckling <=0:
+#                 fos_buckling = 10000
+#         else:
+#             fos_buckling = 10000
+
+#         if fos_yielding < fos_buckling:
+
+#             fos = fos_yielding
+#         else:
+#             fos = fos_buckling
+
+#         if fos < fos_total:
+#             fos_total = fos
+
+#         m.fos = fos
+
+#     for i in range(len(truss.joints)):
+#         for j in range(3):
+#             if truss.translations[i][j]:
+#                 truss.joints[i].reactions[j] = reactions[j, i]
+#                 truss.joints[i].deflections[j] = 0.0
+#             else:
+#                 truss.joints[i].reactions[j] = 0.0
+#                 truss.joints[i].deflections[j] = deflections[j, i]
+
+#     truss.fos_total = fos_total
+
+#     return
+
+    # member_fos_yielding = Fy * truss_info['area'] / np.absolute(forces)
+    # member_fos_yielding[np.isnan(member_fos_yielding)] = 10000
+    # member_fos_buckling = self.buckling_constants / forces
+    # member_fos_buckling[member_fos_buckling <=0 ] = 10000
+
+    # members_fos = np.minimum(member_fos_yielding, member_fos_buckling)
+
+    # self.fos_buckling = member_fos_buckling.min()
+    # self.fos_yielding = member_fos_yielding.min()
+    # self.fos_total = min(self.fos_buckling, self.fos_yielding)
+
+    # for member, fos in zip(self.members, members_fos):
+    #     member.fos = fos
+
+    # for i in range(len(self.joints)):
+        # for j in range(3):
+        #     if self.translations[i][j]:
+        #         self.joints[i].reactions[j] = reactions[j, i]
+        #         self.joints[i].deflections[j] = 0.0
+        #     else:
+        #         self.joints[i].reactions[j] = 0.0
+        #         self.joints[i].deflections[j] = deflections[j, i]
+
+    # if self.condition > pow(10, 5):
+    #     self.fos_total /= 100

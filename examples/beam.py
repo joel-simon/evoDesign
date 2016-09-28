@@ -4,7 +4,6 @@ import numpy
 
 # from main import main
 from src.hexSimulation import HexSimulation
-from src.hexmap import Map
 from src.modules import signals, neighbors_distinct, divide_distinct, truss
 from src.views.drawHexMap import draw_hex_map
 from src.views.drawUtils import draw_text
@@ -85,7 +84,7 @@ class Simulation(HexSimulation):
         self._mark_unconnected()
 
     def create_input(self, cell):
-        gradient = cell.userData['coords'][1] / float(self.bounds[1])
+        gradient = cell.position[1] / float(self.bounds[1])
         return [int(gradient)]
 
     def handle_output(self, cell, outputs):
@@ -118,7 +117,7 @@ class Simulation(HexSimulation):
         #         if self.hmap[row][col]:
         #             cell = self.hmap[row][col]
         for cell in self.cells:
-            if cell.userData['coords'] in seen:
+            if cell.position in seen:
                 # print 'in'
                 # cell.userData['connected'] = True
                 if 'body' not in cell.userData:

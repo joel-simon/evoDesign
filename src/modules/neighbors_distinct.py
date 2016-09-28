@@ -1,4 +1,6 @@
+import numpy as np
 from src.modules import Module, BaseModuleSimulation
+from src.map_utils import directions, shape
 
 class NeighborSimulation(BaseModuleSimulation):
     """docstring for NeighborSimulation"""
@@ -8,10 +10,29 @@ class NeighborSimulation(BaseModuleSimulation):
     def create_input(self, cell):
         """ Binary encoding of six neighbors.
         """
-        coords = cell.userData['coords']
         inputs = [0] * 6
-        for i, n, in enumerate(self.simulation.hmap.neighbors(coords)):
-            inputs[i] = int(bool(n))
+        hmap = self.simulation.hmap
+        x, y, z = cell.position
+        X, Y, Z = shape(hmap)
+
+        if x > 0 and hmap[x-1][y][z]:
+            inputs[0] = 1
+
+        if x < X-1 and hmap[x+1][y][z]:
+            inputs[1] = 1
+
+        if y > 0 and hmap[x][y-1][z]:
+            inputs[2] = 1
+
+        if y < Y-1 and hmap[x][y+1][z]:
+            inputs[3] = 1
+
+        if z > 0 and hmap[x][y][z-1]:
+            inputs[4] = 1
+
+        if z < Z-1 and hmap[x][y][z+1]:
+            inputs[5] = 1
+
         return inputs
 
 class NeighborModule(Module):
@@ -20,5 +41,4 @@ class NeighborModule(Module):
         super(NeighborModule, self).__init__(gene=None,
                                             simulation=NeighborSimulation)
 
-        self.inputs = ['neighbor_t', 'neighbor_tr',  'neighbor_br',
-                       'neighbor_b', 'neighbor_bl', 'neighbor_tl']
+        self.inputs = [('neighbor_%i'%i) for i in range(len(directions))]

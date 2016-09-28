@@ -1,8 +1,7 @@
 from copy import copy
 from src.modules import BaseModuleGene, BaseModuleSimulation
-from src.views.drawUtils import draw_text, rgb_int
 from colorsys import hsv_to_rgb
-from src.views.drawHexMap import draw_hex_map
+# from src.views.drawHexMap import draw_hex_map
 
 class BaseSignalGene(BaseModuleGene):
     def key(self):
@@ -41,13 +40,14 @@ class BaseSignalSimulation(BaseModuleSimulation):
         hexview.border((0,0,0), 1)
 
     def render(self, surface):
-        draw_text(surface, (2, 10), "Num genes:%i"%len(self.module.genes))
+        pass
+        # draw_text(surface, (2, 10), "Num genes:%i"%len(self.module.genes))
 
-        max_value = 0
-        for cell in self.simulation.cells:
-            for gene in self.module.genes.values():
-                max_value = max(max_value, max(cell.userData[gene.key()]))
+        # max_value = 0
+        # for cell in self.simulation.cells:
+        #     for gene in self.module.genes.values():
+        #         max_value = max(max_value, max(cell.userData[gene.key()]))
 
-        draw_text(surface, (2, 30), "Max :%f"%max_value)
-        draw_hex_map(surface, self.simulation.hmap, self._draw_hex)
+        # draw_text(surface, (2, 30), "Max :%f"%max_value)
+        # draw_hex_map(surface, self.simulation.hmap, self._draw_hex)
 

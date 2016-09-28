@@ -45,7 +45,7 @@ class MorphogenGene(BaseModuleGene):
     def _mutate_value(self, v):
         new_v = v + gauss(0, 1) * self.mutation_power
         return max(0, min(new_v, 1))
-    
+
     def mutate(self):
         self.decay = self._mutate_value(self.decay)
         self.diffusion = self._mutate_value(self.diffusion)
@@ -71,7 +71,7 @@ class MorphogenSimulation(BaseModuleSimulation):
         shape = (len(module.genes), simulation.bounds[0], simulation.bounds[1])
         self.values = numpy.zeros(shape)
 
-        self.kernels = [mgene._get_kernel() for mgene in module.genes.values()] 
+        self.kernels = [mgene._get_kernel() for mgene in module.genes.values()]
 
     def cell_init(self, cell):
         pass
@@ -81,7 +81,7 @@ class MorphogenSimulation(BaseModuleSimulation):
 
     def handle_output(self, cell, outputs):
         gene_ids = sorted(self.module.genes.keys())
-        cell_r, cell_c = cell.userData['coords']
+        cell_r, cell_c = cell.position
         bounds = self.simulation.bounds
 
         for i, (strength, gid) in enumerate(zip(outputs, gene_ids)):
@@ -110,11 +110,11 @@ class MorphogenSimulation(BaseModuleSimulation):
 
                 # kern = self.kernels[i][crop_r:row_end, crop_c:col_end] * strength
                 # self.values[i, max(0, r-a):r+a+1, max(0, c-a):c+a+1] += kern
-# 
+#
     def create_input(self, cell):
         """ Cell gets the concentration of each signal at its position.
         """
-        coords = cell.userData['coords']
+        coords = cell.position
         # print [v[coords] for v in self.values]
         return [v[coords] for v in self.values]
 
@@ -137,7 +137,7 @@ class MorphogenSimulation(BaseModuleSimulation):
         max_value = self.values.max()
         draw_text(surface, (2, 10), "Morphogens (%i genes)"%len(self.module.genes))
         draw_text(surface, (2, 30), "Max :%f"%max_value)
-        
+
         hmap = Map(self.simulation.bounds)
         # hmap.values = self.values
         draw_hex_map(surface, hmap, self._draw_hex)

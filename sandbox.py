@@ -6,31 +6,30 @@ from src.neat_custom.config import Config
 from neat import ctrnn, nn
 
 from src.cellGenome import CellGenome
-from src.hexmap import Map
-from src.hexSimulation import HexSimulation
-from src.views import View
+from src.views.viewer import Viewer
 
-# from experiments.tree import Simulation, genome_config
-# from experiments.shapes import genome_config, R as Simulation
-from experiments.table import Simulation, genome_config
+from src.modules import neighbors_distinct, divide_distinct, truss
 
-from src.modules.morphogen import MorphogenModule
-import time
-# genome_config['modules'] = [
+from examples.table import Simulation
+
+genome_config = {
+    'modules': [
 #     (MorphogenModule, {'start_genes': 1, 'min_genes': 0})
     # (Signal3Module, {'prob_add': .0, 'prob_remove': .0,
     #                  'min_genes': 0, 'start_genes': 3, 'max_genes': 6 }),
 
     # (neighbors_continuous.NeighborModule, {}),
     # (divide_theta.DivideThetaModule, {}),
-
-    # (neighbors_distinct.NeighborModule, {}),
-    # (divide_distinct.DivideDistinctModule, {})
-# ]
-
+        (neighbors_distinct.NeighborModule, {}),
+        (divide_distinct.DivideDistinctModule, {}),
+        (truss.TrussModule, {'static_map': None})
+    ],
+    'inputs': [],
+    'outputs': []
+}
 
 LOCAL_DIR = os.path.dirname(__file__)
-CONFIG = Config(os.path.join(LOCAL_DIR, 'experiments/shape_config.txt'))
+CONFIG = Config(os.path.join(LOCAL_DIR, 'examples/config.txt'))
 CONFIG.genome_config = genome_config
 DUMMY_GENOME = CellGenome.create_unconnected(1, CONFIG)
 network = nn.create_recurrent_phenotype(DUMMY_GENOME)
@@ -40,35 +39,41 @@ class Sandbox(Simulation):
     def __init__(self):
         super(Sandbox, self).__init__(DUMMY_GENOME)
 
-        for row in range(1, self.bounds[0]):
-            self.create_cell((row, 0))
+        self.destroy_cell(self.cells[0])
 
-        for row in range(self.bounds[0]-1):
-            self.create_cell((row, 1))
+        for x in range(self.bounds[0]):
+            for y in range(self.bounds[1]):
+                for z in range(self.bounds[2]):
+                    self.create_cell(x, y, z)
 
-        for col in range(1, self.bounds[1]):
-            self.create_cell((5, col))
-        # for row in range(0, 4):
-        #     for col in range(2, self.bounds[1]-2):
-        #         self.destroy_cell(self.hmap[row][col])
-        #
-        #     self.create_cell((5, col))
-        # self._calculate_light()
-        # self.filter_unconnected()
+        # self.create_cell(2, 0, 2)
+        # self.create_cell(2, 1, 2)
+        # self.create_cell(2, 2, 2)
+        # self.create_cell(2, 3, 2)
+        # self.create_cell(2, 4, 2)
 
-        # self.create_cell((0, 0))
-        # self.create_cell((0, 1))
-        # self.create_cell((4, 0))
-        # self.create_cell((4, 1))
-        # self.create_cell((5, 1))
-        # self.create_cell((5, 2))
-        # self.create_cell((4, 2))
-        # self.create_cell((3, 1))
 
-        # self.destroy_cell(self.hmap[4][1])
-        # self.create_cell((4,1))
+        # self.create_cell(0, 1, 0)
+        # self.destroy_cell(self.cells[1])
+        # for joint in self.cells[0].userData['body'].joints:
+        #     print joint, joint in self.module_simulations[2].truss.joints
+        # self.create_cell(0, 1, 0)
 
-        # self.create_cell((1, 6))
+        # self.create_cell(0, 2, 0)
+        # self.create_cell(0, 3, 0)
+        # self.create_cell(0, 4, 0)
+
+        # self.create_cell(0, 4, 1)
+        # self.create_cell(0, 4, 2)
+        # self.create_cell(0, 4, 3)
+        # self.create_cell(0, 4, 4)
+        
+
+    def create_input(self, cell):
+        return []
+
+    def handle_output(self, cell, outputs):
+        pass
 
     def create_beam(self):
         for i in [self.bounds[0]-1, 0]:
@@ -86,12 +91,13 @@ class Sandbox(Simulation):
         # if self.step_count > 0 and self.step_count < self.bounds[1]:
         #     self.create_cell((5, self.step_count))
         #     self.destroy_cell(self.hmap[1][2])
-        super(Sandbox, self).step()
-        time.sleep(1)
-        # for cell in [c for c in self.cells]:
-        #     for i in range(6):
-        #         self.divide_cell(cell, i)
-        # print(self.genome)
+        # super(Sandbox, self).step()
+        # if self.step_count == 1:
+        #     self.create_cell(1,1,1)
+        # self.viewer.set_mesh(self.hmap)
+        # self.viewer.main_loop()
+        pass
+
 
     # def create_inputs(self, cell):
     #     # return []
@@ -100,7 +106,7 @@ class Sandbox(Simulation):
     #     return inputs
 
     # def handle_outputs(self, cell, outputs):
-        # print(cell.userData['coords'], outputs)
+        # print(cell.position, outputs)
         # pass
 
     # def get_outputs(self):
@@ -109,11 +115,9 @@ class Sandbox(Simulation):
     # def fitness(self):
     #     return 0
 
-
+viewer = Viewer(bounds= (8,8,8))
 simulation = Sandbox()
-simulation.max_steps = 2
+simulation.max_steps = 20
 simulation.verbose = True
-view = View(600, 800, simulation)
-simulation.run(view)
-simulation.step()
-view.hold()
+simulation.run(viewer=viewer)
+

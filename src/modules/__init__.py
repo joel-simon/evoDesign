@@ -25,7 +25,7 @@ class BaseModuleSimulation(object):
         pass
 
     def render(self, surface):
-        raise NotImplementedError()
+        pass
 
 class BaseModuleGene(object):
     """

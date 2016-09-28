@@ -8,7 +8,7 @@ class NeighborSimulation(BaseModuleSimulation):
     def create_input(self, cell):
         """ encode number of neighbors as a float in [0,1]
         """
-        coords = cell.userData['coords']
+        coords = cell.position
         value = sum(map(bool, self.simulation.hmap.neighbors(coords))) / 6.0
         return [value]
 

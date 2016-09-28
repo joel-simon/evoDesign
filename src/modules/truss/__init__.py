@@ -5,11 +5,10 @@ pyximport.install(setup_args={"include_dirs":numpy.get_include()},
 import time
 import math
 from src.modules import Module, BaseModuleSimulation
-from hexBody import HexBody
+from cellBody import CellBody
 from src.modules.truss.truss import Truss
-from src.modules.truss.drawTruss import drawTruss
 from numpy.linalg import LinAlgError
-
+from src.map_utils import empty
 SQRT3 = math.sqrt(3)
 
 class TrussSimulation(BaseModuleSimulation):
@@ -17,39 +16,19 @@ class TrussSimulation(BaseModuleSimulation):
     def __init__(self, simulation, module, static_map):
         super(TrussSimulation, self).__init__(simulation, module)
         self.static_map = static_map
-        self.hex_radius = 1
+        self.radius = 1
         self.truss = Truss()
-
-    def _create_body(self, cell):
-        """ Create a physical representation of cell.
-        """
-        coords = cell.userData['coords']
-        row, col = coords
-
-        neighbor_bodies = []
-        for n in self.simulation.hmap.neighbors(coords):
-            if n and 'body' in n.userData:
-                neighbor_bodies.append(n.userData['body'])
-            else:
-                neighbor_bodies.append(None)
-
-        # Calculate position.
-        offset = self.hex_radius * SQRT3 / 2 if col % 2 else 0
-        left = 1.5 * col * self.hex_radius
-        top = offset + SQRT3 * row * self.hex_radius
-
-        cell.userData['body'] = HexBody(
-            ID=cell.id,
-            truss=self.truss,
-            position=(left, top),
-            radius=self.hex_radius,
-            neighbors=neighbor_bodies,
-            static=self.static_map[coords]
-        )
+        X, Y, Z = simulation.bounds
+        self.joint_map = empty((X+1, Y+1, Z+1))
 
     def cell_init(self, cell):
         cell.userData['stress'] = 0.0
-        self._create_body(cell)
+        cell.userData['body'] = CellBody(
+            ID=cell.id,
+            truss=self.truss,
+            position=cell.position,
+            joint_map=self.joint_map,
+        )
 
     def cell_destroy(self, cell):
         if 'body' in cell.userData:
@@ -59,17 +38,10 @@ class TrussSimulation(BaseModuleSimulation):
     def calculate(self):
         if len(self.simulation.cells) == 0:
             return
-
-        # self.add_loads(self.simulation.hmap, self.truss)
-
         try:
             self.truss.calc_fos()
         except LinAlgError as e:
             print('LinAlgError!')
-            print(e)
-            print(len(self.truss.joints))
-            print(len(self.truss.members))
-
             self.truss.fos_total = 0
             for member in self.truss.members:
                 member.fos = 0
@@ -92,8 +64,15 @@ class TrussSimulation(BaseModuleSimulation):
         else:
             return [0]
 
-    def render(self, surface):
-        drawTruss(self.truss, surface)
+    def render(self, view):
+        nodes = [j.coordinates+j.deflections.T for j in self.truss.joints]
+        edges = [(self.truss.joint_index(m.joint_a), self.truss.joint_index(m.joint_b)) \
+                                                    for m in self.truss.members]
+
+        colors = [(1-min(1, m.fos), 0, 0) for m in self.truss.members]
+        if self.simulation.verbose:
+            print('Rendering truss. %i nodes,  %i edges.'%(len(nodes), len(edges)))
+        view.add_mesh(nodes, edges, colors)
 
 class TrussModule(Module):
     """docstring for PhysicsModule"""

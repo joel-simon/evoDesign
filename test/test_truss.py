@@ -11,17 +11,17 @@ class Test_CellGenome(unittest.TestCase):
         truss = Truss()
         self.truss = truss
         j0 = truss.add_support([0.0, 0.0, 0.0])
-        j1 = truss.add_joint([1.0, 0.0, 0.0])
-        j2 = truss.add_joint([2.0, 0.0, 0.0])
-        j3 = truss.add_joint([3.0, 0.0, 0.0])
-        j4 = truss.add_joint([4.0, 0.0, 0.0])
+        j1 = truss.add_joint([1.0, 0.0, 0.0], translation=[0, 0, 1])
+        j2 = truss.add_joint([2.0, 0.0, 0.0], translation=[0, 0, 1])
+        j3 = truss.add_joint([3.0, 0.0, 0.0], translation=[0, 0, 1])
+        j4 = truss.add_joint([4.0, 0.0, 0.0], translation=[0, 0, 1])
         j5 = truss.add_support([5.0, 0.0, 0.0])
 
-        j6 = truss.add_joint([0.5, 1.0, 0.0])
-        j7 = truss.add_joint([1.5, 1.0, 0.0])
-        j8 = truss.add_joint([2.5, 1.0, 0.0])
-        j9 = truss.add_joint([3.5, 1.0, 0.0])
-        j10 = truss.add_joint([4.5, 1.0, 0.0])
+        j6 = truss.add_joint([0.5, 1.0, 0.0], translation=[0, 0, 1])
+        j7 = truss.add_joint([1.5, 1.0, 0.0], translation=[0, 0, 1])
+        j8 = truss.add_joint([2.5, 1.0, 0.0], translation=[0, 0, 1])
+        j9 = truss.add_joint([3.5, 1.0, 0.0], translation=[0, 0, 1])
+        j10 = truss.add_joint([4.5, 1.0, 0.0], translation=[0, 0, 1])
 
         j7.loads[1] = -20000
         j8.loads[1] = -20000

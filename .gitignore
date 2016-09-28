@@ -8,3 +8,4 @@
 out/*
 neat_custom/__pycache__
 *.zip
+*.ipynb

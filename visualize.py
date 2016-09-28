@@ -5,14 +5,16 @@ import argparse
 import pickle
 import subprocess
 # TODO allow passing experiment name
-from experiments.table import Simulation
-from src.views import View
+from examples.table import Simulation
+from src.views.viewer import Viewer
 
 def main(args):
     path = args.dir
     save = args.save
     tmp = None
     best_genome = pickle.load(open(join(path, 'genome.p'), 'rb'))
+    
+    viewer = Viewer(bounds=(8,8,8))
 
     if save:
         tmp = join(path, 'temp')
@@ -22,10 +24,13 @@ def main(args):
 
     simulation = Simulation(best_genome)
     simulation.verbose = True
-    view = View(800, 800, simulation)
-    simulation.run(renderer=view)
-    view.hold()
-    # if args.video:
+    simulation.run(viewer=None)
+    print 'animation done'
+    # viewer.set_map(simulation.hmap)
+    simulation.render_all(viewer)
+    viewer.main_loop()
+
+# if args.video:
     # if args.gif:
     # if save:
     #     subprocess.call(['avconv', '-i', join(tmp, '%d.jpg'),'-r','20',

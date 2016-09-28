@@ -15,7 +15,7 @@ class Signal1Simulation(BaseSignalSimulation):
 
     def create_input(self, cell):
         inputs = []
-        coords = cell.userData['coords']
+        coords = cell.position
         neighbors = list(self.simulation.hmap.neighbors(coords))
 
         for gene in self.module.genes.values():

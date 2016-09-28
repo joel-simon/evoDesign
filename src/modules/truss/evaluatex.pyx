@@ -22,17 +22,17 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
                  np.ndarray[DTYPE_t, ndim=2] reactions, \
                  np.ndarray[DTYPE_t, ndim=2] loads, \
                  np.ndarray[DTYPE_t, ndim=1] area):
-    
+
     cdef ITYPE_t jj, ii, k, i, u, j
     cdef DTYPE_t length, ea_over_l
 
     cdef np.ndarray[ITYPE_t, ndim=1] w
     cdef np.ndarray[DTYPE_t, ndim=1] flat_deflections, flat_loads, forces
-    cdef np.ndarray[DTYPE_t, ndim=2] SSff  
-    
-    cdef int n_cons = connections.shape[0] 
+    cdef np.ndarray[DTYPE_t, ndim=2] SSff
+
+    cdef int n_cons = connections.shape[0]
     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)
-    
+
     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)
     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)
     cdef np.ndarray[DTYPE_t, ndim=2] deflections = np.ones(w, dtype=DTYPE)
@@ -47,10 +47,10 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
     cdef np.ndarray[DTYPE_t, ndim=2] s = np.zeros((3, 3), dtype=DTYPE)
     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)
 
-    cdef ITYPE_t len_ff = len(ff)    
+    cdef ITYPE_t len_ff = len(ff)
 
     # Build the global stiffness matrix
-    for i in range(n_cons):
+    for i in xrange(n_cons):
         ends[0] = connections[i, 0]
         ends[1] = connections[i, 1]
         ends[2] = connections[i, 2]
@@ -60,7 +60,7 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
         lv[2] = coordinates[ends[1],2] - coordinates[ends[0],2]
 
         length = sqrt(lv[0]*lv[0] + lv[1]*lv[1] + lv[2]*lv[2])
-        
+
         direction[0] = lv[0]/length
         direction[1] = lv[1]/length
         direction[2] = lv[2]/length
@@ -68,12 +68,12 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
         ea_over_l = elastic_modulus[i]*area[i] / length
 
         # Compute "s = np.outer(direction, direction)"
-        for ii in range(3):
-            for jj in range(3):
+        for ii in xrange(3):
+            for jj in xrange(3):
                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]
 
-        for u in range(3):
-            for j in range(3):
+        for u in xrange(3):
+            for j in xrange(3):
                 ss[u, j] = s[u, j]
                 ss[u, j+3] = -1 * s[u, j]
                 ss[u+3, j] = -1 * s[u, j]
@@ -98,10 +98,10 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
     flat_loads = loads.T.flat[ff]
     flat_deflections = np.linalg.solve(SSff, flat_loads)
     ff2 = np.where(deflections.T == 1)
-    
+
     for i in xrange(len(ff2[0])):
         deflections[ff2[1][i], ff2[0][i]] = flat_deflections[i]
-    
+
     forces = np.sum(np.multiply(
         tj.T, deflections[:, connections[:, 1]]
         - deflections[:, connections[:, 0]]), axis=0)
@@ -110,6 +110,6 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
     # cond = np.linalg.cond(SSff)
 
     # Compute the reactions
-    reactions = np.sum(dof*deflections.T.flat[:], axis=1).reshape([w[1], w[0]]).T
+    # reactions = np.sum(dof*deflections.T.flat[:], axis=1).reshape([w[1], w[0]]).T
 
     return forces, deflections, reactions#, cond
