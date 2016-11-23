@@ -42,7 +42,10 @@ class CellGenome(Genome):
         super(CellGenome, self).__init__(ID, config, parent1_id, parent2_id)
         self.attribute_genes = {}
         self.genome_config = config.genome_config
-        self.modules = [ M(**mc) for M, mc in self.genome_config['modules'] ]
+
+        module_configs = self.genome_config['modules']#.items()
+        self.modules = [M(**mconf) for (M, mconf) in module_configs]
+
         self.node_names = {}
         self.non_module_inputs  = len(config.genome_config['inputs'])
         self.non_module_outputs = len(config.genome_config['outputs'])
@@ -82,8 +85,7 @@ class CellGenome(Genome):
                 self.num_inputs += len(module.genes[mg_id].inputs)
                 self.num_outputs += len(module.genes[mg_id].outputs)
 
-        # valid_genome(self)
-        # self.node_names = copy(parent1.node_names)
+        self.node_names = copy(parent1.node_names)
 
     def mutate(self, innovation_indexer):
         for ag in self.attribute_genes.values():
@@ -93,10 +95,8 @@ class CellGenome(Genome):
         for module in self.modules:
             self.mutate_module(module, innovation_indexer)
 
-        # self.update_inout()
         super(CellGenome, self).mutate(innovation_indexer)
 
-        # valid_genome(self)
         return self
 
     def remove_module_gene(self, module):
@@ -155,13 +155,30 @@ class CellGenome(Genome):
         # Remove mgene
         if random() < module.prob_remove and len(module.genes) > module.min_genes:
             self.remove_module_gene(module)
-        valid_genome(self)
+        # valid_genome(self)
 
     def add_connection(self, g1, g2, innovation_indexer):
         weight = gauss(0, self.config.weight_stdev)
         innovation_id = innovation_indexer.get_innovation_id(g1.ID, g2.ID)
         cg = self.config.conn_gene_type(innovation_id, g1.ID, g2.ID, weight, True)
         self.conn_genes[cg.key] = cg
+
+    def mutate_add_connection(self, innovation_indexer):
+        '''
+        Overrride this function to prevent connections between outputs. 
+        '''
+        in_node = choice(list(self.node_genes.values()))
+        
+        if in_node.type == 'OUTPUT':
+            return
+
+        possible_outputs = [n for n in self.node_genes.values() if n.type != 'INPUT']
+        out_node = choice(possible_outputs)
+
+        # Only create the connection if it doesn't already exist.
+        key = (in_node.ID, out_node.ID)
+        if key not in self.conn_genes:
+            self.add_connection(in_node, out_node, innovation_indexer)
 
     def compute_full_mgene_connections(self, mgene):
         in_genes = [g for g in self.node_genes.values() if g.type == 'INPUT']

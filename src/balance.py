@@ -45,7 +45,7 @@ def point_polygon_distance(x, y, verts):
         d2 = point_line_dist(x, y, x1, y1, x2, y2)
         if d==None or d2 < d:
             d = d2
-            segment = (x1, y1, x2, y2) 
+            segment = (x1, y1, x2, y2)
     return d, segment
 
 def polygon_center(points):
@@ -116,11 +116,11 @@ def balance_score2(cells, verbose=False):
 
     if len(cells) == 0:
         return 0
-    
+
     com = [0, 0, 0] # Store center of mass for all points.
     bottom_points = [] # Store all points on bottom as (x, z) tuples.
     # n = 0
-    
+
     for cell in cells:
         x, y, z = cell.position
         if y == 0:
@@ -173,7 +173,7 @@ def balance_score(cells, hmap, verbose=False):
 
     X, Y, Z = shape(hmap)
     bottom_points = [] # Store all points on bottom as (x, z) tuples.
-    
+
     # Create lsit of all points touching the bottom.
     for x in range(X):
         for z in range(Z):
@@ -188,7 +188,7 @@ def balance_score(cells, hmap, verbose=False):
 
     # Create the convex hull of bottom points, this is the 'base'
     bottom_hull = convex_hull(bottom_points)
-    
+
     # Store which XZ coordiantes lie in the base.
     in_hull_map = empty((X, Z))
     for x in range(X):
@@ -197,16 +197,13 @@ def balance_score(cells, hmap, verbose=False):
                 in_hull_map[x][z] = 1
 
     # Count what percent of mass is in the base on the XZ plane
-    in_hull = 0    
+    in_hull = 0
     for cell in cells:
-        x, y, z = cell.position
+        x, _, z = cell.position
         if in_hull_map[x][z]:
             in_hull += 1
 
-    if verbose:
-        print 'in_hull', in_hull
-
-    # TODO: multiply by max(1, shortest width / COM_height) 
+    # TODO: multiply by max(1, shortest width / COM_height)
     return in_hull/ float(len(cells))
 
 

@@ -37,6 +37,7 @@ class NeighborSimulation(BaseModuleSimulation):
 
 class NeighborModule(Module):
     """docstring for NeighborModule"""
+    name = 'neighbors'
     def __init__(self):
         super(NeighborModule, self).__init__(gene=None,
                                             simulation=NeighborSimulation)

@@ -63,7 +63,7 @@ class Test_CellGenome(unittest.TestCase):
 
     def test_truss(self):
         self.truss.calc_fos()
-        self.truss.calc_mass()
+        # self.truss.calc_mass()
         self.assertAlmostEqual(self.truss.fos_total, 7.75156917007)
         # self.assertAlmostEqual(self.truss.mass, 37.5825759882)
         return True

@@ -15,8 +15,7 @@ class BaseSignalGene(BaseModuleGene):
 class BaseSignalSimulation(BaseModuleSimulation):
     """docstring for BaseSignalSimulation"""
     def __init__(self, simulation, module):
-        super(BaseSignalSimulation, self).__init__(simulation, module,
-                                                   has_render=True)
+        super(BaseSignalSimulation, self).__init__(simulation, module)
 
     def cell_init(self, cell):
         for gene in self.module.genes.values():
@@ -26,20 +25,7 @@ class BaseSignalSimulation(BaseModuleSimulation):
         for gene in self.module.genes.values():
             cell.userData[gene.key()] = outputs
 
-    def _draw_hex(self, coord, hexview):
-        if self.simulation.hmap[coord] and len(self.module.genes) > 0:
-            v = 0
-            for gene in self.module.genes.values():
-                values = self.simulation.hmap[coord].userData[gene.key()]
-                v = max(v, max(values))
-            v = min(v, 1.0)
-            color = hsv_to_rgb(60.0/360, v, 1)
-            hexview.fill(rgb_int(color))
-            hexview.border()
-
-        hexview.border((0,0,0), 1)
-
-    def render(self, surface):
+    def render(self, view):
         pass
         # draw_text(surface, (2, 10), "Num genes:%i"%len(self.module.genes))
 

@@ -11,7 +11,7 @@ ctypedef np.float64_t DTYPE_t
 
 ITYPE = np.int64
 ctypedef np.int64_t ITYPE_t
-
+import time
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False) # turn off negative index wrapping for entire function
 @cython.cdivision(True)
@@ -22,7 +22,7 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
                  np.ndarray[DTYPE_t, ndim=2] reactions, \
                  np.ndarray[DTYPE_t, ndim=2] loads, \
                  np.ndarray[DTYPE_t, ndim=1] area):
-
+    start = time.time()
     cdef ITYPE_t jj, ii, k, i, u, j
     cdef DTYPE_t length, ea_over_l
 
@@ -32,6 +32,7 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
 
     cdef int n_cons = connections.shape[0]
     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)
+    cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)
 
     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)
     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)
@@ -78,10 +79,11 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
                 ss[u, j+3] = -1 * s[u, j]
                 ss[u+3, j] = -1 * s[u, j]
                 ss[u+3, j+3] = s[u, j]
-
-        tj[i][0] = ea_over_l*direction[0]
-        tj[i][1] = ea_over_l*direction[1]
-        tj[i][2] = ea_over_l*direction[2]
+        
+        tj_i = tj[i]
+        tj_i[0] = ea_over_l*direction[0]
+        tj_i[1] = ea_over_l*direction[1]
+        tj_i[2] = ea_over_l*direction[2]
 
         for k in xrange(6):
             e[k] = 3*ends[k/3] + k%3
@@ -89,22 +91,28 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
         for ii in xrange(6):
             for jj in xrange(6):
                 dof[e[ii], e[jj]] += ss[ii, jj]
-
+    
     SSff = np.zeros([len_ff, len_ff])
     for i in xrange(len_ff):
         for j in xrange(len_ff):
             SSff[i, j] = dof[ff[i], ff[j]]
-
+    
     flat_loads = loads.T.flat[ff]
+    # flat_deflections = spsolve(SSff, flat_loads)
     flat_deflections = np.linalg.solve(SSff, flat_loads)
-    ff2 = np.where(deflections.T == 1)
 
-    for i in xrange(len(ff2[0])):
-        deflections[ff2[1][i], ff2[0][i]] = flat_deflections[i]
+
+    cdef np.ndarray[ITYPE_t, ndim=1] ff2_0, ff2_1
+    ff2_0, ff2_1 = np.where(deflections.T == 1)
+    cdef int derp = ff2_0.size
+
+    for i in range(derp):
+        deflections[ff2_1[i], ff2_0[i]] = flat_deflections[i]
 
     forces = np.sum(np.multiply(
         tj.T, deflections[:, connections[:, 1]]
         - deflections[:, connections[:, 0]]), axis=0)
+    # print 'f', time.time() - start
 
     # Check the condition number, and warn the user if it is out of range
     # cond = np.linalg.cond(SSff)

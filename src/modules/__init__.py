@@ -24,6 +24,9 @@ class BaseModuleSimulation(object):
     def step(self):
         pass
 
+    def save(self, directory):
+        pass
+
     def render(self, surface):
         pass
 

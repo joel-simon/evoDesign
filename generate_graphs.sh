@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+# !/usr/bin/python
 from os.path import join, isfile
 import sys
 import os
@@ -13,18 +14,17 @@ def main(args):
     if isfile(join(args.dir, 'genome.p')):
         with open(join(args.dir, 'genome.p'), 'rb') as f:
             best_genome = pickle.load(f)
+            visualize.draw_net(best_genome,
+                               view=False,
+                               node_names=best_genome.node_names,
+                               filename=join(args.dir,"nn_winner.gv"))
 
-        visualize.draw_net(best_genome,
-                           view=False,
-                           node_names=best_genome.node_names,
-                           filename=join(args.dir,"nn_winner.gv"))
-
-        print('Generated network graph.')
+            print('Generated network graph.')
 
     if isfile(join(args.dir, 'population.p')):
         pop = pickle.load(open(join(args.dir, 'population.p'),'rb'))
         # Plot the evolution of the best/average fitness.
-        visualize.plot_stats(pop.statistics, ylog=True,
+        visualize.plot_stats(pop.statistics, ylog=False,
                             filename=join(out_dir,"nn_fitness.svg"))
 
         # Visualizes speciation

@@ -1,43 +1,40 @@
 from os.path import join
-import sys
 import os
 import argparse
 import pickle
-import subprocess
-# TODO allow passing experiment name
-from examples.table import Simulation
 from src.views.viewer import Viewer
+from src import export
 
+from examples.plant.plant import Plant as Simulation
 def main(args):
     path = args.dir
     save = args.save
-    tmp = None
     best_genome = pickle.load(open(join(path, 'genome.p'), 'rb'))
-    
-    viewer = Viewer(bounds=(8,8,8))
+    # Simulation = pickle.load(open(join(path, 'simulation.p')))
+    sim_params = pickle.load(open(join(path, 'params.p')))
 
-    if save:
-        tmp = join(path, 'temp')
-        os.system("rm -rf %s" % tmp)
-        os.mkdir(tmp)
-        video_path = join(path, 'animation.avi')
-
-    simulation = Simulation(best_genome)
-    simulation.verbose = True
-    simulation.run(viewer=None)
-    print 'animation done'
-    # viewer.set_map(simulation.hmap)
-    simulation.render_all(viewer)
-    viewer.main_loop()
-
-# if args.video:
-    # if args.gif:
+    # tmp = None
     # if save:
-    #     subprocess.call(['avconv', '-i', join(tmp, '%d.jpg'),'-r','20',
-    #                         '-threads', 'auto','-qscale','1','-s','800x800',
-    #                         video_path])
+    #     tmp = join(path, 'temp')
     #     os.system("rm -rf %s" % tmp)
-    #     print('Created video file.')
+    #     os.mkdir(tmp)
+    #     video_path = join(path, 'animation.avi')
+
+    for i, params in enumerate(sim_params):
+        viewer = Viewer(bounds=(8, 8, 8))
+        simulation = Simulation(best_genome, **params)
+        simulation.run()
+
+        max_steps = simulation.max_fitness_steps
+        simulation = Simulation(best_genome, **params)
+        simulation.verbose = True
+        simulation.max_steps = max_steps + 1
+        simulation.run(viewer=viewer)
+
+        export.to_obj(simulation.hmap, join(path, 'final_obj_%i.obj'%i))
+        simulation.render_all(viewer)
+        print('Animation done.')
+        viewer.main_loop()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

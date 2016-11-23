@@ -3,6 +3,7 @@
 """
 from src.modules import Module, BaseModuleGene#, BaseModuleSimulation
 from src.modules.signals import BaseSignalGene, BaseSignalSimulation
+from src.map_utils import shape
 
 class Signal0Gene(BaseSignalGene):
 
@@ -15,21 +16,44 @@ class Signal0Simulation(BaseSignalSimulation):
 
     def create_input(self, cell):
         inputs = []
-        neighbors = self.simulation.hmap.neighbors(cell.position)
+        cmap = self.simulation.hmap
+        x, y, z = cell.position
 
         for gene in self.module.genes.values():
             signal = 0
             key = gene.key()
-            for neighbor in filter(bool, neighbors):
-                signal += neighbor.userData[key][0] / 6.0
-
+            try:
+                signal += cmap[x-1][y][z].userData[key][0]# / 6.0
+            except:
+                pass
+            try:
+                signal += cmap[x+1][y][z].userData[key][0]# / 6.0
+            except:
+                pass
+            try:
+                signal += cmap[x][y-1][z].userData[key][0]# / 6.0
+            except:
+                pass
+            try:
+                signal += cmap[x][y+1][z].userData[key][0]# / 6.0
+            except:
+                pass
+            try:
+                signal += cmap[x][y][z-1].userData[key][0]# / 6.0
+            except:
+                pass
+            try:
+                signal += cmap[x][y][z+1].userData[key][0]# / 6.0
+            except:
+                pass
             inputs.append(signal)
 
-        assert(len(inputs) == len(self.module.total_inputs()))
+        # assert(len(inputs) == len(self.module.total_inputs()))
         return inputs
 
 class Signal0Module(Module):
     """docstring for Signal0Module"""
+    name = 'Signals0'
     def __init__(self, **kwargs):
         super(Signal0Module, self).__init__(gene=Signal0Gene,
                                             simulation=Signal0Simulation,

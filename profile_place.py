@@ -5,16 +5,20 @@ pyximport.install(setup_args={"include_dirs":numpy.get_include()},
 
 import pickle
 import time
-# from src.modules.truss.truss import handle_results
-from src.modules.truss.handle_results import handle_results
-truss, results = pickle.load(open('test_truss.p', 'r'))
+from examples.bookcase import place, placex
 
-n = 1
+data = pickle.load(open('place_data.p', 'r'))
+
+n = 10000
 start = time.time()
 for i in range(n):
-	truss.calc_fos()
+	place.place_items(*data)
 print 'done', (time.time()-start)/n
 
+start = time.time()
+for i in range(n):
+	placex.place_items(*data)
+print 'done', (time.time()-start)/n
 
 
 # for i in range(n):

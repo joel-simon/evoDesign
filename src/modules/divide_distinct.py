@@ -36,6 +36,7 @@ class DivideDistinctSimulation(BaseModuleSimulation):
 
 class DivideDistinctModule(Module):
     """docstring for DivideDistinctModule"""
+    name = 'divide'
     def __init__(self):
         super(DivideDistinctModule, self).__init__(gene=None,
                                             simulation=DivideDistinctSimulation)

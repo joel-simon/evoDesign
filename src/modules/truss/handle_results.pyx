@@ -16,12 +16,9 @@ ctypedef np.int64_t ITYPE_t
 @cython.wraparound(False) # turn off negative index wrapping for entire function
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cpdef handle_results(truss,
-                    np.ndarray[DTYPE_t, ndim=1] forces, \
-                    np.ndarray[DTYPE_t, ndim=2] deflections, \
-                    np.ndarray[DTYPE_t, ndim=2] reactions):
-
-
+cpdef handle_results(truss, np.ndarray[DTYPE_t, ndim=1] forces,
+    np.ndarray[DTYPE_t, ndim=2] deflections, \
+    np.ndarray[DTYPE_t, ndim=2] reactions):
     cdef DTYPE_t fos_total = 10000
     cdef DTYPE_t rho = 200
     cdef DTYPE_t elastic_modulus = 5e8
@@ -35,6 +32,8 @@ cpdef handle_results(truss,
     cdef DTYPE_t PI2 = pow(M_PI, 2)
 
     cdef int i
+
+    truss.mass = 0
 
     for i in range(len(truss.members)):
         m = truss.members[i]
@@ -78,18 +77,21 @@ cpdef handle_results(truss,
             fos_total = fos
 
         m.fos = fos
+        truss.mass += mass
 
-    # for i in range(len(truss.joints)):
+    for i in range(len(truss.joints)):
     #     if truss.translations[i]
     #     truss.joints[i].
-    #     # for j in range(3):
-    #         if truss.translations[i][j]:
-    #             truss.joints[i].reactions[j] = reactions[j, i]
-    #             truss.joints[i].deflections[j] = 0.0
-    #         else:
-    #             truss.joints[i].reactions[j] = 0.0
-    #             truss.joints[i].deflections[j] = deflections[j, i]
+        joint = truss.joints[i]
+        for j in range(3):
+            if joint.translation[j]:
+                # truss.joints[i].reactions[j] = reactions[j, i]
+                joint.deflections[j] = 0.0
+            else:
+                # truss.joints[i].reactions[j] = 0.0
+                joint.deflections[j] = deflections[j, i]
 
     truss.fos_total = fos_total
 
     return
+
