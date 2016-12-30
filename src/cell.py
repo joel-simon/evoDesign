@@ -1,6 +1,7 @@
-from .cellGenome import CellGenome
+from src.cellGenome import CellGenome
+from src.neat_custom import ctrnn
 from neat import nn
-from neat_custom import ctrnn
+
 
 class Cell(object):
     """docstring for Cell"""

@@ -5,14 +5,19 @@ import pickle
 from src.views.viewer import Viewer
 from src import export
 
-from examples.plant.plant import Plant as Simulation
+from examples.table.table import Table as Simulation
+
 def main(args):
     path = args.dir
     save = args.save
     best_genome = pickle.load(open(join(path, 'genome.p'), 'rb'))
-    # Simulation = pickle.load(open(join(path, 'simulation.p')))
-    sim_params = pickle.load(open(join(path, 'params.p')))
 
+    # sim_params = pickle.load(open(join(path, 'params.p')))
+    sim_params = [{
+        'bounds': [8, 8, 8],
+        'start': [(0, 0, 0)],
+        # 'modules':
+    }]
     # tmp = None
     # if save:
     #     tmp = join(path, 'temp')
@@ -29,7 +34,7 @@ def main(args):
         simulation = Simulation(best_genome, **params)
         simulation.verbose = True
         simulation.max_steps = max_steps + 1
-        simulation.run(viewer=viewer)
+        simulation.run(viewer=None)
 
         export.to_obj(simulation.hmap, join(path, 'final_obj_%i.obj'%i))
         simulation.render_all(viewer)

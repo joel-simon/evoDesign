@@ -13,10 +13,10 @@ def shape(hmap):
 def empty(shape):
     if len(shape) == 2:
         x, y = shape
-        return [([0]*y) for j in xrange(x)]
+        return [([0]*y) for j in range(x)]
     else:
         x, y, z = shape
-        return [[([0]*z) for j in xrange(y)] for k in xrange(x)]
+        return [[([0]*z) for j in range(y)] for k in range(x)]
 
 # def clear(cmap):
     #
@@ -31,8 +31,8 @@ def connected_mask(hmap, start):
     # start = []
     counts = [0] * len(start)
 
-    # for x in xrange(X):
-    #     for z in xrange(Z):
+    # for x in range(X):
+    #     for z in range(Z):
     #         if hmap[x][0][z]:
     #             start.append((x, 0, z))
     #             counts.append(0)
@@ -70,9 +70,9 @@ def connected_mask(hmap, start):
         return filter_mask
 
     largest = counts.index(max(counts))+1
-    for x in xrange(X):
-        for y in xrange(Y):
-            for z in xrange(Z):
+    for x in range(X):
+        for y in range(Y):
+            for z in range(Z):
                 if filter_mask[x][y][z] != largest:
                     filter_mask[x][y][z] = 0
                 else:

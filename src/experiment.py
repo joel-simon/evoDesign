@@ -2,10 +2,10 @@ import os
 from os import path
 import pickle
 import subprocess
-
+from shutil import copyfile
 from neat import population
 
-from neat_custom.parallel import ParallelEvaluator
+from src.neat_custom.parallel import ParallelEvaluator
 from src.neat_custom.config import Config as NeatConfig
 from src.neat_custom import ctrnn
 from src.cellGenome import CellGenome
@@ -17,6 +17,7 @@ class Experiment(object):
     def __init__(self, simulation, neat_config_path, modules, params):
         self.simulation = simulation
 
+        self.neat_config_path = neat_config_path
         self.neat_config = NeatConfig(neat_config_path)
         self.neat_config.genotype = CellGenome
         self.neat_config.genome_config = {
@@ -92,14 +93,14 @@ class Experiment(object):
                 max_steps = sim.max_fitness_steps
                 sim.reset()
                 # print('max_steps:', max_steps)
-                
+
                 sim.max_steps = max_steps + 1
                 sim.verbose = True
                 sim.run()
                 sim.render_all(self.viewer)
-                
-                # Turn on 
-                # self.viewer.main_loop()
+
+                # Turn on
+                self.viewer.main_loop()
 
                 file_name = path.join(out_dir, 'final_obj_%i.obj' % i)
                 meta_data = 'params #%i: %s' % (i, str(params))
@@ -111,16 +112,17 @@ class Experiment(object):
                 report.write('\tfitness: %f\n' % sim.max_fitness)
                 report.write('\tsteps_taken: %i\n' % sim.max_fitness_steps)
 
-        # copyfile(config_path, path.join(out_dir, 'config.txt'))
+        copyfile(self.neat_config_path, path.join(out_dir, 'config.txt'))
+
         # copyfile('./experiments/%s.py' % experiment, path.join(out_dir, '%s.py.txt' % experiment))
         subprocess.call(['./generate_graphs.sh', out_dir])
         print('Report finished.')
 
     def run(self, cores, generations, pop_size):
-        print "Running experiment"
-        print "\tcores: %i" % cores
-        print "\tpop_size: %i" % pop_size
-        print "\tgenerations: %i" % generations
+        print("Running experiment")
+        print("\tcores: %i" % cores)
+        print("\tpop_size: %i" % pop_size)
+        print("\tgenerations: %i" % generations)
 
         self.neat_config.pop_size = pop_size
         self.population = population.Population(self.neat_config)

@@ -54,7 +54,7 @@ def depthmap(cmap, front_map, cell):
 #         # print 'not in bounds', cell.position, item, Z, z-dz
 #         return []
 
-#     for i in reversed(xrange(dx)):
+#     for i in reversed(range(dx)):
 #         # for _y in range(dy):
 #         #     if dmap[x+i][y+_y+1] >= z:
 #         #         return []
@@ -80,7 +80,7 @@ def fits(depth_map, dx, dy, dz):
     elif depth_map[dy - 1] < dz:
         return 0
     else:
-        return 1  
+        return 1
 
 def place_items(cmap, cells, items):
     # import pickle
@@ -117,13 +117,13 @@ def place_items(cmap, cells, items):
                 front_edge_cells.append(cell)
                 depth_maps.append(depthmap(cmap, front_map, cell))
     depth_maps = np.array(depth_maps)
-    
+
     # print depth_maps
     # print front_map
 
     # item id -> cell
     results = [None] * num_items
-    for i in xrange(num_items):
+    for i in range(num_items):
         dy, dz = items[i]
         placed = False
         for depth_map, cell in zip(depth_maps, front_edge_cells):

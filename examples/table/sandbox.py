@@ -52,9 +52,10 @@ class Sandbox(Table):
     def handle_all_outputs(self, outputs):
         pass
 
-# viewer = Viewer(bounds=(8,8,8))
+viewer = Viewer(bounds=(8,8,8))
 simulation = Sandbox()
 simulation.max_steps = 1
 # simulation.verbose = True
-simulation.run(viewer=None)
+simulation.run(viewer=viewer)
+viewer.hold()
 

@@ -51,7 +51,7 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
     cdef ITYPE_t len_ff = len(ff)
 
     # Build the global stiffness matrix
-    for i in xrange(n_cons):
+    for i in range(n_cons):
         ends[0] = connections[i, 0]
         ends[1] = connections[i, 1]
         ends[2] = connections[i, 2]
@@ -69,34 +69,34 @@ cpdef the_forces(np.ndarray[DTYPE_t, ndim=1] elastic_modulus, \
         ea_over_l = elastic_modulus[i]*area[i] / length
 
         # Compute "s = np.outer(direction, direction)"
-        for ii in xrange(3):
-            for jj in xrange(3):
+        for ii in range(3):
+            for jj in range(3):
                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]
 
-        for u in xrange(3):
-            for j in xrange(3):
+        for u in range(3):
+            for j in range(3):
                 ss[u, j] = s[u, j]
                 ss[u, j+3] = -1 * s[u, j]
                 ss[u+3, j] = -1 * s[u, j]
                 ss[u+3, j+3] = s[u, j]
-        
+
         tj_i = tj[i]
         tj_i[0] = ea_over_l*direction[0]
         tj_i[1] = ea_over_l*direction[1]
         tj_i[2] = ea_over_l*direction[2]
 
-        for k in xrange(6):
+        for k in range(6):
             e[k] = 3*ends[k/3] + k%3
 
-        for ii in xrange(6):
-            for jj in xrange(6):
+        for ii in range(6):
+            for jj in range(6):
                 dof[e[ii], e[jj]] += ss[ii, jj]
-    
+
     SSff = np.zeros([len_ff, len_ff])
-    for i in xrange(len_ff):
-        for j in xrange(len_ff):
+    for i in range(len_ff):
+        for j in range(len_ff):
             SSff[i, j] = dof[ff[i], ff[j]]
-    
+
     flat_loads = loads.T.flat[ff]
     # flat_deflections = spsolve(SSff, flat_loads)
     flat_deflections = np.linalg.solve(SSff, flat_loads)

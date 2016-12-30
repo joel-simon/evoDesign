@@ -10,7 +10,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
-from primitive import make_plane, G_OBJ_PLANE, make_sphere, G_OBJ_SPHERE
+from .primitive import make_plane, G_OBJ_PLANE, make_sphere, G_OBJ_SPHERE
 import numpy as np
 
 class Viewer(object):
@@ -164,9 +164,9 @@ class Viewer(object):
         else:
             glColor4fv(color)
         glBegin(GL_QUADS)
-        for i in xrange(6):
+        for i in range(6):
             glNormal3f(normals[i][0], normals[i][1], normals[i][2])
-            for j in xrange(4):
+            for j in range(4):
                 glVertex3f(vertices[i][j][0], vertices[i][j][1], vertices[i][j][2])
         glEnd()
 

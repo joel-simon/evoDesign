@@ -1,0 +1,12 @@
+digraph {
+	node [fontsize=9 height=0.2 shape=circle width=0.2]
+		x [shape=box style=filled]
+		y [shape=box style=filled]
+		z [shape=box style=filled]
+		"has_cell (sigmoid)" [color=lightblue style=filled]
+			y -> "relu 4" [color=green penwidth=0.457208950239 style=solid]
+			x -> "sin 5" [color=red penwidth=0.231505021569 style=solid]
+			"relu 4" -> "has_cell (sigmoid)" [color=green penwidth=1.81575714228 style=solid]
+			z -> "sin 5" [color=green penwidth=0.704277719794 style=solid]
+			"sin 5" -> "has_cell (sigmoid)" [color=red penwidth=0.275817934371 style=solid]
+}

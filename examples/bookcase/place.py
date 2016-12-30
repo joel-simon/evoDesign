@@ -35,7 +35,7 @@ def fits(depth_map, dx, dy, dz):
     elif depth_map[dy - 1] < dz:
         return 0
     else:
-        return 1  
+        return 1
 
 def makey(cmap, cells):
     front_edge_cells = []
@@ -57,9 +57,9 @@ def makey(cmap, cells):
             if cell and not cmap[x][y+1][z]:
                 front_edge_cells.append(cell)
                 depth_maps.append(depthmap(cmap, front_map, cell))
-    
+
     return front_edge_cells, depth_maps, front_map
-    
+
 def place_items(cmap, cells, items):
     """ Items is list of dimensions
         return list where spot i is cell for object i
@@ -73,11 +73,11 @@ def place_items(cmap, cells, items):
 
     # item id -> cell
     results = [None] * num_items
-    for i in xrange(num_items):
+    for i in range(num_items):
         dy, dz = items[i]
         for j, (depth_map, cell) in enumerate(zip(depth_maps, front_edge_cells)):
             x, y, z = cell.position
-            
+
             if len(depth_map) >= dy and depth_map[dy - 1] >= dz:
                 foo = False
                 for _y in range(dy):
@@ -85,7 +85,7 @@ def place_items(cmap, cells, items):
                         foo = True
                         break
                 if foo:
-                    continue    
+                    continue
 
                 results[i] = cell
                 # cell.userData[]

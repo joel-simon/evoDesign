@@ -1,3 +1,4 @@
+from __future__ import print_function
 import math
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from src.map_utils import shape, connected_mask
 from src.balance import balance_score
 
 class Table(Simulation):
-    inputs = []#['gradient_x', 'gradient_y', 'gradient_z']
+    inputs = []#['gradient_x', 'gradient_y', 'gradient_z'] ##['gradient_y']
     outputs = [('apoptosis', 'sigmoid')]
 
     def __init__(self, genome, bounds, start=[(0,0,0)]):
@@ -26,8 +27,11 @@ class Table(Simulation):
 
     def create_input(self, cell):
         return []
-        # gradient = cell.position[1] / float(self.bounds[1])
-        # return [gradient]
+        # x, y, z = cell.position
+        # x_gradient = -1.0 + 2.0 * x / float(self.bounds[0]-1)
+        # y_gradient = -1.0 + 2.0 * y / float(self.bounds[1]-1)
+        # z_gradient = -1.0 + 2.0 * z / float(self.bounds[2]-1)
+        # return [x_gradient, y_gradient, z_gradient]
 
     def handle_output(self, cell, outputs):
         if outputs[0] > .5: # Apoptos`is.
@@ -38,7 +42,6 @@ class Table(Simulation):
             return 0
 
         X, Y, Z = shape(self.hmap)
-
 
         static_cells = [c.position for c in self.cells if c.position[1] == 0]
         connected_array = connected_mask(self.hmap, start=static_cells)
@@ -62,14 +65,6 @@ class Table(Simulation):
             self.module_simulations['truss'].calculate()
             truss = self.module_simulations['truss'].truss
 
-            # for cell in connected_cells:
-            #     if cell.position[1] == 0:
-            #         for joint in cell.userData['body'].joints:
-            #             joint.coordinates[1] = 0
-            #     elif cell.position[1] == Y:
-            #         for joint in cell.userData['body'].joints:
-            #             joint.coordinates[1] = Y
-
             fos_fitness = (math.atan((truss.fos_total - 1) * 20) / math.pi) + 0.5
             weight_fitness = 1 - (truss.mass / float(X*Y*Z))
 
@@ -77,27 +72,38 @@ class Table(Simulation):
             fos_fitness = 1
             weight_fitness = 1 - (len(connected_cells) / float(X*Y*Z))
 
-        height_fitness = y_max / float(Y)
+        height_fitness = y_max / float(Y-1)
 
         cover_fitness = top_covereage / float(X * Z)
 
         balance_fitness = balance_score(connected_cells, connected_array)
 
-        total_fitness = .1*height_fitness + .9*cover_fitness
-        total_fitness *= .4*weight_fitness + .6
-        total_fitness *= balance_fitness
-        total_fitness *= fos_fitness
+
+        total_fitness = ((.1*height_fitness+.9*cover_fitness) * weight_fitness * balance_fitness) ** (1/3.0)
 
         if self.verbose:
-            print 'cover_fitness', cover_fitness
-            print 'weight_fitness', weight_fitness
-            print 'balance_fitness', balance_fitness
-            # print 'fos', truss.fos_total
-            print 'fos_fitness', fos_fitness
-            print 'total_fitness', total_fitness
+            print('#'*80)
+            print('cover_fitness', cover_fitness)
+            print('height_fitness', height_fitness)
+            print('weight_fitness', weight_fitness)
+            print('balance_fitness', balance_fitness)
+            print('\ntotal_fitness', total_fitness)
+            print('#'*80)
+        # total_fitness = .1*height_fitness + .9*cover_fitness
+        # total_fitness *= .4*weight_fitness + .6
+        # total_fitness *= balance_fitness
+        # total_fitness *= fos_fitness
+
+        # if self.verbose:
+        #     print('cover_fitness', cover_fitness)
+        #     print('weight_fitness', weight_fitness)
+        #     print('balance_fitness', balance_fitness)
+        #     # print('fos', truss.fos_total)
+        #     print('fos_fitness', fos_fitness)
+        #     print('total_fitness', total_fitness)
 
         return total_fitness
 
 
-    def render(self, viewer):
-        pass
+    # def render(self, viewer):
+    #     pass

@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Cython: evaluatex.pyx</title>
     <style type="text/css">
-    
+
 body.cython { font-family: courier; font-size: 12; }
 
 .cython.tag  {  }
@@ -1487,7 +1487,7 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
   if (<span class='pyx_c_api'>__Pyx_Print</span>(0, __pyx_t_7, 1) &lt; 0) __PYX_ERR(0, 53, __pyx_L1_error)
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_7); __pyx_t_7 = 0;
 </pre><pre class="cython line score-0">&#xA0;<span class="">054</span>:     # Build the global stiffness matrix</pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">055</span>:     for i in xrange(n_cons):</pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">055</span>:     for i in range(n_cons):</pre>
 <pre class='cython code score-0 '>  __pyx_t_10 = __pyx_v_n_cons;
   for (__pyx_t_26 = 0; __pyx_t_26 &lt; __pyx_t_10; __pyx_t_26+=1) {
     __pyx_v_i = __pyx_t_26;
@@ -1563,10 +1563,10 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
     __pyx_v_ea_over_l = (((*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_elastic_modulus.rcbuffer-&gt;pybuffer.buf, __pyx_t_69, __pyx_pybuffernd_elastic_modulus.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_area.rcbuffer-&gt;pybuffer.buf, __pyx_t_70, __pyx_pybuffernd_area.diminfo[0].strides))) / __pyx_v_length);
 </pre><pre class="cython line score-0">&#xA0;<span class="">071</span>: </pre>
 <pre class="cython line score-0">&#xA0;<span class="">072</span>:         # Compute "s = np.outer(direction, direction)"</pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">073</span>:         for ii in xrange(3):</pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">073</span>:         for ii in range(3):</pre>
 <pre class='cython code score-0 '>    for (__pyx_t_71 = 0; __pyx_t_71 &lt; 3; __pyx_t_71+=1) {
       __pyx_v_ii = __pyx_t_71;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">074</span>:             for jj in xrange(3):</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">074</span>:             for jj in range(3):</pre>
 <pre class='cython code score-0 '>      for (__pyx_t_72 = 0; __pyx_t_72 &lt; 3; __pyx_t_72+=1) {
         __pyx_v_jj = __pyx_t_72;
 </pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">075</span>:                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]</pre>
@@ -1578,10 +1578,10 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
       }
     }
 </pre><pre class="cython line score-0">&#xA0;<span class="">076</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">077</span>:         for u in xrange(3):</pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">077</span>:         for u in range(3):</pre>
 <pre class='cython code score-0 '>    for (__pyx_t_71 = 0; __pyx_t_71 &lt; 3; __pyx_t_71+=1) {
       __pyx_v_u = __pyx_t_71;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">078</span>:             for j in xrange(3):</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">078</span>:             for j in range(3):</pre>
 <pre class='cython code score-0 '>      for (__pyx_t_72 = 0; __pyx_t_72 &lt; 3; __pyx_t_72+=1) {
         __pyx_v_j = __pyx_t_72;
 </pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">079</span>:                 ss[u, j] = s[u, j]</pre>
@@ -1648,7 +1648,7 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
     __pyx_t_99 = 2;
     *__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_tj_i.rcbuffer-&gt;pybuffer.buf, __pyx_t_99, __pyx_pybuffernd_tj_i.diminfo[0].strides) = (__pyx_v_ea_over_l * (*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_direction.rcbuffer-&gt;pybuffer.buf, __pyx_t_98, __pyx_pybuffernd_direction.diminfo[0].strides)));
 </pre><pre class="cython line score-0">&#xA0;<span class="">088</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">089</span>:         for k in xrange(6):</pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">089</span>:         for k in range(6):</pre>
 <pre class='cython code score-0 '>    for (__pyx_t_71 = 0; __pyx_t_71 &lt; 6; __pyx_t_71+=1) {
       __pyx_v_k = __pyx_t_71;
 </pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">090</span>:             e[k] = 3*ends[k/3] + k%3</pre>
@@ -1657,10 +1657,10 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
       *__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_ITYPE_t *, __pyx_pybuffernd_e.rcbuffer-&gt;pybuffer.buf, __pyx_t_100, __pyx_pybuffernd_e.diminfo[0].strides) = ((3 * (*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_ITYPE_t *, __pyx_pybuffernd_ends.rcbuffer-&gt;pybuffer.buf, __pyx_t_72, __pyx_pybuffernd_ends.diminfo[0].strides))) + (__pyx_v_k % 3));
     }
 </pre><pre class="cython line score-0">&#xA0;<span class="">091</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">092</span>:         for ii in xrange(6):</pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">092</span>:         for ii in range(6):</pre>
 <pre class='cython code score-0 '>    for (__pyx_t_71 = 0; __pyx_t_71 &lt; 6; __pyx_t_71+=1) {
       __pyx_v_ii = __pyx_t_71;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">093</span>:             for jj in xrange(6):</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">093</span>:             for jj in range(6):</pre>
 <pre class='cython code score-0 '>      for (__pyx_t_101 = 0; __pyx_t_101 &lt; 6; __pyx_t_101+=1) {
         __pyx_v_jj = __pyx_t_101;
 </pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">094</span>:                 dof[e[ii], e[jj]] += ss[ii, jj]</pre>
@@ -1777,11 +1777,11 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
   __pyx_t_108 = 0;
   __pyx_v_SSff = ((PyArrayObject *)__pyx_t_7);
   __pyx_t_7 = 0;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">098</span>:     for i in xrange(len_ff):</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">098</span>:     for i in range(len_ff):</pre>
 <pre class='cython code score-0 '>  __pyx_t_26 = __pyx_v_len_ff;
   for (__pyx_t_71 = 0; __pyx_t_71 &lt; __pyx_t_26; __pyx_t_71+=1) {
     __pyx_v_i = __pyx_t_71;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">099</span>:         for j in xrange(len_ff):</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">099</span>:         for j in range(len_ff):</pre>
 <pre class='cython code score-0 '>    __pyx_t_101 = __pyx_v_len_ff;
     for (__pyx_t_109 = 0; __pyx_t_109 &lt; __pyx_t_101; __pyx_t_109+=1) {
       __pyx_v_j = __pyx_t_109;
@@ -2011,11 +2011,11 @@ static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(
     }
     #if CYTHON_COMPILING_IN_CPYTHON
     if (likely(<span class='py_c_api'>PyTuple_CheckExact</span>(sequence))) {
-      __pyx_t_2 = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(sequence, 0); 
-      __pyx_t_8 = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(sequence, 1); 
+      __pyx_t_2 = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(sequence, 0);
+      __pyx_t_8 = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(sequence, 1);
     } else {
-      __pyx_t_2 = <span class='py_macro_api'>PyList_GET_ITEM</span>(sequence, 0); 
-      __pyx_t_8 = <span class='py_macro_api'>PyList_GET_ITEM</span>(sequence, 1); 
+      __pyx_t_2 = <span class='py_macro_api'>PyList_GET_ITEM</span>(sequence, 0);
+      __pyx_t_8 = <span class='py_macro_api'>PyList_GET_ITEM</span>(sequence, 1);
     }
     <span class='pyx_macro_api'>__Pyx_INCREF</span>(__pyx_t_2);
     <span class='pyx_macro_api'>__Pyx_INCREF</span>(__pyx_t_8);

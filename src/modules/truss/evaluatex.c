@@ -554,7 +554,7 @@ typedef struct {
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":725
  * # in Cython to enable them only on the right systems.
- * 
+ *
  * ctypedef npy_int8       int8_t             # <<<<<<<<<<<<<<
  * ctypedef npy_int16      int16_t
  * ctypedef npy_int32      int32_t
@@ -562,7 +562,7 @@ typedef struct {
 typedef npy_int8 __pyx_t_5numpy_int8_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":726
- * 
+ *
  * ctypedef npy_int8       int8_t
  * ctypedef npy_int16      int16_t             # <<<<<<<<<<<<<<
  * ctypedef npy_int32      int32_t
@@ -590,7 +590,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":732
  * #ctypedef npy_int128     int128_t
- * 
+ *
  * ctypedef npy_uint8      uint8_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uint16     uint16_t
  * ctypedef npy_uint32     uint32_t
@@ -598,7 +598,7 @@ typedef npy_int64 __pyx_t_5numpy_int64_t;
 typedef npy_uint8 __pyx_t_5numpy_uint8_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":733
- * 
+ *
  * ctypedef npy_uint8      uint8_t
  * ctypedef npy_uint16     uint16_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uint32     uint32_t
@@ -626,7 +626,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":739
  * #ctypedef npy_uint128    uint128_t
- * 
+ *
  * ctypedef npy_float32    float32_t             # <<<<<<<<<<<<<<
  * ctypedef npy_float64    float64_t
  * #ctypedef npy_float80    float80_t
@@ -634,7 +634,7 @@ typedef npy_uint64 __pyx_t_5numpy_uint64_t;
 typedef npy_float32 __pyx_t_5numpy_float32_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":740
- * 
+ *
  * ctypedef npy_float32    float32_t
  * ctypedef npy_float64    float64_t             # <<<<<<<<<<<<<<
  * #ctypedef npy_float80    float80_t
@@ -656,7 +656,7 @@ typedef npy_long __pyx_t_5numpy_int_t;
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t             # <<<<<<<<<<<<<<
  * ctypedef npy_longlong   longlong_t
- * 
+ *
  */
 typedef npy_longlong __pyx_t_5numpy_long_t;
 
@@ -664,14 +664,14 @@ typedef npy_longlong __pyx_t_5numpy_long_t;
  * ctypedef npy_long       int_t
  * ctypedef npy_longlong   long_t
  * ctypedef npy_longlong   longlong_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_ulong      uint_t
  */
 typedef npy_longlong __pyx_t_5numpy_longlong_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":753
  * ctypedef npy_longlong   longlong_t
- * 
+ *
  * ctypedef npy_ulong      uint_t             # <<<<<<<<<<<<<<
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t
@@ -679,11 +679,11 @@ typedef npy_longlong __pyx_t_5numpy_longlong_t;
 typedef npy_ulong __pyx_t_5numpy_uint_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":754
- * 
+ *
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t             # <<<<<<<<<<<<<<
  * ctypedef npy_ulonglong  ulonglong_t
- * 
+ *
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
 
@@ -691,32 +691,32 @@ typedef npy_ulonglong __pyx_t_5numpy_ulong_t;
  * ctypedef npy_ulong      uint_t
  * ctypedef npy_ulonglong  ulong_t
  * ctypedef npy_ulonglong  ulonglong_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_intp       intp_t
  */
 typedef npy_ulonglong __pyx_t_5numpy_ulonglong_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":757
  * ctypedef npy_ulonglong  ulonglong_t
- * 
+ *
  * ctypedef npy_intp       intp_t             # <<<<<<<<<<<<<<
  * ctypedef npy_uintp      uintp_t
- * 
+ *
  */
 typedef npy_intp __pyx_t_5numpy_intp_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":758
- * 
+ *
  * ctypedef npy_intp       intp_t
  * ctypedef npy_uintp      uintp_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_double     float_t
  */
 typedef npy_uintp __pyx_t_5numpy_uintp_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":760
  * ctypedef npy_uintp      uintp_t
- * 
+ *
  * ctypedef npy_double     float_t             # <<<<<<<<<<<<<<
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t
@@ -724,11 +724,11 @@ typedef npy_uintp __pyx_t_5numpy_uintp_t;
 typedef npy_double __pyx_t_5numpy_float_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":761
- * 
+ *
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t             # <<<<<<<<<<<<<<
  * ctypedef npy_longdouble longdouble_t
- * 
+ *
  */
 typedef npy_double __pyx_t_5numpy_double_t;
 
@@ -736,22 +736,22 @@ typedef npy_double __pyx_t_5numpy_double_t;
  * ctypedef npy_double     float_t
  * ctypedef npy_double     double_t
  * ctypedef npy_longdouble longdouble_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t
  */
 typedef npy_longdouble __pyx_t_5numpy_longdouble_t;
 
 /* "evoDesign/src/modules/truss/evaluatex.pyx":11
- * 
+ *
  * DTYPE = np.float64
  * ctypedef np.float64_t DTYPE_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ITYPE = np.int64
  */
 typedef __pyx_t_5numpy_float64_t __pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t;
 
 /* "evoDesign/src/modules/truss/evaluatex.pyx":14
- * 
+ *
  * ITYPE = np.int64
  * ctypedef np.int64_t ITYPE_t             # <<<<<<<<<<<<<<
  * import time
@@ -785,7 +785,7 @@ typedef __pyx_t_5numpy_int64_t __pyx_t_9evoDesign_3src_7modules_5truss_9evaluate
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":764
  * ctypedef npy_longdouble longdouble_t
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t             # <<<<<<<<<<<<<<
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t
@@ -793,11 +793,11 @@ typedef __pyx_t_5numpy_int64_t __pyx_t_9evoDesign_3src_7modules_5truss_9evaluate
 typedef npy_cfloat __pyx_t_5numpy_cfloat_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":765
- * 
+ *
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t             # <<<<<<<<<<<<<<
  * ctypedef npy_clongdouble clongdouble_t
- * 
+ *
  */
 typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
 
@@ -805,16 +805,16 @@ typedef npy_cdouble __pyx_t_5numpy_cdouble_t;
  * ctypedef npy_cfloat      cfloat_t
  * ctypedef npy_cdouble     cdouble_t
  * ctypedef npy_clongdouble clongdouble_t             # <<<<<<<<<<<<<<
- * 
+ *
  * ctypedef npy_cdouble     complex_t
  */
 typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":768
  * ctypedef npy_clongdouble clongdouble_t
- * 
+ *
  * ctypedef npy_cdouble     complex_t             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):
  */
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
@@ -1503,7 +1503,7 @@ static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_9evoDesign_3src_7modules_5truss_
 int __pyx_module_is_main_evoDesign__src__modules__truss__evaluatex = 0;
 
 /* Implementation of 'evoDesign.src.modules.truss.evaluatex' */
-static PyObject *__pyx_builtin_xrange;
+static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_range;
 static PyObject *__pyx_builtin_ValueError;
 static PyObject *__pyx_builtin_RuntimeError;
@@ -1540,7 +1540,7 @@ static const char __pyx_k_where[] = "where";
 static const char __pyx_k_zeros[] = "zeros";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_linalg[] = "linalg";
-static const char __pyx_k_xrange[] = "xrange";
+static const char __pyx_k_range[] = "range";
 static const char __pyx_k_float64[] = "float64";
 static const char __pyx_k_multiply[] = "multiply";
 static const char __pyx_k_reactions[] = "reactions";
@@ -1601,7 +1601,7 @@ static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_time;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_where;
-static PyObject *__pyx_n_s_xrange;
+static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_zeros;
 static PyObject *__pyx_pf_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_elastic_modulus, PyArrayObject *__pyx_v_coordinates, PyArrayObject *__pyx_v_connections, PyArrayObject *__pyx_v_reactions, PyArrayObject *__pyx_v_loads, PyArrayObject *__pyx_v_area); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
@@ -2009,7 +2009,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":34
  *     cdef np.ndarray[DTYPE_t, ndim=2] SSff
- * 
+ *
  *     cdef int n_cons = connections.shape[0]             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)
@@ -2017,11 +2017,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_v_n_cons = (__pyx_v_connections->dimensions[0]);
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":35
- * 
+ *
  *     cdef int n_cons = connections.shape[0]
  *     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)
- * 
+ *
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2072,7 +2072,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef int n_cons = connections.shape[0]
  *     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)             # <<<<<<<<<<<<<<
- * 
+ *
  *     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)
  */
   __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
@@ -2106,7 +2106,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":38
  *     cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)
- * 
+ *
  *     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] deflections = np.ones(w, dtype=DTYPE)
@@ -2199,7 +2199,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_t_7 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":39
- * 
+ *
  *     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=2] deflections = np.ones(w, dtype=DTYPE)
@@ -2259,7 +2259,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] deflections = np.ones(w, dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     deflections -= reactions
- * 
+ *
  */
   __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 40, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -2300,7 +2300,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef np.ndarray[DTYPE_t, ndim=2] dof = np.zeros([3*w[1], 3*w[1]], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] deflections = np.ones(w, dtype=DTYPE)
  *     deflections -= reactions             # <<<<<<<<<<<<<<
- * 
+ *
  *     # This identifies joints that can be loaded
  */
   __pyx_t_2 = PyNumber_InPlaceSubtract(((PyObject *)__pyx_v_deflections), ((PyObject *)__pyx_v_reactions)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 41, __pyx_L1_error)
@@ -2328,7 +2328,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_t_2 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":44
- * 
+ *
  *     # This identifies joints that can be loaded
  *     cdef np.ndarray[ITYPE_t, ndim=1] ff = np.where(deflections.T.flat == 1)[0]             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[ITYPE_t, ndim=1] e = np.zeros((6), dtype=ITYPE)
@@ -2539,7 +2539,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef np.ndarray[DTYPE_t, ndim=1] direction = np.zeros((3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] s = np.zeros((3, 3), dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)
- * 
+ *
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -2574,7 +2574,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef np.ndarray[DTYPE_t, ndim=1] direction = np.zeros((3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] s = np.zeros((3, 3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef ITYPE_t len_ff = len(ff)
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
@@ -2608,7 +2608,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":52
  *     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)
- * 
+ *
  *     cdef ITYPE_t len_ff = len(ff)             # <<<<<<<<<<<<<<
  *     print 'a', time.time() - start
  *     # Build the global stiffness matrix
@@ -2617,11 +2617,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_v_len_ff = __pyx_t_25;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":53
- * 
+ *
  *     cdef ITYPE_t len_ff = len(ff)
  *     print 'a', time.time() - start             # <<<<<<<<<<<<<<
  *     # Build the global stiffness matrix
- *     for i in xrange(n_cons):
+ *     for i in range(n_cons):
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -2663,7 +2663,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   /* "evoDesign/src/modules/truss/evaluatex.pyx":55
  *     print 'a', time.time() - start
  *     # Build the global stiffness matrix
- *     for i in xrange(n_cons):             # <<<<<<<<<<<<<<
+ *     for i in range(n_cons):             # <<<<<<<<<<<<<<
  *         ends[0] = connections[i, 0]
  *         ends[1] = connections[i, 1]
  */
@@ -2673,7 +2673,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":56
  *     # Build the global stiffness matrix
- *     for i in xrange(n_cons):
+ *     for i in range(n_cons):
  *         ends[0] = connections[i, 0]             # <<<<<<<<<<<<<<
  *         ends[1] = connections[i, 1]
  *         ends[2] = connections[i, 2]
@@ -2684,11 +2684,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     *__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_ITYPE_t *, __pyx_pybuffernd_ends.rcbuffer->pybuffer.buf, __pyx_t_29, __pyx_pybuffernd_ends.diminfo[0].strides) = (*__Pyx_BufPtrStrided2d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_ITYPE_t *, __pyx_pybuffernd_connections.rcbuffer->pybuffer.buf, __pyx_t_27, __pyx_pybuffernd_connections.diminfo[0].strides, __pyx_t_28, __pyx_pybuffernd_connections.diminfo[1].strides));
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":57
- *     for i in xrange(n_cons):
+ *     for i in range(n_cons):
  *         ends[0] = connections[i, 0]
  *         ends[1] = connections[i, 1]             # <<<<<<<<<<<<<<
  *         ends[2] = connections[i, 2]
- * 
+ *
  */
     __pyx_t_30 = __pyx_v_i;
     __pyx_t_31 = 1;
@@ -2699,7 +2699,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         ends[0] = connections[i, 0]
  *         ends[1] = connections[i, 1]
  *         ends[2] = connections[i, 2]             # <<<<<<<<<<<<<<
- * 
+ *
  *         lv[0] = coordinates[ends[1],0] - coordinates[ends[0],0]
  */
     __pyx_t_33 = __pyx_v_i;
@@ -2709,7 +2709,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":60
  *         ends[2] = connections[i, 2]
- * 
+ *
  *         lv[0] = coordinates[ends[1],0] - coordinates[ends[0],0]             # <<<<<<<<<<<<<<
  *         lv[1] = coordinates[ends[1],1] - coordinates[ends[0],1]
  *         lv[2] = coordinates[ends[1],2] - coordinates[ends[0],2]
@@ -2724,11 +2724,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     *__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_lv.rcbuffer->pybuffer.buf, __pyx_t_42, __pyx_pybuffernd_lv.diminfo[0].strides) = ((*__Pyx_BufPtrStrided2d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_coordinates.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_coordinates.diminfo[0].strides, __pyx_t_38, __pyx_pybuffernd_coordinates.diminfo[1].strides)) - (*__Pyx_BufPtrStrided2d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_coordinates.rcbuffer->pybuffer.buf, __pyx_t_40, __pyx_pybuffernd_coordinates.diminfo[0].strides, __pyx_t_41, __pyx_pybuffernd_coordinates.diminfo[1].strides)));
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":61
- * 
+ *
  *         lv[0] = coordinates[ends[1],0] - coordinates[ends[0],0]
  *         lv[1] = coordinates[ends[1],1] - coordinates[ends[0],1]             # <<<<<<<<<<<<<<
  *         lv[2] = coordinates[ends[1],2] - coordinates[ends[0],2]
- * 
+ *
  */
     __pyx_t_43 = 1;
     __pyx_t_44 = (*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_ITYPE_t *, __pyx_pybuffernd_ends.rcbuffer->pybuffer.buf, __pyx_t_43, __pyx_pybuffernd_ends.diminfo[0].strides));
@@ -2743,7 +2743,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         lv[0] = coordinates[ends[1],0] - coordinates[ends[0],0]
  *         lv[1] = coordinates[ends[1],1] - coordinates[ends[0],1]
  *         lv[2] = coordinates[ends[1],2] - coordinates[ends[0],2]             # <<<<<<<<<<<<<<
- * 
+ *
  *         length = sqrt(lv[0]*lv[0] + lv[1]*lv[1] + lv[2]*lv[2])
  */
     __pyx_t_50 = 1;
@@ -2757,9 +2757,9 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":64
  *         lv[2] = coordinates[ends[1],2] - coordinates[ends[0],2]
- * 
+ *
  *         length = sqrt(lv[0]*lv[0] + lv[1]*lv[1] + lv[2]*lv[2])             # <<<<<<<<<<<<<<
- * 
+ *
  *         direction[0] = lv[0]/length
  */
     __pyx_t_57 = 0;
@@ -2772,7 +2772,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":66
  *         length = sqrt(lv[0]*lv[0] + lv[1]*lv[1] + lv[2]*lv[2])
- * 
+ *
  *         direction[0] = lv[0]/length             # <<<<<<<<<<<<<<
  *         direction[1] = lv[1]/length
  *         direction[2] = lv[2]/length
@@ -2782,11 +2782,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     *__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_direction.rcbuffer->pybuffer.buf, __pyx_t_64, __pyx_pybuffernd_direction.diminfo[0].strides) = ((*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_lv.rcbuffer->pybuffer.buf, __pyx_t_63, __pyx_pybuffernd_lv.diminfo[0].strides)) / __pyx_v_length);
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":67
- * 
+ *
  *         direction[0] = lv[0]/length
  *         direction[1] = lv[1]/length             # <<<<<<<<<<<<<<
  *         direction[2] = lv[2]/length
- * 
+ *
  */
     __pyx_t_65 = 1;
     __pyx_t_66 = 1;
@@ -2796,7 +2796,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         direction[0] = lv[0]/length
  *         direction[1] = lv[1]/length
  *         direction[2] = lv[2]/length             # <<<<<<<<<<<<<<
- * 
+ *
  *         ea_over_l = elastic_modulus[i]*area[i] / length
  */
     __pyx_t_67 = 2;
@@ -2805,9 +2805,9 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":70
  *         direction[2] = lv[2]/length
- * 
+ *
  *         ea_over_l = elastic_modulus[i]*area[i] / length             # <<<<<<<<<<<<<<
- * 
+ *
  *         # Compute "s = np.outer(direction, direction)"
  */
     __pyx_t_69 = __pyx_v_i;
@@ -2815,10 +2815,10 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     __pyx_v_ea_over_l = (((*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_elastic_modulus.rcbuffer->pybuffer.buf, __pyx_t_69, __pyx_pybuffernd_elastic_modulus.diminfo[0].strides)) * (*__Pyx_BufPtrStrided1d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_area.rcbuffer->pybuffer.buf, __pyx_t_70, __pyx_pybuffernd_area.diminfo[0].strides))) / __pyx_v_length);
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":73
- * 
+ *
  *         # Compute "s = np.outer(direction, direction)"
- *         for ii in xrange(3):             # <<<<<<<<<<<<<<
- *             for jj in xrange(3):
+ *         for ii in range(3):             # <<<<<<<<<<<<<<
+ *             for jj in range(3):
  *                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]
  */
     for (__pyx_t_71 = 0; __pyx_t_71 < 3; __pyx_t_71+=1) {
@@ -2826,20 +2826,20 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
       /* "evoDesign/src/modules/truss/evaluatex.pyx":74
  *         # Compute "s = np.outer(direction, direction)"
- *         for ii in xrange(3):
- *             for jj in xrange(3):             # <<<<<<<<<<<<<<
+ *         for ii in range(3):
+ *             for jj in range(3):             # <<<<<<<<<<<<<<
  *                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]
- * 
+ *
  */
       for (__pyx_t_72 = 0; __pyx_t_72 < 3; __pyx_t_72+=1) {
         __pyx_v_jj = __pyx_t_72;
 
         /* "evoDesign/src/modules/truss/evaluatex.pyx":75
- *         for ii in xrange(3):
- *             for jj in xrange(3):
+ *         for ii in range(3):
+ *             for jj in range(3):
  *                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]             # <<<<<<<<<<<<<<
- * 
- *         for u in xrange(3):
+ *
+ *         for u in range(3):
  */
         __pyx_t_73 = __pyx_v_ii;
         __pyx_t_74 = __pyx_v_jj;
@@ -2851,18 +2851,18 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":77
  *                 s[ii, jj] = ea_over_l * direction[ii] * direction[jj]
- * 
- *         for u in xrange(3):             # <<<<<<<<<<<<<<
- *             for j in xrange(3):
+ *
+ *         for u in range(3):             # <<<<<<<<<<<<<<
+ *             for j in range(3):
  *                 ss[u, j] = s[u, j]
  */
     for (__pyx_t_71 = 0; __pyx_t_71 < 3; __pyx_t_71+=1) {
       __pyx_v_u = __pyx_t_71;
 
       /* "evoDesign/src/modules/truss/evaluatex.pyx":78
- * 
- *         for u in xrange(3):
- *             for j in xrange(3):             # <<<<<<<<<<<<<<
+ *
+ *         for u in range(3):
+ *             for j in range(3):             # <<<<<<<<<<<<<<
  *                 ss[u, j] = s[u, j]
  *                 ss[u, j+3] = -1 * s[u, j]
  */
@@ -2870,8 +2870,8 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
         __pyx_v_j = __pyx_t_72;
 
         /* "evoDesign/src/modules/truss/evaluatex.pyx":79
- *         for u in xrange(3):
- *             for j in xrange(3):
+ *         for u in range(3):
+ *             for j in range(3):
  *                 ss[u, j] = s[u, j]             # <<<<<<<<<<<<<<
  *                 ss[u, j+3] = -1 * s[u, j]
  *                 ss[u+3, j] = -1 * s[u, j]
@@ -2883,7 +2883,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
         *__Pyx_BufPtrStrided2d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_ss.rcbuffer->pybuffer.buf, __pyx_t_79, __pyx_pybuffernd_ss.diminfo[0].strides, __pyx_t_80, __pyx_pybuffernd_ss.diminfo[1].strides) = (*__Pyx_BufPtrStrided2d(__pyx_t_9evoDesign_3src_7modules_5truss_9evaluatex_DTYPE_t *, __pyx_pybuffernd_s.rcbuffer->pybuffer.buf, __pyx_t_77, __pyx_pybuffernd_s.diminfo[0].strides, __pyx_t_78, __pyx_pybuffernd_s.diminfo[1].strides));
 
         /* "evoDesign/src/modules/truss/evaluatex.pyx":80
- *             for j in xrange(3):
+ *             for j in range(3):
  *                 ss[u, j] = s[u, j]
  *                 ss[u, j+3] = -1 * s[u, j]             # <<<<<<<<<<<<<<
  *                 ss[u+3, j] = -1 * s[u, j]
@@ -2900,7 +2900,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *                 ss[u, j+3] = -1 * s[u, j]
  *                 ss[u+3, j] = -1 * s[u, j]             # <<<<<<<<<<<<<<
  *                 ss[u+3, j+3] = s[u, j]
- * 
+ *
  */
         __pyx_t_85 = __pyx_v_u;
         __pyx_t_86 = __pyx_v_j;
@@ -2912,7 +2912,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *                 ss[u, j+3] = -1 * s[u, j]
  *                 ss[u+3, j] = -1 * s[u, j]
  *                 ss[u+3, j+3] = s[u, j]             # <<<<<<<<<<<<<<
- * 
+ *
  *         tj_i = tj[i]
  */
         __pyx_t_89 = __pyx_v_u;
@@ -2925,7 +2925,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":84
  *                 ss[u+3, j+3] = s[u, j]
- * 
+ *
  *         tj_i = tj[i]             # <<<<<<<<<<<<<<
  *         tj_i[0] = ea_over_l*direction[0]
  *         tj_i[1] = ea_over_l*direction[1]
@@ -2955,7 +2955,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     __pyx_t_7 = 0;
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":85
- * 
+ *
  *         tj_i = tj[i]
  *         tj_i[0] = ea_over_l*direction[0]             # <<<<<<<<<<<<<<
  *         tj_i[1] = ea_over_l*direction[1]
@@ -2970,7 +2970,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         tj_i[0] = ea_over_l*direction[0]
  *         tj_i[1] = ea_over_l*direction[1]             # <<<<<<<<<<<<<<
  *         tj_i[2] = ea_over_l*direction[2]
- * 
+ *
  */
     __pyx_t_96 = 1;
     __pyx_t_97 = 1;
@@ -2980,8 +2980,8 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         tj_i[0] = ea_over_l*direction[0]
  *         tj_i[1] = ea_over_l*direction[1]
  *         tj_i[2] = ea_over_l*direction[2]             # <<<<<<<<<<<<<<
- * 
- *         for k in xrange(6):
+ *
+ *         for k in range(6):
  */
     __pyx_t_98 = 2;
     __pyx_t_99 = 2;
@@ -2989,20 +2989,20 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":89
  *         tj_i[2] = ea_over_l*direction[2]
- * 
- *         for k in xrange(6):             # <<<<<<<<<<<<<<
+ *
+ *         for k in range(6):             # <<<<<<<<<<<<<<
  *             e[k] = 3*ends[k/3] + k%3
- * 
+ *
  */
     for (__pyx_t_71 = 0; __pyx_t_71 < 6; __pyx_t_71+=1) {
       __pyx_v_k = __pyx_t_71;
 
       /* "evoDesign/src/modules/truss/evaluatex.pyx":90
- * 
- *         for k in xrange(6):
+ *
+ *         for k in range(6):
  *             e[k] = 3*ends[k/3] + k%3             # <<<<<<<<<<<<<<
- * 
- *         for ii in xrange(6):
+ *
+ *         for ii in range(6):
  */
       __pyx_t_72 = (__pyx_v_k / 3);
       __pyx_t_100 = __pyx_v_k;
@@ -3011,18 +3011,18 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":92
  *             e[k] = 3*ends[k/3] + k%3
- * 
- *         for ii in xrange(6):             # <<<<<<<<<<<<<<
- *             for jj in xrange(6):
+ *
+ *         for ii in range(6):             # <<<<<<<<<<<<<<
+ *             for jj in range(6):
  *                 dof[e[ii], e[jj]] += ss[ii, jj]
  */
     for (__pyx_t_71 = 0; __pyx_t_71 < 6; __pyx_t_71+=1) {
       __pyx_v_ii = __pyx_t_71;
 
       /* "evoDesign/src/modules/truss/evaluatex.pyx":93
- * 
- *         for ii in xrange(6):
- *             for jj in xrange(6):             # <<<<<<<<<<<<<<
+ *
+ *         for ii in range(6):
+ *             for jj in range(6):             # <<<<<<<<<<<<<<
  *                 dof[e[ii], e[jj]] += ss[ii, jj]
  *     print 'b', time.time() - start
  */
@@ -3030,11 +3030,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
         __pyx_v_jj = __pyx_t_101;
 
         /* "evoDesign/src/modules/truss/evaluatex.pyx":94
- *         for ii in xrange(6):
- *             for jj in xrange(6):
+ *         for ii in range(6):
+ *             for jj in range(6):
  *                 dof[e[ii], e[jj]] += ss[ii, jj]             # <<<<<<<<<<<<<<
  *     print 'b', time.time() - start
- * 
+ *
  */
         __pyx_t_102 = __pyx_v_ii;
         __pyx_t_103 = __pyx_v_jj;
@@ -3048,10 +3048,10 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   }
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":95
- *             for jj in xrange(6):
+ *             for jj in range(6):
  *                 dof[e[ii], e[jj]] += ss[ii, jj]
  *     print 'b', time.time() - start             # <<<<<<<<<<<<<<
- * 
+ *
  *     SSff = np.zeros([len_ff, len_ff])
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 95, __pyx_L1_error)
@@ -3093,10 +3093,10 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":97
  *     print 'b', time.time() - start
- * 
+ *
  *     SSff = np.zeros([len_ff, len_ff])             # <<<<<<<<<<<<<<
- *     for i in xrange(len_ff):
- *         for j in xrange(len_ff):
+ *     for i in range(len_ff):
+ *         for j in range(len_ff):
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3164,10 +3164,10 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_t_7 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":98
- * 
+ *
  *     SSff = np.zeros([len_ff, len_ff])
- *     for i in xrange(len_ff):             # <<<<<<<<<<<<<<
- *         for j in xrange(len_ff):
+ *     for i in range(len_ff):             # <<<<<<<<<<<<<<
+ *         for j in range(len_ff):
  *             SSff[i, j] = dof[ff[i], ff[j]]
  */
   __pyx_t_26 = __pyx_v_len_ff;
@@ -3176,8 +3176,8 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":99
  *     SSff = np.zeros([len_ff, len_ff])
- *     for i in xrange(len_ff):
- *         for j in xrange(len_ff):             # <<<<<<<<<<<<<<
+ *     for i in range(len_ff):
+ *         for j in range(len_ff):             # <<<<<<<<<<<<<<
  *             SSff[i, j] = dof[ff[i], ff[j]]
  *     print 'c', time.time() - start
  */
@@ -3186,11 +3186,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
       __pyx_v_j = __pyx_t_109;
 
       /* "evoDesign/src/modules/truss/evaluatex.pyx":100
- *     for i in xrange(len_ff):
- *         for j in xrange(len_ff):
+ *     for i in range(len_ff):
+ *         for j in range(len_ff):
  *             SSff[i, j] = dof[ff[i], ff[j]]             # <<<<<<<<<<<<<<
  *     print 'c', time.time() - start
- * 
+ *
  */
       __pyx_t_110 = __pyx_v_i;
       __pyx_t_111 = __pyx_v_j;
@@ -3203,10 +3203,10 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   }
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":101
- *         for j in xrange(len_ff):
+ *         for j in range(len_ff):
  *             SSff[i, j] = dof[ff[i], ff[j]]
  *     print 'c', time.time() - start             # <<<<<<<<<<<<<<
- * 
+ *
  *     flat_loads = loads.T.flat[ff]
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
@@ -3248,7 +3248,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":103
  *     print 'c', time.time() - start
- * 
+ *
  *     flat_loads = loads.T.flat[ff]             # <<<<<<<<<<<<<<
  *     flat_deflections = np.linalg.solve(SSff, flat_loads)
  *     print 'd', time.time() - start
@@ -3284,11 +3284,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __pyx_t_7 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":104
- * 
+ *
  *     flat_loads = loads.T.flat[ff]
  *     flat_deflections = np.linalg.solve(SSff, flat_loads)             # <<<<<<<<<<<<<<
  *     print 'd', time.time() - start
- * 
+ *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3351,8 +3351,8 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     flat_loads = loads.T.flat[ff]
  *     flat_deflections = np.linalg.solve(SSff, flat_loads)
  *     print 'd', time.time() - start             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -3392,11 +3392,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":109
- * 
+ *
  *     cdef np.ndarray[ITYPE_t, ndim=1] ff2_0, ff2_1
  *     ff2_0, ff2_1 = np.where(deflections.T == 1)             # <<<<<<<<<<<<<<
  *     cdef int derp = ff2_0.size
- * 
+ *
  */
   __pyx_t_4 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 109, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -3448,11 +3448,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     }
     #if CYTHON_COMPILING_IN_CPYTHON
     if (likely(PyTuple_CheckExact(sequence))) {
-      __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0); 
-      __pyx_t_8 = PyTuple_GET_ITEM(sequence, 1); 
+      __pyx_t_2 = PyTuple_GET_ITEM(sequence, 0);
+      __pyx_t_8 = PyTuple_GET_ITEM(sequence, 1);
     } else {
-      __pyx_t_2 = PyList_GET_ITEM(sequence, 0); 
-      __pyx_t_8 = PyList_GET_ITEM(sequence, 1); 
+      __pyx_t_2 = PyList_GET_ITEM(sequence, 0);
+      __pyx_t_8 = PyList_GET_ITEM(sequence, 1);
     }
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_8);
@@ -3531,7 +3531,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     cdef np.ndarray[ITYPE_t, ndim=1] ff2_0, ff2_1
  *     ff2_0, ff2_1 = np.where(deflections.T == 1)
  *     cdef int derp = ff2_0.size             # <<<<<<<<<<<<<<
- * 
+ *
  *     for i in range(derp):
  */
   __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_ff2_0), __pyx_n_s_size); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 110, __pyx_L1_error)
@@ -3542,7 +3542,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":112
  *     cdef int derp = ff2_0.size
- * 
+ *
  *     for i in range(derp):             # <<<<<<<<<<<<<<
  *         deflections[ff2_1[i], ff2_0[i]] = flat_deflections[i]
  *     print 'e', time.time() - start
@@ -3552,11 +3552,11 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
     __pyx_v_i = __pyx_t_26;
 
     /* "evoDesign/src/modules/truss/evaluatex.pyx":113
- * 
+ *
  *     for i in range(derp):
  *         deflections[ff2_1[i], ff2_0[i]] = flat_deflections[i]             # <<<<<<<<<<<<<<
  *     print 'e', time.time() - start
- * 
+ *
  */
     __pyx_t_71 = __pyx_v_i;
     __pyx_t_101 = __pyx_v_i;
@@ -3570,7 +3570,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *     for i in range(derp):
  *         deflections[ff2_1[i], ff2_0[i]] = flat_deflections[i]
  *     print 'e', time.time() - start             # <<<<<<<<<<<<<<
- * 
+ *
  *     forces = np.sum(np.multiply(
  */
   __pyx_t_8 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 114, __pyx_L1_error)
@@ -3612,7 +3612,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":116
  *     print 'e', time.time() - start
- * 
+ *
  *     forces = np.sum(np.multiply(             # <<<<<<<<<<<<<<
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)
@@ -3629,7 +3629,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":117
- * 
+ *
  *     forces = np.sum(np.multiply(
  *         tj.T, deflections[:, connections[:, 1]]             # <<<<<<<<<<<<<<
  *         - deflections[:, connections[:, 0]]), axis=0)
@@ -3656,7 +3656,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)             # <<<<<<<<<<<<<<
  *     print 'f', time.time() - start
- * 
+ *
  */
   __pyx_t_1 = PyObject_GetItem(((PyObject *)__pyx_v_connections), __pyx_tuple__16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -3705,7 +3705,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":116
  *     print 'e', time.time() - start
- * 
+ *
  *     forces = np.sum(np.multiply(             # <<<<<<<<<<<<<<
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)
@@ -3721,7 +3721,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)             # <<<<<<<<<<<<<<
  *     print 'f', time.time() - start
- * 
+ *
  */
   __pyx_t_7 = PyDict_New(); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
@@ -3729,7 +3729,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":116
  *     print 'e', time.time() - start
- * 
+ *
  *     forces = np.sum(np.multiply(             # <<<<<<<<<<<<<<
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)
@@ -3765,7 +3765,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)
  *     print 'f', time.time() - start             # <<<<<<<<<<<<<<
- * 
+ *
  *     # Check the condition number, and warn the user if it is out of range
  */
   __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_time); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L1_error)
@@ -3807,7 +3807,7 @@ static PyObject *__pyx_f_9evoDesign_3src_7modules_5truss_9evaluatex_the_forces(P
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":127
  *     # reactions = np.sum(dof*deflections.T.flat[:], axis=1).reshape([w[1], w[0]]).T
- * 
+ *
  *     return forces, deflections, reactions#, cond             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
@@ -4192,9 +4192,9 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":203
  *             # of flags
- * 
+ *
  *             if info == NULL: return             # <<<<<<<<<<<<<<
- * 
+ *
  *             cdef int copy_shape, i, ndim
  */
   __pyx_t_1 = ((__pyx_v_info == NULL) != 0);
@@ -4204,11 +4204,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":206
- * 
+ *
  *             cdef int copy_shape, i, ndim
  *             cdef int endian_detector = 1             # <<<<<<<<<<<<<<
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)
- * 
+ *
  */
   __pyx_v_endian_detector = 1;
 
@@ -4216,23 +4216,23 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             cdef int copy_shape, i, ndim
  *             cdef int endian_detector = 1
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)             # <<<<<<<<<<<<<<
- * 
+ *
  *             ndim = PyArray_NDIM(self)
  */
   __pyx_v_little_endian = ((((char *)(&__pyx_v_endian_detector))[0]) != 0);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":209
  *             cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)
- * 
+ *
  *             ndim = PyArray_NDIM(self)             # <<<<<<<<<<<<<<
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  */
   __pyx_v_ndim = PyArray_NDIM(__pyx_v_self);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":211
  *             ndim = PyArray_NDIM(self)
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):             # <<<<<<<<<<<<<<
  *                 copy_shape = 1
  *             else:
@@ -4241,7 +4241,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   if (__pyx_t_1) {
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":212
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  *                 copy_shape = 1             # <<<<<<<<<<<<<<
  *             else:
@@ -4251,7 +4251,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":211
  *             ndim = PyArray_NDIM(self)
- * 
+ *
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):             # <<<<<<<<<<<<<<
  *                 copy_shape = 1
  *             else:
@@ -4263,7 +4263,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 copy_shape = 1
  *             else:
  *                 copy_shape = 0             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  */
   /*else*/ {
@@ -4273,7 +4273,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":216
  *                 copy_shape = 0
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")
@@ -4286,11 +4286,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":217
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):             # <<<<<<<<<<<<<<
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  */
   __pyx_t_2 = ((!(PyArray_CHKFLAGS(__pyx_v_self, NPY_C_CONTIGUOUS) != 0)) != 0);
   __pyx_t_1 = __pyx_t_2;
@@ -4298,7 +4298,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":216
  *                 copy_shape = 0
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")
@@ -4309,7 +4309,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__17, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
@@ -4320,7 +4320,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":216
  *                 copy_shape = 0
- * 
+ *
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")
@@ -4329,7 +4329,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":220
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
@@ -4342,11 +4342,11 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   }
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":221
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):             # <<<<<<<<<<<<<<
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
- * 
+ *
  */
   __pyx_t_2 = ((!(PyArray_CHKFLAGS(__pyx_v_self, NPY_F_CONTIGUOUS) != 0)) != 0);
   __pyx_t_1 = __pyx_t_2;
@@ -4354,7 +4354,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":220
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
@@ -4365,7 +4365,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  */
     __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__18, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
@@ -4376,7 +4376,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":220
  *                 raise ValueError(u"ndarray is not C contiguous")
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)             # <<<<<<<<<<<<<<
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
@@ -4385,7 +4385,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":224
  *                 raise ValueError(u"ndarray is not Fortran contiguous")
- * 
+ *
  *             info.buf = PyArray_DATA(self)             # <<<<<<<<<<<<<<
  *             info.ndim = ndim
  *             if copy_shape:
@@ -4393,7 +4393,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   __pyx_v_info->buf = PyArray_DATA(__pyx_v_self);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":225
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  *             info.ndim = ndim             # <<<<<<<<<<<<<<
  *             if copy_shape:
@@ -4504,7 +4504,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             info.suboffsets = NULL
  *             info.itemsize = PyArray_ITEMSIZE(self)             # <<<<<<<<<<<<<<
  *             info.readonly = not PyArray_ISWRITEABLE(self)
- * 
+ *
  */
   __pyx_v_info->itemsize = PyArray_ITEMSIZE(__pyx_v_self);
 
@@ -4512,13 +4512,13 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             info.suboffsets = NULL
  *             info.itemsize = PyArray_ITEMSIZE(self)
  *             info.readonly = not PyArray_ISWRITEABLE(self)             # <<<<<<<<<<<<<<
- * 
+ *
  *             cdef int t
  */
   __pyx_v_info->readonly = (!(PyArray_ISWRITEABLE(__pyx_v_self) != 0));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":242
- * 
+ *
  *             cdef int t
  *             cdef char* f = NULL             # <<<<<<<<<<<<<<
  *             cdef dtype descr = self.descr
@@ -4531,7 +4531,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             cdef char* f = NULL
  *             cdef dtype descr = self.descr             # <<<<<<<<<<<<<<
  *             cdef int offset
- * 
+ *
  */
   __pyx_t_3 = ((PyObject *)__pyx_v_self->descr);
   __Pyx_INCREF(__pyx_t_3);
@@ -4540,16 +4540,16 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":246
  *             cdef int offset
- * 
+ *
  *             cdef bint hasfields = PyDataType_HASFIELDS(descr)             # <<<<<<<<<<<<<<
- * 
+ *
  *             if not hasfields and not copy_shape:
  */
   __pyx_v_hasfields = PyDataType_HASFIELDS(__pyx_v_descr);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":248
  *             cdef bint hasfields = PyDataType_HASFIELDS(descr)
- * 
+ *
  *             if not hasfields and not copy_shape:             # <<<<<<<<<<<<<<
  *                 # do not call releasebuffer
  *                 info.obj = None
@@ -4580,7 +4580,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":248
  *             cdef bint hasfields = PyDataType_HASFIELDS(descr)
- * 
+ *
  *             if not hasfields and not copy_shape:             # <<<<<<<<<<<<<<
  *                 # do not call releasebuffer
  *                 info.obj = None
@@ -4592,7 +4592,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *             else:
  *                 # need to call releasebuffer
  *                 info.obj = self             # <<<<<<<<<<<<<<
- * 
+ *
  *             if not hasfields:
  */
   /*else*/ {
@@ -4606,7 +4606,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":255
  *                 info.obj = self
- * 
+ *
  *             if not hasfields:             # <<<<<<<<<<<<<<
  *                 t = descr.type_num
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -4615,7 +4615,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
   if (__pyx_t_1) {
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":256
- * 
+ *
  *             if not hasfields:
  *                 t = descr.type_num             # <<<<<<<<<<<<<<
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -4928,7 +4928,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":255
  *                 info.obj = self
- * 
+ *
  *             if not hasfields:             # <<<<<<<<<<<<<<
  *                 t = descr.type_num
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -4977,7 +4977,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                                       info.format + _buffer_format_string_len,
  *                                       &offset)
  *                 f[0] = c'\0' # Terminate format string             # <<<<<<<<<<<<<<
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):
  */
     (__pyx_v_f[0]) = '\x00';
@@ -5018,7 +5018,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":290
  *                 f[0] = c'\0' # Terminate format string
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):             # <<<<<<<<<<<<<<
  *             if PyArray_HASFIELDS(self):
  *                 stdlib.free(info.format)
@@ -5043,7 +5043,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
   __Pyx_TraceCall("__releasebuffer__", __pyx_f[1], 290, 0, __PYX_ERR(1, 290, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":291
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):
  *             if PyArray_HASFIELDS(self):             # <<<<<<<<<<<<<<
  *                 stdlib.free(info.format)
@@ -5062,7 +5062,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
     free(__pyx_v_info->format);
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":291
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):
  *             if PyArray_HASFIELDS(self):             # <<<<<<<<<<<<<<
  *                 stdlib.free(info.format)
@@ -5085,7 +5085,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
  *             if sizeof(npy_intp) != sizeof(Py_ssize_t):
  *                 stdlib.free(info.strides)             # <<<<<<<<<<<<<<
  *                 # info.shape was stored after info.strides in the same block
- * 
+ *
  */
     free(__pyx_v_info->strides);
 
@@ -5100,7 +5100,7 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":290
  *                 f[0] = c'\0' # Terminate format string
- * 
+ *
  *         def __releasebuffer__(ndarray self, Py_buffer* info):             # <<<<<<<<<<<<<<
  *             if PyArray_HASFIELDS(self):
  *                 stdlib.free(info.format)
@@ -5117,10 +5117,10 @@ static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_s
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":770
  * ctypedef npy_cdouble     complex_t
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__pyx_v_a) {
@@ -5132,10 +5132,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
   __Pyx_TraceCall("PyArray_MultiIterNew1", __pyx_f[1], 770, 0, __PYX_ERR(1, 770, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":771
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):
  *     return PyArray_MultiIterNew(1, <void*>a)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5147,10 +5147,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":770
  * ctypedef npy_cdouble     complex_t
- * 
+ *
  * cdef inline object PyArray_MultiIterNew1(a):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  */
 
   /* function exit code */
@@ -5167,10 +5167,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew1(PyObject *__
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":773
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__pyx_v_a, PyObject *__pyx_v_b) {
@@ -5182,10 +5182,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
   __Pyx_TraceCall("PyArray_MultiIterNew2", __pyx_f[1], 773, 0, __PYX_ERR(1, 773, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":774
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5197,10 +5197,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":773
  *     return PyArray_MultiIterNew(1, <void*>a)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew2(a, b):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  */
 
   /* function exit code */
@@ -5217,10 +5217,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew2(PyObject *__
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":776
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c) {
@@ -5232,10 +5232,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
   __Pyx_TraceCall("PyArray_MultiIterNew3", __pyx_f[1], 776, 0, __PYX_ERR(1, 776, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":777
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5247,10 +5247,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":776
  *     return PyArray_MultiIterNew(2, <void*>a, <void*>b)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew3(a, b, c):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  */
 
   /* function exit code */
@@ -5267,10 +5267,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew3(PyObject *__
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":779
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d) {
@@ -5282,10 +5282,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
   __Pyx_TraceCall("PyArray_MultiIterNew4", __pyx_f[1], 779, 0, __PYX_ERR(1, 779, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":780
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5297,10 +5297,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":779
  *     return PyArray_MultiIterNew(3, <void*>a, <void*>b, <void*> c)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew4(a, b, c, d):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  */
 
   /* function exit code */
@@ -5317,10 +5317,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew4(PyObject *__
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":782
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  */
 
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__pyx_v_a, PyObject *__pyx_v_b, PyObject *__pyx_v_c, PyObject *__pyx_v_d, PyObject *__pyx_v_e) {
@@ -5332,10 +5332,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
   __Pyx_TraceCall("PyArray_MultiIterNew5", __pyx_f[1], 782, 0, __PYX_ERR(1, 782, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":783
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:
  */
   __Pyx_XDECREF(__pyx_r);
@@ -5347,10 +5347,10 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":782
  *     return PyArray_MultiIterNew(4, <void*>a, <void*>b, <void*>c, <void*> d)
- * 
+ *
  * cdef inline object PyArray_MultiIterNew5(a, b, c, d, e):             # <<<<<<<<<<<<<<
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  */
 
   /* function exit code */
@@ -5367,7 +5367,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_PyArray_MultiIterNew5(PyObject *__
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":785
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:             # <<<<<<<<<<<<<<
  *     # Recursive utility function used in __getbuffer__ to get format
  *     # string. The new location in the format string is returned.
@@ -5397,7 +5397,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
   __Pyx_TraceCall("_util_dtypestring", __pyx_f[1], 785, 0, __PYX_ERR(1, 785, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":790
- * 
+ *
  *     cdef dtype child
  *     cdef int endian_detector = 1             # <<<<<<<<<<<<<<
  *     cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)
@@ -5410,13 +5410,13 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *     cdef int endian_detector = 1
  *     cdef bint little_endian = ((<char*>&endian_detector)[0] != 0)             # <<<<<<<<<<<<<<
  *     cdef tuple fields
- * 
+ *
  */
   __pyx_v_little_endian = ((((char *)(&__pyx_v_endian_detector))[0]) != 0);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":794
  *     cdef tuple fields
- * 
+ *
  *     for childname in descr.names:             # <<<<<<<<<<<<<<
  *         fields = descr.fields[childname]
  *         child, new_offset = fields
@@ -5438,11 +5438,11 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     __pyx_t_3 = 0;
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":795
- * 
+ *
  *     for childname in descr.names:
  *         fields = descr.fields[childname]             # <<<<<<<<<<<<<<
  *         child, new_offset = fields
- * 
+ *
  */
     if (unlikely(__pyx_v_descr->fields == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
@@ -5458,7 +5458,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *     for childname in descr.names:
  *         fields = descr.fields[childname]
  *         child, new_offset = fields             # <<<<<<<<<<<<<<
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  */
     if (likely(__pyx_v_fields != Py_None)) {
@@ -5474,8 +5474,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
         __PYX_ERR(1, 796, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0); 
-      __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1); 
+      __pyx_t_3 = PyTuple_GET_ITEM(sequence, 0);
+      __pyx_t_4 = PyTuple_GET_ITEM(sequence, 1);
       __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(__pyx_t_4);
       #else
@@ -5495,10 +5495,10 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":798
  *         child, new_offset = fields
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:             # <<<<<<<<<<<<<<
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  */
     __pyx_t_4 = __Pyx_PyInt_From_int((__pyx_v_offset[0])); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 798, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -5511,10 +5511,10 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     if (__pyx_t_6) {
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":799
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")             # <<<<<<<<<<<<<<
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  */
       __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__20, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
@@ -5525,16 +5525,16 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":798
  *         child, new_offset = fields
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:             # <<<<<<<<<<<<<<
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  */
     }
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":801
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or             # <<<<<<<<<<<<<<
  *             (child.byteorder == c'<' and not little_endian)):
  *             raise ValueError(u"Non-native byte order not supported")
@@ -5553,7 +5553,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     __pyx_L8_next_or:;
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":802
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  *             (child.byteorder == c'<' and not little_endian)):             # <<<<<<<<<<<<<<
  *             raise ValueError(u"Non-native byte order not supported")
@@ -5571,7 +5571,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":801
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or             # <<<<<<<<<<<<<<
  *             (child.byteorder == c'<' and not little_endian)):
  *             raise ValueError(u"Non-native byte order not supported")
@@ -5593,7 +5593,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":801
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or             # <<<<<<<<<<<<<<
  *             (child.byteorder == c'<' and not little_endian)):
  *             raise ValueError(u"Non-native byte order not supported")
@@ -5601,7 +5601,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     }
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":813
- * 
+ *
  *         # Output padding bytes
  *         while offset[0] < new_offset:             # <<<<<<<<<<<<<<
  *             f[0] = 120 # "x"; pad byte
@@ -5630,7 +5630,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             f[0] = 120 # "x"; pad byte
  *             f += 1             # <<<<<<<<<<<<<<
  *             offset[0] += 1
- * 
+ *
  */
       __pyx_v_f = (__pyx_v_f + 1);
 
@@ -5638,7 +5638,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             f[0] = 120 # "x"; pad byte
  *             f += 1
  *             offset[0] += 1             # <<<<<<<<<<<<<<
- * 
+ *
  *         offset[0] += child.itemsize
  */
       __pyx_t_8 = 0;
@@ -5647,9 +5647,9 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":818
  *             offset[0] += 1
- * 
+ *
  *         offset[0] += child.itemsize             # <<<<<<<<<<<<<<
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):
  */
     __pyx_t_8 = 0;
@@ -5657,7 +5657,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":820
  *         offset[0] += child.itemsize
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):             # <<<<<<<<<<<<<<
  *             t = child.type_num
  *             if end - f < 5:
@@ -5666,7 +5666,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
     if (__pyx_t_6) {
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":821
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):
  *             t = child.type_num             # <<<<<<<<<<<<<<
  *             if end - f < 5:
@@ -5682,7 +5682,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             t = child.type_num
  *             if end - f < 5:             # <<<<<<<<<<<<<<
  *                 raise RuntimeError(u"Format string allocated too short.")
- * 
+ *
  */
       __pyx_t_6 = (((__pyx_v_end - __pyx_v_f) < 5) != 0);
       if (__pyx_t_6) {
@@ -5691,7 +5691,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             t = child.type_num
  *             if end - f < 5:
  *                 raise RuntimeError(u"Format string allocated too short.")             # <<<<<<<<<<<<<<
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
         __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__22, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
@@ -5705,12 +5705,12 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             t = child.type_num
  *             if end - f < 5:             # <<<<<<<<<<<<<<
  *                 raise RuntimeError(u"Format string allocated too short.")
- * 
+ *
  */
       }
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":826
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  *             if   t == NPY_BYTE:        f[0] =  98 #"b"             # <<<<<<<<<<<<<<
  *             elif t == NPY_UBYTE:       f[0] =  66 #"B"
@@ -6056,7 +6056,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
       /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":820
  *         offset[0] += child.itemsize
- * 
+ *
  *         if not PyDataType_HASFIELDS(child):             # <<<<<<<<<<<<<<
  *             t = child.type_num
  *             if end - f < 5:
@@ -6069,7 +6069,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # so don't output it
  *             f = _util_dtypestring(child, f, end, offset)             # <<<<<<<<<<<<<<
  *     return f
- * 
+ *
  */
     /*else*/ {
       __pyx_t_9 = __pyx_f_5numpy__util_dtypestring(__pyx_v_child, __pyx_v_f, __pyx_v_end, __pyx_v_offset); if (unlikely(__pyx_t_9 == NULL)) __PYX_ERR(1, 849, __pyx_L1_error)
@@ -6079,7 +6079,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":794
  *     cdef tuple fields
- * 
+ *
  *     for childname in descr.names:             # <<<<<<<<<<<<<<
  *         fields = descr.fields[childname]
  *         child, new_offset = fields
@@ -6091,15 +6091,15 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # so don't output it
  *             f = _util_dtypestring(child, f, end, offset)
  *     return f             # <<<<<<<<<<<<<<
- * 
- * 
+ *
+ *
  */
   __pyx_r = __pyx_v_f;
   goto __pyx_L0;
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":785
  *     return PyArray_MultiIterNew(5, <void*>a, <void*>b, <void*>c, <void*> d, <void*> e)
- * 
+ *
  * cdef inline char* _util_dtypestring(dtype descr, char* f, char* end, int* offset) except NULL:             # <<<<<<<<<<<<<<
  *     # Recursive utility function used in __getbuffer__ to get format
  *     # string. The new location in the format string is returned.
@@ -6124,8 +6124,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
 }
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":966
- * 
- * 
+ *
+ *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
  *      cdef PyObject* baseptr
  *      if base is None:
@@ -6196,7 +6196,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  *          baseptr = <PyObject*>base
  *      Py_XDECREF(arr.base)             # <<<<<<<<<<<<<<
  *      arr.base = baseptr
- * 
+ *
  */
   Py_XDECREF(__pyx_v_arr->base);
 
@@ -6204,14 +6204,14 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
  *          baseptr = <PyObject*>base
  *      Py_XDECREF(arr.base)
  *      arr.base = baseptr             # <<<<<<<<<<<<<<
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):
  */
   __pyx_v_arr->base = __pyx_v_baseptr;
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":966
- * 
- * 
+ *
+ *
  * cdef inline void set_array_base(ndarray arr, object base):             # <<<<<<<<<<<<<<
  *      cdef PyObject* baseptr
  *      if base is None:
@@ -6228,7 +6228,7 @@ static CYTHON_INLINE void __pyx_f_5numpy_set_array_base(PyArrayObject *__pyx_v_a
 
 /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":976
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None
@@ -6243,7 +6243,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
   __Pyx_TraceCall("get_array_base", __pyx_f[1], 976, 0, __PYX_ERR(1, 976, __pyx_L1_error));
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":977
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):
  *     if arr.base is NULL:             # <<<<<<<<<<<<<<
  *         return None
@@ -6265,7 +6265,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
     goto __pyx_L0;
 
     /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":977
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):
  *     if arr.base is NULL:             # <<<<<<<<<<<<<<
  *         return None
@@ -6287,7 +6287,7 @@ static CYTHON_INLINE PyObject *__pyx_f_5numpy_get_array_base(PyArrayObject *__py
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":976
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None
@@ -6374,15 +6374,15 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_time, __pyx_k_time, sizeof(__pyx_k_time), 0, 0, 1, 1},
   {&__pyx_kp_u_unknown_dtype_code_in_numpy_pxd, __pyx_k_unknown_dtype_code_in_numpy_pxd, sizeof(__pyx_k_unknown_dtype_code_in_numpy_pxd), 0, 1, 0, 0},
   {&__pyx_n_s_where, __pyx_k_where, sizeof(__pyx_k_where), 0, 0, 1, 1},
-  {&__pyx_n_s_xrange, __pyx_k_xrange, sizeof(__pyx_k_xrange), 0, 0, 1, 1},
+  {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
   #if PY_MAJOR_VERSION >= 3
-  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_xrange) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 55, __pyx_L1_error)
   #else
-  __pyx_builtin_xrange = __Pyx_GetBuiltinName(__pyx_n_s_xrange); if (!__pyx_builtin_xrange) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 55, __pyx_L1_error)
   #endif
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 112, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 218, __pyx_L1_error)
@@ -6400,7 +6400,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     cdef int n_cons = connections.shape[0]
  *     cdef np.ndarray[DTYPE_t, ndim=2] tj = np.zeros([n_cons, 3], dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=1] tj_i = np.zeros((3,), dtype=DTYPE)             # <<<<<<<<<<<<<<
- * 
+ *
  *     w = np.array([np.size(reactions, axis=0), np.size(reactions, axis=1)], dtype=ITYPE)
  */
   __pyx_tuple_ = PyTuple_Pack(1, __pyx_int_3); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 36, __pyx_L1_error)
@@ -6459,7 +6459,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     cdef np.ndarray[DTYPE_t, ndim=1] direction = np.zeros((3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] s = np.zeros((3, 3), dtype=DTYPE)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)
- * 
+ *
  */
   __pyx_tuple__7 = PyTuple_Pack(2, __pyx_int_3, __pyx_int_3); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(0, 49, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__7);
@@ -6472,7 +6472,7 @@ static int __Pyx_InitCachedConstants(void) {
  *     cdef np.ndarray[DTYPE_t, ndim=1] direction = np.zeros((3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] s = np.zeros((3, 3), dtype=DTYPE)
  *     cdef np.ndarray[DTYPE_t, ndim=2] ss = np.zeros((6, 6), dtype=DTYPE)             # <<<<<<<<<<<<<<
- * 
+ *
  *     cdef ITYPE_t len_ff = len(ff)
  */
   __pyx_tuple__9 = PyTuple_Pack(2, __pyx_int_6, __pyx_int_6); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 50, __pyx_L1_error)
@@ -6483,7 +6483,7 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__10);
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":117
- * 
+ *
  *     forces = np.sum(np.multiply(
  *         tj.T, deflections[:, connections[:, 1]]             # <<<<<<<<<<<<<<
  *         - deflections[:, connections[:, 0]]), axis=0)
@@ -6504,7 +6504,7 @@ static int __Pyx_InitCachedConstants(void) {
  *         tj.T, deflections[:, connections[:, 1]]
  *         - deflections[:, connections[:, 0]]), axis=0)             # <<<<<<<<<<<<<<
  *     print 'f', time.time() - start
- * 
+ *
  */
   __pyx_slice__14 = PySlice_New(Py_None, Py_None, Py_None); if (unlikely(!__pyx_slice__14)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__14);
@@ -6520,7 +6520,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_C_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not C contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
   __pyx_tuple__17 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(1, 218, __pyx_L1_error)
@@ -6531,7 +6531,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  *                 and not PyArray_CHKFLAGS(self, NPY_F_CONTIGUOUS)):
  *                 raise ValueError(u"ndarray is not Fortran contiguous")             # <<<<<<<<<<<<<<
- * 
+ *
  *             info.buf = PyArray_DATA(self)
  */
   __pyx_tuple__18 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(1, 222, __pyx_L1_error)
@@ -6550,10 +6550,10 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__19);
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":799
- * 
+ *
  *         if (end - f) - <int>(new_offset - offset[0]) < 15:
  *             raise RuntimeError(u"Format string allocated too short, see comment in numpy.pxd")             # <<<<<<<<<<<<<<
- * 
+ *
  *         if ((child.byteorder == c'>' and little_endian) or
  */
   __pyx_tuple__20 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(1, 799, __pyx_L1_error)
@@ -6575,7 +6575,7 @@ static int __Pyx_InitCachedConstants(void) {
  *             t = child.type_num
  *             if end - f < 5:
  *                 raise RuntimeError(u"Format string allocated too short.")             # <<<<<<<<<<<<<<
- * 
+ *
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
   __pyx_tuple__22 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(1, 823, __pyx_L1_error)
@@ -6686,7 +6686,7 @@ PyMODINIT_FUNC PyInit_evaluatex(void)
   /*--- Function export code ---*/
   /*--- Type init code ---*/
   /*--- Type import code ---*/
-  __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type", 
+  __pyx_ptype_7cpython_4type_type = __Pyx_ImportType(__Pyx_BUILTIN_MODULE_NAME, "type",
   #if CYTHON_COMPILING_IN_PYPY
   sizeof(PyTypeObject),
   #else
@@ -6710,7 +6710,7 @@ PyMODINIT_FUNC PyInit_evaluatex(void)
  * # cython: profile=True
  * import numpy as np             # <<<<<<<<<<<<<<
  * cimport numpy as np
- * 
+ *
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6719,10 +6719,10 @@ PyMODINIT_FUNC PyInit_evaluatex(void)
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":10
  * from libc.math cimport sqrt
- * 
+ *
  * DTYPE = np.float64             # <<<<<<<<<<<<<<
  * ctypedef np.float64_t DTYPE_t
- * 
+ *
  */
   __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -6734,7 +6734,7 @@ PyMODINIT_FUNC PyInit_evaluatex(void)
 
   /* "evoDesign/src/modules/truss/evaluatex.pyx":13
  * ctypedef np.float64_t DTYPE_t
- * 
+ *
  * ITYPE = np.int64             # <<<<<<<<<<<<<<
  * ctypedef np.int64_t ITYPE_t
  * import time
@@ -6771,7 +6771,7 @@ PyMODINIT_FUNC PyInit_evaluatex(void)
 
   /* "../../.local/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":976
  *      arr.base = baseptr
- * 
+ *
  * cdef inline object get_array_base(ndarray arr):             # <<<<<<<<<<<<<<
  *     if arr.base is NULL:
  *         return None

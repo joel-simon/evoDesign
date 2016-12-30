@@ -1,4 +1,3 @@
-import numpy as np
 from datetime import datetime
 
 from src.experiment import Experiment
@@ -6,7 +5,7 @@ from src.modules import neighbors_distinct, divide_distinct, truss
 from src.modules.signals import signal_0
 
 from examples.table.table import Table
-from src.map_utils import empty
+# from src.map_utils import empty
 
 def is_static(x, y, z, X, Y, Z):
     return y == 0
@@ -20,15 +19,15 @@ if __name__ == '__main__':
 
     modules = [ (neighbors_distinct.NeighborModule, {}),
                 (divide_distinct.DivideDistinctModule, {}),
-                (truss.TrussModule, {'is_static': is_static,
-                                     'get_load': get_load,
-                                     'cell_width': .05,
-                                     }),
+                # (truss.TrussModule, {'is_static': is_static,
+                #                      'get_load': get_load,
+                #                      'cell_width': .05,
+                #                      }),
               ]
 
     start = [(0,0,0)]
-    train_params = [{'bounds': (20, 20, 20), 'start':start}]
+    train_params = [{'bounds': (8, 8, 8), 'start':start}]
 
     experiment = Experiment(Table, neat_config, modules, train_params)
-    experiment.run(cores=1, generations=100, pop_size=50)
+    experiment.run(cores=2, generations=200, pop_size=200)
     experiment.report(out_path)

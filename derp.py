@@ -7,14 +7,14 @@ def loops():
 	X, Y, Z = (n, n, n)
 
 	start = time()
-	for x in xrange(X):
-		for y in xrange(Y):
-			for z in xrange(Z):
+	for x in range(X):
+		for y in range(Y):
+			for z in range(Z):
 				pass
 	print 'manual loop', time() - start
 
 	start = time()
-	for x, y, z in product(xrange(X), xrange(Y), xrange(Z)):
+	for x, y, z in product(range(X), range(Y), range(Z)):
 		pass
 
 	print 'product loop', time() - start

@@ -1,0 +1,16 @@
+digraph {
+	node [fontsize=9 height=0.2 shape=circle width=0.2]
+		x [shape=box style=filled]
+		y [shape=box style=filled]
+		z [shape=box style=filled]
+		"has_cell (sigmoid)" [color=lightblue style=filled]
+			y -> "has_cell (sigmoid)" [color=red penwidth=1.18911325684 style=solid]
+			"tanh 4" -> "exp 6" [color=green penwidth=0.148970546643 style=solid]
+			y -> "tanh 4" [color=green penwidth=0.186768519999 style=solid]
+			"exp 6" -> "has_cell (sigmoid)" [color=green penwidth=0.862727745182 style=solid]
+			x -> "clamped 5" [color=red penwidth=0.149706404964 style=solid]
+			"tanh 4" -> "has_cell (sigmoid)" [color=green penwidth=0.684310008283 style=solid]
+			z -> "has_cell (sigmoid)" [color=red penwidth=0.618474901322 style=solid]
+			x -> "has_cell (sigmoid)" [color=red penwidth=1.01286242901 style=solid]
+			"clamped 5" -> "has_cell (sigmoid)" [color=red penwidth=1.18906581862 style=solid]
+}

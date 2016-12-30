@@ -16,6 +16,8 @@ def main(args):
             best_genome = pickle.load(f)
             visualize.draw_net(best_genome,
                                view=False,
+                               show_disabled=False,
+                               prune_unused=True,
                                node_names=best_genome.node_names,
                                filename=join(args.dir,"nn_winner.gv"))
 

@@ -41,4 +41,4 @@ class DivideDistinctModule(Module):
         super(DivideDistinctModule, self).__init__(gene=None,
                                             simulation=DivideDistinctSimulation)
 
-        self.outputs = [('divide_%i'%i, 'sigmoid') for i in xrange(len(directions))]
+        self.outputs = [('divide_%i'%i, 'sigmoid') for i in range(len(directions))]

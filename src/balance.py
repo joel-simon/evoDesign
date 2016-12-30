@@ -39,7 +39,7 @@ def point_polygon_distance(x, y, verts):
     # minimum of ditance bwtween point and each edge.
     d = None
     segment = None
-    for i in xrange(len(verts)):
+    for i in range(len(verts)):
         x1, y1 = verts[i]
         x2, y2 = verts[i-1]
         d2 = point_line_dist(x, y, x1, y1, x2, y2)
@@ -154,15 +154,14 @@ def balance_score2(cells, verbose=False):
     x = distance((com[0], com[2]), bottom_center) / bottom_radius
 
     if verbose:
-        print
-        print 'com', com
-        print 'bottom_area', bottom_area
-        print 'bottom_hull', bottom_hull
-        # print 'bottom_radius', bottom_radius
-        # print 'd',d
-        # print 'D',D
-        print 'x=',x
-        print 'foo', (1 if com[1]==0 else min(1, bottom_area/com[1]))
+        print('com', com)
+        print('bottom_area', bottom_area)
+        print('bottom_hull', bottom_hull)
+        # print('bottom_radius', bottom_radius)
+        # print('d',d)
+        # print('D',D)
+        print('x=',x)
+        print('foo', (1 if com[1]==0 else min(1, bottom_area/com[1])))
     score = math.exp(-2*x**2) * (1 if com[1]==0 else min(1, bottom_area/com[1]))
 
     return score
