@@ -96,18 +96,18 @@ class Simulation(object):
         all_outputs = []
         for cell in self.cells:
             inputs = self.create_input(cell)
-            # assert len(inputs) == self.genome.non_module_inputs
+            assert len(inputs) == self.genome.non_module_inputs
 
             for mod_sim in self.module_simulations.values():
                 mod_input = mod_sim.create_input(cell)
-                # assert(len(mod_input) == len(mod_sim.module.total_inputs()))
+                assert(len(mod_input) == len(mod_sim.module.total_inputs()))
                 inputs.extend(mod_input)
 
-            # assert(len(inputs) == self.genome.num_inputs)
+            assert(len(inputs) == self.genome.num_inputs)
 
             all_outputs.append(cell.outputs(inputs))
 
-            # assert(len(all_outputs[-1]) == self.genome.num_outputs)
+            assert(len(all_outputs[-1]) == self.genome.num_outputs)
 
         return all_outputs
 

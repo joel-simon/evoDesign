@@ -2,14 +2,14 @@ from __future__ import print_function
 import math
 from datetime import datetime
 
-from src.experiment import Experiment
+# from src.experiment import Experiment
 from src.simulation import Simulation
 from src.modules import neighbors_distinct, divide_distinct
 from src.map_utils import shape, connected_mask
 from src.balance import balance_score
 
 class Table(Simulation):
-    inputs = []#['gradient_x', 'gradient_y', 'gradient_z'] ##['gradient_y']
+    inputs = ['gradient_y']#[]#['gradient_x', 'gradient_y', 'gradient_z'] ##
     outputs = [('apoptosis', 'sigmoid')]
 
     def __init__(self, genome, bounds, start=[(0,0,0)]):
@@ -26,11 +26,12 @@ class Table(Simulation):
 
 
     def create_input(self, cell):
-        return []
-        # x, y, z = cell.position
-        # x_gradient = -1.0 + 2.0 * x / float(self.bounds[0]-1)
-        # y_gradient = -1.0 + 2.0 * y / float(self.bounds[1]-1)
-        # z_gradient = -1.0 + 2.0 * z / float(self.bounds[2]-1)
+        # return []
+        x, y, z = cell.position
+        x_gradient = -1.0 + 2.0 * x / float(self.bounds[0]-1)
+        y_gradient = -1.0 + 2.0 * y / float(self.bounds[1]-1)
+        z_gradient = -1.0 + 2.0 * z / float(self.bounds[2]-1)
+        return [y_gradient]
         # return [x_gradient, y_gradient, z_gradient]
 
     def handle_output(self, cell, outputs):
@@ -70,7 +71,9 @@ class Table(Simulation):
 
         else:
             fos_fitness = 1
-            weight_fitness = 1 - (len(connected_cells) / float(X*Y*Z))
+            min_number_cells = (4*(Y-1)) + (X*Z)
+            # print(min_number_cells, len(connected_cells))
+            weight_fitness = 1 - ((len(connected_cells)- min_number_cells) / (float(X*Y*Z)- min_number_cells))
 
         height_fitness = y_max / float(Y-1)
 

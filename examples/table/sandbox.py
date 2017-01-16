@@ -13,10 +13,10 @@ from examples.table.main import is_static, get_load
 
 genome_config = {
     'modules': [
-        (truss.TrussModule, {
-            'is_static': is_static,
-            'get_load': get_load,
-            'cell_width': .02})
+        # (truss.TrussModule, {
+        #     'is_static': is_static,
+        #     'get_load': get_load,
+        #     'cell_width': .02})
     ],
     'inputs':[],
     'outputs':[('apoptosis', 'sigmoid')]
@@ -30,10 +30,10 @@ DUMMY_GENOME = CellGenome.create_unconnected(1, CONFIG)
 class Sandbox(Table):
     """ Extend the simualtion to inject arbitrary cell behavior. """
     def __init__(self):
-        super(Sandbox, self).__init__(DUMMY_GENOME, bounds=(20, 20, 20), start=[])
+        super(Sandbox, self).__init__(DUMMY_GENOME, bounds=(12, 12, 12), start=[])
         X, Y, Z = self.bounds
-        # self.create_cell(0, 0, 0)
-        for y in range(Y-3):
+
+        for y in range(Y-1):
             self.create_cell(0, y, 0)
             self.create_cell(X-1, y, 0)
             self.create_cell(0, y, Z-1)
@@ -42,8 +42,9 @@ class Sandbox(Table):
         for x in range(X):
             for z in range(Z):
                 self.create_cell(x, Y-1, z)
-                self.create_cell(x, Y-2, z)
-                self.create_cell(x, Y-3, z)
+                # self.create_cell(x, Y-1, z)
+                # self.create_cell(x, Y-2, z)
+                # self.create_cell(x, Y-3, z)
             # self.cells[-1].userData['body'].set_thickness(.079)
 
     def create_input(self, cell):
@@ -55,7 +56,8 @@ class Sandbox(Table):
 viewer = Viewer(bounds=(8,8,8))
 simulation = Sandbox()
 simulation.max_steps = 1
-# simulation.verbose = True
+simulation.verbose = True
 simulation.run(viewer=viewer)
-viewer.hold()
+
+# viewer.hold()
 
