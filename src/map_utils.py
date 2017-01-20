@@ -7,8 +7,8 @@ import operator
 # def add_direction(position, direction):
 #     return tuple(map(operator.add, position, direction))
 
-def shape(hmap):
-    return (len(hmap), len(hmap[0]), len(hmap[0][0]))
+def shape(cmap):
+    return (len(cmap), len(cmap[0]), len(cmap[0][0]))
 
 def empty(shape):
     if len(shape) == 2:
@@ -21,19 +21,19 @@ def empty(shape):
 # def clear(cmap):
     #
 
-def connected_mask(hmap, start):
+def connected_mask(cmap, start):
     """ Take a 3d python list of objects and return a numpy mask of same shape
         of all points that are connected by a path to start
 
     """
-    X, Y, Z = shape(hmap)
+    X, Y, Z = shape(cmap)
     filter_mask = empty((X, Y, Z))
     # start = []
     counts = [0] * len(start)
 
     # for x in range(X):
     #     for z in range(Z):
-    #         if hmap[x][0][z]:
+    #         if cmap[x][0][z]:
     #             start.append((x, 0, z))
     #             counts.append(0)
 
@@ -48,22 +48,22 @@ def connected_mask(hmap, start):
                 filter_mask[x][y][z] = i+1
                 counts[i] += 1
 
-                if x > 0 and hmap[x-1][y][z]:
+                if x > 0 and cmap[x-1][y][z]:
                     queue.append((x-1, y, z))
 
-                if x < X-1 and hmap[x+1][y][z]:
+                if x < X-1 and cmap[x+1][y][z]:
                     queue.append((x+1, y, z))
 
-                if y > 0 and hmap[x][y-1][z]:
+                if y > 0 and cmap[x][y-1][z]:
                     queue.append((x, y-1, z))
 
-                if y < Y-1 and hmap[x][y+1][z]:
+                if y < Y-1 and cmap[x][y+1][z]:
                     queue.append((x, y+1, z))
 
-                if z > 0 and hmap[x][y][z-1]:
+                if z > 0 and cmap[x][y][z-1]:
                     queue.append((x, y, z-1))
 
-                if z < Z-1 and hmap[x][y][z+1]:
+                if z < Z-1 and cmap[x][y][z+1]:
                     queue.append((x, y, z+1))
 
     if len(counts) == 0:
@@ -76,21 +76,21 @@ def connected_mask(hmap, start):
                 if filter_mask[x][y][z] != largest:
                     filter_mask[x][y][z] = 0
                 else:
-                    filter_mask[x][y][z] = hmap[x][y][z]
+                    filter_mask[x][y][z] = cmap[x][y][z]
     # derp = filter_mask != counts.index(max(counts))+1
     # filter_mask[derp] = 0
     return filter_mask
 
-# def in_bounds(hmap, position):
+# def in_bounds(cmap, position):
 #     if position[0] < 0 or position[1] < 0 or position[2] < 0:
 #         return False
 #     try:
-#         _ = hmap[position]
+#         _ = cmap[position]
 #         return True
 #     except IndexError:
 #         return False
 
-# def has_neighbor(hmap, position, direction):
+# def has_neighbor(cmap, position, direction):
 #     """ Return if there is a cell in that direction.
 #     """
 #     x = position[0] + direction[0]
@@ -98,12 +98,12 @@ def connected_mask(hmap, start):
 #     z = position[2] + direction[2]
 #     if x < 0 or y < 0 or z < 0:
 #         return False
-#     elif x >= hmap.shape[0] or y >= hmap.shape[1] or z >= hmap.shape[2]:
+#     elif x >= cmap.shape[0] or y >= cmap.shape[1] or z >= cmap.shape[2]:
 #         return False
 #     else:
-#         return bool(hmap[x, y, z])
+#         return bool(cmap[x, y, z])
 
-# def neighbor_positions(hmap, position):
+# def neighbor_positions(cmap, position):
 #     """ Return all adjacent positions that have a cell
 #     """
 
@@ -112,11 +112,11 @@ def connected_mask(hmap, start):
 #         y = position[1] + direction[1]
 #         z = position[2] + direction[2]
 #         if x >=0 and y >=0 and z>=0 and \
-#           x < hmap.shape[0] and y < hmap.shape[1] and z < hmap.shape[2]:
+#           x < cmap.shape[0] and y < cmap.shape[1] and z < cmap.shape[2]:
 #             yield x, y ,z
 
-# def neighbors(hmap, position):
+# def neighbors(cmap, position):
 #     """ Return all cells that are adjacent.
 #     """
 #     for position in neighbor_positions(position):
-#         yield hmap[position]
+#         yield cmap[position]

@@ -166,17 +166,17 @@ def balance_score2(cells, verbose=False):
 
     return score
 
-def balance_score(cells, hmap, verbose=False):
+def balance_score(cells, cmap, verbose=False):
     if len(cells) == 0:
         return 0
 
-    X, Y, Z = shape(hmap)
+    X, Y, Z = shape(cmap)
     bottom_points = [] # Store all points on bottom as (x, z) tuples.
 
     # Create lsit of all points touching the bottom.
     for x in range(X):
         for z in range(Z):
-            if hmap[x][0][z]:
+            if cmap[x][0][z]:
                 bottom_points.append((x-.5, z-.5))
                 bottom_points.append((x+.5, z-.5))
                 bottom_points.append((x-.5, z+.5))

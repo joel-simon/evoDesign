@@ -55,14 +55,14 @@ if __name__ == '__main__':
     # pred = [1,1,1,1,1]
     true = [1,1,1,1,0,1]
     pred = [1,1,1,1,1,1]
-    print sklearn_f1(true, pred)
-    print roc_auc_score(true, pred)
+    print(sklearn_f1(true, pred))
+    print(roc_auc_score(true, pred))
     print(balanced_accuracy_score(true, pred))
 
     true = [0,0,0,0,1,0]
     pred = [0,0,0,0,0,0]
-    print sklearn_f1(true, pred)
-    print roc_auc_score(true, pred)
+    print(sklearn_f1(true, pred))
+    print(roc_auc_score(true, pred))
     print(balanced_accuracy_score(true, pred))
 
 

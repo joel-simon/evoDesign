@@ -8,31 +8,34 @@ class DivideDistinctSimulation(BaseModuleSimulation):
 
     def __init__(self, simulation, module):
         super(DivideDistinctSimulation, self).__init__(simulation, module,
-                                                       has_render=False)
+                                                               num_inputs=0,
+                                                               num_outputs=6)
 
-    def handle_output(self, cell, outputs):
-        hmap = self.simulation.hmap
-
-        x, y, z = cell.position
-        X, Y, Z = shape(hmap)
-
-        if outputs[0] > .5 and x > 0 and not hmap[x-1][y][z]:
+    def handle_output(self, x, y, z, outputs, current, next):
+        X, Y, Z = current.shape
+        if outputs[0] > .5 and x > 0 and not current[x-1, y, z]:
             self.simulation.create_cell(x-1, y, z)
+            # next[x-1, y, z] = 1
 
-        if outputs[1] > .5 and x < X-1 and not hmap[x+1][y][z]:
+        if outputs[1] > .5 and x < X-1 and not current[x+1, y, z]:
             self.simulation.create_cell(x+1, y, z)
+            # next[x+1, y, z] = 1
 
-        if outputs[2] > .5 and y > 0 and not hmap[x][y-1][z]:
+        if outputs[2] > .5 and y > 0 and not current[x, y-1, z]:
             self.simulation.create_cell(x, y-1, z)
+            # next[x, y-1, z] = 1
 
-        if outputs[3] > .5 and y < Y-1 and not hmap[x][y+1][z]:
+        if outputs[3] > .5 and y < Y-1 and not current[x, y+1, z]:
             self.simulation.create_cell(x, y+1, z)
+            # next[x, y+1, z] = 1
 
-        if outputs[4] > .5 and z > 0 and not hmap[x][y][z-1]:
+        if outputs[4] > .5 and z > 0 and not current[x, y, z-1]:
             self.simulation.create_cell(x, y, z-1)
+            # next[x, y, z-1] = 1
 
-        if outputs[5] > .5 and z < Z-1 and not hmap[x][y][z+1]:
+        if outputs[5] > .5 and z < Z-1 and not current[x, y, z+1]:
             self.simulation.create_cell(x, y, z+1)
+            # next[x, y, z+1] = 1
 
 class DivideDistinctModule(Module):
     """docstring for DivideDistinctModule"""

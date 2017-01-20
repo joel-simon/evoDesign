@@ -46,5 +46,4 @@ simulation.max_steps = 1
 simulation.verbose = True
 simulation.run(viewer=viewer)
 
-# viewer.hold()
 

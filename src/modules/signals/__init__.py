@@ -35,5 +35,5 @@ class BaseSignalSimulation(BaseModuleSimulation):
         #         max_value = max(max_value, max(cell.userData[gene.key()]))
 
         # draw_text(surface, (2, 30), "Max :%f"%max_value)
-        # draw_hex_map(surface, self.simulation.hmap, self._draw_hex)
+        # draw_hex_map(surface, self.simulation.cmap, self._draw_hex)
 

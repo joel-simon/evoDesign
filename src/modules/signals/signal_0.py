@@ -16,7 +16,7 @@ class Signal0Simulation(BaseSignalSimulation):
 
     def create_input(self, cell):
         inputs = []
-        cmap = self.simulation.hmap
+        cmap = self.simulation.cmap
         x, y, z = cell.position
 
         for gene in self.module.genes.values():

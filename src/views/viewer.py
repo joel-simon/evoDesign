@@ -103,15 +103,15 @@ class Viewer(object):
             glEnd()
         glLineWidth(1)
 
-    def set_map(self, hmap):
+    def set_map(self, cmap):
         gl_list = glGenLists(1)
         glNewList(gl_list, GL_COMPILE)
 
-        for x, y, z in zip(*np.where(hmap)):
-            if hmap[x][y][z].userData['connected']:
-                self.draw_cube(x, y, z, (.9, .9, .9, 1))
-            else:
-                self.draw_cube(x, y, z, (.5, .5, .5, .2), border=False)
+        for x, y, z in zip(*np.where(cmap)):
+            # if cmap[x][y][z].userData['connected']:
+            self.draw_cube(x, y, z, (.9, .9, .9, 1))
+            # else:
+            #     self.draw_cube(x, y, z, (.5, .5, .5, .2), border=False)
 
         glEndList()
         self.gl_lists.append(gl_list)

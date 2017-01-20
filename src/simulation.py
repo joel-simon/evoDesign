@@ -1,10 +1,16 @@
-from __future__ import print_function
+from __future__ import division, print_function
+import pyximport
 import numpy as np
+pyximport.install(setup_args={"include_dirs":np.get_include()},
+                  reload_support=True)
+
 from os.path import join
 
-from .cell import Cell
-from .map_utils import empty
-from .export import to_obj
+from src.export import to_obj
+
+# from neat import nn
+from src.neat_custom import nnx as nn
+# from numba import jit
 
 class Simulation(object):
     def __init__(self, genome, bounds, max_steps, starting_positions,
@@ -12,6 +18,11 @@ class Simulation(object):
         assert(len(bounds) == 3)
 
         self.genome = genome
+
+        # self.network = NEAT.NeuralNetwork()
+        # genome.BuildPhenotype(self.network)
+        self.network = nn.create_feed_forward_phenotype(genome)
+
         self.bounds = bounds
         self.max_steps = max_steps
         self.starting_positions = starting_positions
@@ -26,8 +37,17 @@ class Simulation(object):
 
         self.max_fitness = 0
         self.max_fitness_steps = 0
-        self.hmap = empty(self.bounds)
-        self.cells = []
+
+        self.cell_positions = set()
+
+        self.cmap = np.zeros(self.bounds, dtype=bool)
+        self.cmap_next = np.zeros(self.bounds, dtype=bool)
+
+        # dx, dy, dz = self.bounds
+        # self.inputs = np.zeros((dx, dy, dz, self.genome.num_inputs))
+        # self.outputs = np.zeros((dx, dy, dz, self.genome.num_outputs))
+
+        # self.cells = set()
         self.next_cell_id = 0
 
         # Step statistics
@@ -50,87 +70,84 @@ class Simulation(object):
                 sim = module.simulation(self, module, **module.simulation_config)
                 self.module_simulations[module.name] = sim
 
-    def _get_cell_id(self):
-        self.next_cell_id += 1
-        return self.next_cell_id
+    # def _get_cell_id(self):
+    #     self.next_cell_id += 1
+    #     return self.next_cell_id
 
-    def super_cell_init(self, cell):
-        for module in self.module_simulations.values():
-            module.cell_init(cell)
-        self.cell_init(cell)
+    # def super_cell_init(self, cell):
+    #     for module in self.module_simulations.values():
+    #         module.cell_init(cell)
+    #     # self.cell_init(cell)
 
     def create_cell(self, x, y, z):
-        assert not self.hmap[x][y][z]
-        cell = Cell(self._get_cell_id(), self.genome, (x, y, z))
-        self.hmap[x][y][z] = cell
-        self.cells.append(cell)
-        self.super_cell_init(cell)
+        assert not self.cmap[x, y, z]
+        # cell = Cell(self._get_cell_id(), self.genome, (x, y, z))
+        self.cmap[x, y, z] = 1
+        self.cell_positions.add((x, y, z))
+        # self.cells.add(cell)
+        # self.super_cell_init(x, y, z)
         self.created_cells += 1
-        # self.last_change = self.step_count
+        for sim in self.module_simulations.values():
+            sim.cell_init(x, y, z)
+        # return cell
 
-        return cell
+    # def destroy_cell(self, cell):
+    #     self.cell_positions[]
+    #     # self.last_change = self.step_count
+    #     for module in self.module_simulations.values():
+    #         module.cell_destroy(cell)
+    #     self.cells.remove(cell)
+    #     x, y, z = cell.position
+    #     self.cmap[x][y][z] = 0
+    #     self.destroyed_cells += 1
+    #     cell.alive = False
 
-    def destroy_cell(self, cell):
-        # self.last_change = self.step_count
-        for module in self.module_simulations.values():
-            module.cell_destroy(cell)
-        self.cells.remove(cell)
-        x, y, z = cell.position
-        self.hmap[x][y][z] = 0
-        self.destroyed_cells += 1
-        cell.alive = False
+    # def create_input(self, cell):
+    #     raise NotImplementedError()
 
-    def create_input(self, cell):
-        raise NotImplementedError()
+    # def handle_output(self, cell, outputs):
+    #     raise NotImplementedError()
 
-    def handle_output(self, cell, outputs):
-        raise NotImplementedError()
+    def activate(self, inputs, outputs):
+        # # print(inputs)
+        # self.network.Flush()
+        # self.network.Input(inputs)  # can input numpy arrays, too
+        # return self.network.Activate()
+        return self.network.serial_activate(inputs, outputs)
 
+    # @profile
     def step(self):
-        pass
+        sim_list = list(self.module_simulations.values())
+        cells = list(self.cell_positions) # make copy, will change during iteration
+        inputs = np.zeros(self.genome.num_inputs)
+        outputs = np.zeros(self.genome.num_outputs)
 
-    def create_all_outputs(self):
-        """ Collect all inputs first so simulation
-            state does not change during input collection
-        """
-        all_outputs = []
-        for cell in self.cells:
-            inputs = self.create_input(cell)
-            assert len(inputs) == self.genome.non_module_inputs
+        for x, y, z in cells:
+            inputs.fill(0)
+            k = 0
+            for sim in sim_list:
+                if sim.num_inputs > 0:
+                    # assert(len(inputs[k:k+sim.num_inputs]) == sim.num_inputs)
+                    sim.create_input(x, y, z, inputs[k:k+sim.num_inputs], self.cmap)
+                k += sim.num_inputs
 
-            for mod_sim in self.module_simulations.values():
-                mod_input = mod_sim.create_input(cell)
-                assert(len(mod_input) == len(mod_sim.module.total_inputs()))
-                inputs.extend(mod_input)
+            self.activate(inputs, outputs)
 
-            assert(len(inputs) == self.genome.num_inputs)
+            if outputs[0] > .5: # Apoptosis.
+                for sim in sim_list:
+                    sim.cell_destroy(x, y, z)
+            else: # Continue to next generation
+                self.cmap_next[x, y, z] = 1
 
-            all_outputs.append(cell.outputs(inputs))
+            k = 1
+            for sim in sim_list:
+                if sim.num_outputs > 0:
+                    # assert(len(outputs[k:k+sim.num_outputs]) == sim.num_outputs)
+                    sim.handle_output(x, y, z, outputs[k:k+sim.num_outputs], self.cmap, self.cmap_next)
+                k += sim.num_outputs
 
-            assert(len(all_outputs[-1]) == self.genome.num_outputs)
-
-        return all_outputs
-
-    def handle_all_outputs(self, all_outputs):
-        # Handle all outputs.
-        # Make a list copy because self.cells will change during iteration.
-        for cell, outputs in list(zip(self.cells, all_outputs)):
-
-            nmi = self.genome.non_module_outputs
-            self.handle_output(cell, outputs[:nmi])
-            if not cell.alive:
-                continue
-
-            # Handle Module outputs
-            i = nmi
-            for module, sim in zip(self.genome.modules, self.module_simulations.values()):
-                k = len(module.total_outputs())
-                module_output = outputs[i:i+k]
-                assert(len(module_output) == k)
-                sim.handle_output(cell, module_output)
-                i += k
-                if not cell.alive:
-                    break
+        self.cmap, self.cmap_next = self.cmap_next, self.cmap
+        self.cmap_next[:, :, :] = False
 
     def super_step(self):
         self.created_cells = 0
@@ -138,9 +155,6 @@ class Simulation(object):
 
         if self.verbose:
             print('#'*40,'step', self.step_count,'#'*40)
-
-        all_outputs = self.create_all_outputs()
-        self.handle_all_outputs(all_outputs)
 
         # Handle experiment logic.
         self.step()
@@ -165,7 +179,7 @@ class Simulation(object):
         if self.verbose:
             print('Destroyed %i cells' % self.destroyed_cells)
             print('Created %i cells:' % self.created_cells)
-            print('Final cells: %i' % len(self.cells))
+            # print('Final cells: %i' % len(self.cells))
             print('Max fitness: %f' % self.max_fitness)
 
         self.step_count += 1
@@ -175,11 +189,8 @@ class Simulation(object):
         # if self.verbose:
         #     print(self.genome.fitness, self.max_fitness)
 
-        # if self.genome.fitness and self.max_fitness >= self.genome.fitness:
-        #     return True
-
         # Check for inactivity.
-        if self._steps_since_change >= 5:
+        if self._steps_since_change >= 4:
             if self.verbose:
                 print('Simulation end due to inactivity.')
             return True
@@ -188,7 +199,7 @@ class Simulation(object):
         return False
 
     def run(self, viewer=None):
-        for _ in range(self.max_steps):
+        for i in range(self.max_steps):
             self.super_step()
 
             if viewer:
@@ -197,9 +208,10 @@ class Simulation(object):
 
             if self.finished():
                 break
+        # print(self.cmap.sum())
 
     def save(self, directory):
-        to_obj(self.hmap, join(directory, 'cells.obj'))
+        to_obj(self.cmap, join(directory, 'cells.obj'))
 
     def save_all(self, directory):
         self.save(directory)
@@ -208,11 +220,11 @@ class Simulation(object):
 
     def render(self, viewer):
         # Simulation defuaults to drawing block representation.
-        viewer.set_map(self.hmap)
+        viewer.set_map(self.cmap)
 
     def render_all(self, viewer):
         viewer.clear()
         self.render(viewer)
-        for m_sim in self.module_simulations.values():
-            m_sim.render(viewer)
+        # for m_sim in self.module_simulations.values():
+        #     m_sim.render(viewer)
 

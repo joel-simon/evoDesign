@@ -15,7 +15,7 @@ class Signal3Simulation(BaseSignalSimulation):
 
     def create_input(self, cell):
         inputs = []
-        neighbors = list(self.simulation.hmap.neighbors(cell.position))
+        neighbors = list(self.simulation.cmap.neighbors(cell.position))
 
         for gene in self.module.genes.values():
             key = gene.key()

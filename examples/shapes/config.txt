@@ -8,8 +8,8 @@ stagnation_type      = DefaultStagnation
 reproduction_type    = DefaultReproduction
 
 [phenotype]
-hidden_nodes         = 0
-initial_connection   = fully_connected
+hidden_nodes         = 3
+initial_connection   = partial .5
 max_weight           = +30
 min_weight           = -30
 feedforward          = 0

@@ -1,9 +1,10 @@
 import os
 from os import path
+import gzip
 import pickle
 import subprocess
 from shutil import copyfile
-from neat import population
+from neat import population, visualize
 
 from src.neat_custom.parallel import ParallelEvaluator
 from src.neat_custom.config import Config as NeatConfig
@@ -67,23 +68,17 @@ class Experiment(object):
         with open(path.join(out_dir, 'genome.p'), 'wb') as genome_out:
             pickle.dump(genome, genome_out)
 
-        with open(path.join(out_dir, 'population.p'), 'wb') as population_out:
+        with gzip.open(path.join(out_dir, 'population.p'), 'wb') as population_out:
             pickle.dump(self.population, population_out)
 
         with open(path.join(out_dir, 'params.p'), 'wb') as params_out:
             pickle.dump(self.simulation_params, params_out)
-
-        # with open(path.join(out_dir, 'simulation.p'), 'wb') as sim_out:
-        #     pickle.dump(self.simulation, sim_out)
-
 
         genome_text = open(path.join(out_dir, 'genome.txt'), 'w+')
         genome_text.write('fitness: %f\n' % genome.fitness)
         genome_text.write(str(genome))
 
         # Visualize the best network.
-        #
-
         with open(path.join(out_dir, 'report.txt'), 'w') as report:
             report.write('# BAUPLAN report.\n')
 
@@ -114,8 +109,22 @@ class Experiment(object):
 
         copyfile(self.neat_config_path, path.join(out_dir, 'config.txt'))
 
+        visualize.draw_net(genome,
+                           view=False,
+                           show_disabled=False,
+                           prune_unused=True,
+                           node_names=genome.node_names,
+                           filename=path.join(out_dir,"nn_winner.gv"))
+
+        # Plot the evolution of the best/average fitness.
+        visualize.plot_stats(self.population.statistics, ylog=False,
+                            filename=path.join(out_dir,"nn_fitness.svg"))
+
+        # Visualizes speciation
+        visualize.plot_species(self.population.statistics,
+                                filename=path.join(out_dir,"nn_speciation.svg"))
         # copyfile('./experiments/%s.py' % experiment, path.join(out_dir, '%s.py.txt' % experiment))
-        subprocess.call(['./generate_graphs.sh', out_dir])
+        # subprocess.call(['./generate_graphs.sh', out_dir])
         print('Report finished.')
 
     def run(self, cores, generations, pop_size):
@@ -127,11 +136,8 @@ class Experiment(object):
         self.neat_config.pop_size = pop_size
         self.population = population.Population(self.neat_config)
 
-        # pop.add_reporter(Reporter3D(self.simulation))
-
         if cores > 1:
             pe = ParallelEvaluator(cores, self.evaluate_genome)
             self.population.run(pe.evaluate, generations)
         else:
             self.population.run(self.evaluate_genomes, generations)
-

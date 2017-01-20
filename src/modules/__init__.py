@@ -4,22 +4,25 @@ from copy import copy
 class BaseModuleSimulation(object):
     """ A module may have its own simulation where it handles its logic. """
 
-    def __init__(self, simulation, module, has_render=True):
+    def __init__(self, simulation, module, num_inputs=0, num_outputs=0,
+                                                             has_render=False):
         self.simulation = simulation
         self.module = module
+        self.num_inputs = num_inputs
+        self.num_outputs = num_outputs
         self.has_render = has_render
 
-    def cell_init(self, cell):
+    def cell_init(self, x, y, z):
         pass
 
-    def cell_destroy(self, cell):
+    def cell_destroy(self, x, y, z):
         pass
 
-    def handle_output(self, cell, outputs):
+    def handle_output(self, x, y, z, outputs, current, next):
         pass
 
-    def create_input(self, cell):
-        return []
+    def create_input(self, x, y, z, input, current):
+        pass
 
     def step(self):
         pass
@@ -27,8 +30,8 @@ class BaseModuleSimulation(object):
     def save(self, directory):
         pass
 
-    def render(self, surface):
-        pass
+    # def render(self, surface):
+    #     pass
 
 class BaseModuleGene(object):
     """
